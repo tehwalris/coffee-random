@@ -9,6 +9,9 @@ service CoffeeSurvey {
 message Empty {}
 
 message SubmitRequest {
+  string username = 4;
+  string password = 5;
+
   uint32 machine_column = 1; // [1, 4]
   float quality = 2; // [0, 1] (worst to best)
   float business = 3; // [0, 1] (deserted to long queues)
