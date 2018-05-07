@@ -43,6 +43,5 @@ class Client {
 }
 
 export const client = new Client(
-  // tslint:disable-next-line:no-eval // HACK ignore typescript warning
-  eval("process.env.REACT_APP_MAILALIAS_API_URL") || "http://localhost:8080",
+  process.env.REACT_APP_MAILALIAS_API_URL || "http://localhost:8080",
 );

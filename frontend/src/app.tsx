@@ -1,26 +1,34 @@
 import * as React from "react";
-import { random } from "lodash";
+import { Store, LoginStore, ColumnStore, RatingStore } from "./store";
 
 interface State {
-  username: string;
-  password: string;
-
-  machineColumn: number;
+  store: Store;
 }
 
 class App extends React.Component<{}, State> {
-  componentWillMount() {
-    this.reset();
+  state: State = { store: new LoginStore(this.onUpdate) };
+
+  private onUpdate(store: Store) {
+    this.setState({ store });
   }
 
-  private reset() {
-    this.setState({ machineColumn: random(1, 4) });
+  render() {
+    const { store } = this.state;
+    if (store instanceof LoginStore) {
+      return <div>Login</div>;
+    }
+    if (store instanceof ColumnStore) {
+      return <div>Column</div>;
+    }
+    if (store instanceof RatingStore) {
+      return <div>Rating</div>;
+    }
+    return unreachable(store);
   }
+}
 
-  public render() {
-    const { machineColumn } = this.state;
-    return <div>{machineColumn}</div>;
-  }
+function unreachable(x: never): never {
+  throw new Error("unreachable");
 }
 
 export default App;
