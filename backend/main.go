@@ -78,7 +78,12 @@ func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Submit submits a new rating.
+// TestLogin submits a new rating.
 func (s *Server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "not implemented")
+}
+
+// CheckCreds checks credentials.
+func (s *Server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "not implemented")
 }

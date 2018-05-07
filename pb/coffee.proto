@@ -3,10 +3,16 @@ syntax = "proto3";
 package coffee;
 
 service CoffeeSurvey {
+  rpc CheckCreds(CheckCredsRequest) returns (Empty);
   rpc Submit(SubmitRequest) returns (Empty);
 }
 
 message Empty {}
+
+message CheckCredsRequest {
+  string username = 4;
+  string password = 5;
+}
 
 message SubmitRequest {
   string username = 4;

@@ -1,9 +1,25 @@
 import * as React from "react";
-import "./app.css";
+import { random } from "lodash";
 
-class App extends React.Component {
+interface State {
+  username: string;
+  password: string;
+
+  machineColumn: number;
+}
+
+class App extends React.Component<{}, State> {
+  componentWillMount() {
+    this.reset();
+  }
+
+  private reset() {
+    this.setState({ machineColumn: random(1, 4) });
+  }
+
   public render() {
-    return <div>walrus</div>;
+    const { machineColumn } = this.state;
+    return <div>{machineColumn}</div>;
   }
 }
 
