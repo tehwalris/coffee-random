@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package coffee;
+
+service CoffeeSurvey {
+  rpc Submit(SubmitRequest) returns (Empty);
+}
+
+message Empty {}
+
+message SubmitRequest {
+  uint32 machine_column = 1; // [1, 4]
+  float quality = 2; // [0, 1] (worst to best)
+  float business = 3; // [0, 1] (deserted to long queues)
+}
