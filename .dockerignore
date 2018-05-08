@@ -1,0 +1,4 @@
+/vendor
+/pb/*.go
+/backend/backend
+/frontend/node_modules

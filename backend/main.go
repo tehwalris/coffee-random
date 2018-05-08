@@ -76,7 +76,7 @@ func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	if s.WrappedGrpc.IsGrpcWebRequest(r) || s.WrappedGrpc.IsAcceptableGrpcCorsRequest(r) {
 		s.WrappedGrpc.ServeHTTP(w, r)
 	} else {
-		fmt.Fprint(w, "The service is only available via GRPC-web.")
+		http.FileServer(http.Dir("../frontend/build/")).ServeHTTP(w, r)
 	}
 }
 

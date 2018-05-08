@@ -74,10 +74,7 @@ export class LoginStore extends BaseState {
   private async tryLoadState() {
     try {
       const s = localStorage.getItem(LOGIN_LOCAL_STORAGE);
-      if (!s) {
-        return;
-      }
-      const v = JSON.parse(s);
+      const v = JSON.parse(s || "");
       await client.checkCreds(v);
       this.username = v.username;
       this.password = v.password;
