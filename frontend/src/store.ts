@@ -25,9 +25,17 @@ class BaseState {
   }
 }
 
+const LOGIN_LOCAL_STORAGE = "coffee-random-login";
+
 export class LoginStore extends BaseState {
   failed = false;
   inProgress = false;
+  initializing = true;
+
+  constructor(arg: UpdateHandler | BaseState) {
+    super(arg);
+    this.tryLoadState();
+  }
 
   onUsernameChange(username: string) {
     this.username = username;
@@ -51,7 +59,41 @@ export class LoginStore extends BaseState {
       this.failed = true;
     }
     this.inProgress = false;
-    this.update(new ColumnStore(this));
+    this.tryAdvance();
+  }
+
+  private tryAdvance() {
+    if (this.failed) {
+      this.update(this);
+    } else {
+      this.saveState();
+      this.update(new ColumnStore(this));
+    }
+  }
+
+  private async tryLoadState() {
+    try {
+      const s = localStorage.getItem(LOGIN_LOCAL_STORAGE);
+      if (!s) {
+        return;
+      }
+      const v = JSON.parse(s);
+      await client.checkCreds(v);
+      this.username = v.username;
+      this.password = v.password;
+      this.tryAdvance();
+    } catch (e) {
+      console.error(e); //tslint:disable-line:no-console
+      this.initializing = false;
+      this.update(this);
+    }
+  }
+
+  private saveState() {
+    localStorage.setItem(
+      LOGIN_LOCAL_STORAGE,
+      JSON.stringify({ username: this.username, password: this.password }),
+    );
   }
 }
 
@@ -63,15 +105,15 @@ export class ColumnStore extends BaseState {
     return random(1, COLUMN_COUNT);
   }
 
-  onDone() {
+  onDone = () => {
     this.update(new RatingStore(this));
-  }
+  };
 
-  onCannot() {
+  onCannot = () => {
     this.column = this.random();
     this.failed = true;
     this.update(this);
-  }
+  };
 }
 
 export interface Rating {
@@ -134,7 +176,7 @@ export class RatingStore extends BaseState {
     this.update(this);
   }
 
-  onTimeout() {
+  private onTimeout = () => {
     this.update(new ColumnStore(this));
-  }
+  };
 }

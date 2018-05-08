@@ -71,19 +71,22 @@ func loadFlags() {
 }
 
 func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
-	if s.WrappedGrpc.IsGrpcWebRequest(r) {
+	if s.WrappedGrpc.IsGrpcWebRequest(r) || s.WrappedGrpc.IsAcceptableGrpcCorsRequest(r) {
 		s.WrappedGrpc.ServeHTTP(w, r)
 	} else {
 		fmt.Fprint(w, "The service is only available via GRPC-web.")
 	}
 }
 
-// TestLogin submits a new rating.
-func (s *Server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "not implemented")
-}
-
 // CheckCreds checks credentials.
 func (s *Server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.Empty, error) {
+	if r.Username == "test" && r.Password == "abc" {
+		return &pb.Empty{}, nil
+	}
+	return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
+}
+
+// Submit submits a new rating.
+func (s *Server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "not implemented")
 }

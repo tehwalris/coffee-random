@@ -1,27 +1,30 @@
 import * as React from "react";
 import { Store, LoginStore, ColumnStore, RatingStore } from "./store";
+import LoginPage from "./pages/login";
+import ColumnPage from "./pages/column";
+import RatingPage from "./pages/rating";
 
 interface State {
   store: Store;
 }
 
 class App extends React.Component<{}, State> {
-  state: State = { store: new LoginStore(this.onUpdate) };
-
-  private onUpdate(store: Store) {
+  private onUpdate = (store: Store) => {
     this.setState({ store });
-  }
+  };
+
+  state: State = { store: new LoginStore(this.onUpdate) };
 
   render() {
     const { store } = this.state;
     if (store instanceof LoginStore) {
-      return <div>Login</div>;
+      return <LoginPage store={store} />;
     }
     if (store instanceof ColumnStore) {
-      return <div>Column</div>;
+      return <ColumnPage store={store} />;
     }
     if (store instanceof RatingStore) {
-      return <div>Rating</div>;
+      return <RatingPage store={store} />;
     }
     return unreachable(store);
   }

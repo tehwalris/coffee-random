@@ -31,7 +31,7 @@ class Client {
     req.setQuality(_req.quality);
     req.setBusiness(_req.business);
     return new Promise((resolve, reject) => {
-      this.client.checkCreds(req, err => {
+      this.client.submit(req, err => {
         if (err) {
           reject(err);
         } else {
