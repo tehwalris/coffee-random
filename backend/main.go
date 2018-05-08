@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/rubenv/sql-migrate"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
@@ -78,15 +80,40 @@ func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// AuthUser checks credentials and retruns the users ID.
+func (s *Server) AuthUser(ctx context.Context, uname string, pw string) (int, error) {
+	var id int
+	var hash string
+	e := s.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE username = $1", uname).Scan(&id, &hash)
+	if e != nil {
+		return 0, e
+	}
+	e = bcrypt.CompareHashAndPassword([]byte(hash), []byte(pw))
+	if e != nil {
+		return 0, e
+	}
+	return id, nil
+}
+
 // CheckCreds checks credentials.
 func (s *Server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.Empty, error) {
-	if r.Username == "test" && r.Password == "abc" {
-		return &pb.Empty{}, nil
+	if _, e := s.AuthUser(ctx, r.Username, r.Password); e != nil {
+		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
 	}
-	return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
+	return &pb.Empty{}, nil
 }
 
 // Submit submits a new rating.
 func (s *Server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "not implemented")
+	userID, e := s.AuthUser(ctx, r.Username, r.Password)
+	if e != nil {
+		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
+	}
+	_, e = s.DB.ExecContext(ctx,
+		"INSERT INTO ratings (user_id, machine_column, quality, business, created_at) VALUES ($1, $2, $3, $4, $5)",
+		userID, r.MachineColumn, r.Quality, r.Business, time.Now())
+	if e != nil {
+		return nil, internalError(e)
+	}
+	return &pb.Empty{}, nil
 }

@@ -23,7 +23,9 @@ export default ({ store }: Props) => {
     <div>
       <Square width={"80%"}>
         <TapArea
-          onTap={({ x, y }) => store.onTapRating({ quality: x, business: y })}
+          onTap={({ x, y }) =>
+            store.onTapRating({ business: x, quality: 1 - y })
+          }
         >
           {text}
         </TapArea>
