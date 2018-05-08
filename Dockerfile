@@ -1,6 +1,6 @@
 FROM node:9.4-alpine
 WORKDIR /usr/src/app
-ENV REACT_APP_MAILALIAS_API_URL="https://mailalias.api.vis.ethz.ch"
+ENV REACT_APP_API_URL="https://coffee.walr.is"
 RUN apk --update add protobuf git build-base && \
   mkdir frontend
 COPY frontend/package.json frontend/package.json
@@ -23,6 +23,10 @@ RUN go get -u github.com/golang/dep/cmd/dep && \
 COPY Gopkg.lock Gopkg.toml ./
 RUN dep ensure -vendor-only
 COPY pb pb
+COPY migrations migrations
+COPY --from=0 /usr/src/app/frontend/build frontend/build
 RUN cd pb && ./gen-go.sh
 COPY backend backend
 RUN cd backend && go build
+
+CMD ["/bin/sh", "-c", "cd backend && ./backend -postgres-url $POSTGRES_URL"]
