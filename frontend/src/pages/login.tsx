@@ -2,6 +2,7 @@ import * as React from "react";
 import { LoginStore } from "../store";
 import { ControlGroup, InputGroup, Intent, Button } from "@blueprintjs/core";
 import { css } from "glamor";
+import SaveTick from "../components/save-tick";
 
 interface Props {
   store: LoginStore;
@@ -50,6 +51,7 @@ export default class LoginPage extends React.Component<Props> {
         >
           Login
         </Button>
+        <SaveTick tick={true} />
       </form>
     );
   }
