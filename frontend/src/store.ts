@@ -37,15 +37,15 @@ export class LoginStore extends BaseState {
     this.tryLoadState();
   }
 
-  onUsernameChange(username: string) {
+  onUsernameChange = (username: string) => {
     this.username = username;
     this.update(this);
-  }
+  };
 
-  onPasswordChange(password: string) {
+  onPasswordChange = (password: string) => {
     this.password = password;
     this.update(this);
-  }
+  };
 
   async onLogin() {
     this.inProgress = true;

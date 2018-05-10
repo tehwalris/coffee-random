@@ -41,9 +41,6 @@ export default class SaveTick extends React.Component<Props> {
           strokeWidth="0.085"
           fill="none"
         />
-        {/*this.getPoints().map(({ x, y }, i) => (
-          <circle key={i} cx={x} cy={y} r="0.1" fill="red" />
-        ))*/}
       </svg>
     );
   }

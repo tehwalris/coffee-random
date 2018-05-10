@@ -12,7 +12,7 @@ interface State {
   isMounted: boolean;
 }
 
-const SPIN_TIME_MS = 1500;
+const SPIN_TIME_MS = 1200;
 
 export default class SaveTick extends React.Component<Props, State> {
   state: State = {
