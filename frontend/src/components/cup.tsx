@@ -3,13 +3,14 @@ import { colors } from "../style";
 
 interface Props {
   widthPx: number;
+  tilt?: string;
 }
 
-const HEGIHT = 0.65;
+const HEIGHT = 0.65;
 const INSET = 0.15;
 
-export default ({ widthPx }: Props) => {
-  const height = Math.floor(HEGIHT * widthPx);
+export default ({ widthPx, tilt }: Props) => {
+  const height = Math.floor(HEIGHT * widthPx);
   const inset = Math.floor(INSET * widthPx);
   return (
     <div
@@ -19,6 +20,8 @@ export default ({ widthPx }: Props) => {
         borderRight: `${inset}px solid transparent`,
         height: 0,
         width: widthPx,
+        transform: tilt ? `rotate(${tilt}) translateY(-8%)` : undefined,
+        transformOrigin: `${100 * (1 - INSET)}% bottom`,
       }}
     />
   );

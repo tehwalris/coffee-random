@@ -3,19 +3,20 @@ import { css } from "glamor";
 import { colors } from "../style";
 import Ratio from "../components/ratio";
 import Head from "./head";
+import Cup from "./cup";
+
+interface Props {
+  arrowPos: number; // 0 is left head, 3 is right head, any float values are allowed
+}
 
 const HEAD_H_PADDING_PERCENT = 2;
 const TRIANGLE_PX = 15;
-
-interface TriangleProps {
-  offsetPercent: number;
-  pointDown: boolean;
-}
+const STAND_OFFSET_PERCENT = 75;
+const CUP_WIDTH_PX = 30;
 
 const styles = {
   body: css({
     position: "relative",
-    width: "100%",
     height: "100%",
     backgroundColor: colors.machineDark,
   }),
@@ -31,7 +32,7 @@ const styles = {
     top: "15%",
   }),
   stands: css({
-    top: "75%",
+    top: `${STAND_OFFSET_PERCENT}%`,
     padding: `0 1%`,
   }),
   stand: css({
@@ -43,35 +44,60 @@ const styles = {
     height: `${TRIANGLE_PX}px`,
     margin: "3px 0",
   }),
-  triangleSVG: (p: TriangleProps) =>
+  triangleSVG: (down: boolean) =>
     css({
       position: "absolute",
-      left: `${p.offsetPercent}%`,
+      [down ? "top" : "bottom"]: "-15px",
       marginLeft: `${-0.5 * TRIANGLE_PX}px`,
       width: `${TRIANGLE_PX}px`,
       height: `${TRIANGLE_PX}px`,
-      transform: p.pointDown ? "rotate(180deg)" : undefined,
+      transform: down ? "rotate(180deg)" : undefined,
     }),
   triangePoly: css({
     fill: colors.machineDark,
   }),
+  layerMid: (offsetPercent: number) =>
+    css({
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      willChange: "transform",
+      transform: `translateX(${offsetPercent}%)`,
+    }),
+  layerTop: css({
+    height: "100%",
+    position: "relative",
+    willChange: "transform",
+  }),
+  cupWrapper: css({
+    position: "absolute",
+    bottom: `${100 - STAND_OFFSET_PERCENT}%`,
+    left: `${-0.5 * CUP_WIDTH_PX}px`,
+  }),
 };
 
-const Triangle = (p: TriangleProps) => (
-  <svg viewBox="0,0,1,1" {...styles.triangleSVG(p)}>
+const Triangle = ({ down }: { down: boolean }) => (
+  <svg viewBox="0,0,1,1" {...styles.triangleSVG(down)}>
     <polygon points="0.5 0.42, 1 1, 0 1" {...styles.triangePoly} />
   </svg>
 );
 
-export default () => (
-  <div>
-    <div {...styles.arrowRow}>
-      <Triangle offsetPercent={centerOfHeadPercent(1)} pointDown={true} />
-    </div>
+export default ({ arrowPos }: Props) => (
+  <div {...styles.body}>
     <Ratio width="100%" ratio={0.45}>
-      <div {...styles.body}>
+      <div {...styles.layerMid(centerOfHeadPercent(arrowPos))}>
+        <Triangle down={true} />
+        <div {...styles.cupWrapper}>
+          <Cup widthPx={CUP_WIDTH_PX} tilt="15deg" />
+        </div>
+        <Triangle down={false} />
+      </div>
+      <div {...styles.layerTop}>
         <div {...styles.row} {...styles.heads}>
-          {[0, 1, 2, 3].map(i => <Head key={i} width="17%" />)}
+          <Head width="17%" door={0} />
+          <Head width="17%" door={0.6} light={true} />
+          <Head width="17%" door={0} />
+          <Head width="17%" door={0} />
         </div>
         <div {...styles.row} {...styles.stands}>
           {[0, 1].map(i => (
@@ -82,9 +108,6 @@ export default () => (
         </div>
       </div>
     </Ratio>
-    <div {...styles.arrowRow}>
-      <Triangle offsetPercent={centerOfHeadPercent(1)} pointDown={false} />
-    </div>
   </div>
 );
 

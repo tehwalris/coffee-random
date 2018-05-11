@@ -22,7 +22,7 @@ export default ({ store }: Props) => (
     <div {...styles.title}>
       Make your<br />coffee here
     </div>
-    <Machine />
+    <Machine arrowPos={1} />
     {store.failed
       ? "Ok, try this column:"
       : "Take your coffee from this column:"}

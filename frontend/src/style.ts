@@ -5,6 +5,7 @@ export const colors = {
   content: "#333333",
 
   machineDark: "#333333",
+  machineMedium: "#808080",
   machineLight: "#c3c1bd",
   coffee: "#A05A2C",
   cup: "#FFFFFF",

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { mix, easeOutQuad } from "../util";
 
 interface Props {
   tick: boolean;
@@ -105,12 +106,4 @@ function mixConfig(a: Config, b: Config, t: number): Config {
       angle: mix(a.long.angle, b.long.angle, t),
     },
   };
-}
-
-function mix(a: number, b: number, t: number): number {
-  return a * (1 - t) + b * t;
-}
-
-function easeOutQuad(t: number) {
-  return t * (2 - t);
 }
