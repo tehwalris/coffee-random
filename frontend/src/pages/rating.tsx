@@ -1,7 +1,7 @@
 import * as React from "react";
 import { RatingStore, RatingState } from "../store";
 import TapArea from "../components/tap-area";
-import Square from "../components/square";
+import Ratio from "../components/ratio";
 
 interface Props {
   store: RatingStore;
@@ -21,7 +21,7 @@ export default ({ store }: Props) => {
   }
   return (
     <div>
-      <Square width={"80%"}>
+      <Ratio width="80%" ratio={1}>
         <TapArea
           onTap={({ x, y }) =>
             store.onTapRating({ business: x, quality: 1 - y })
@@ -29,7 +29,7 @@ export default ({ store }: Props) => {
         >
           {text}
         </TapArea>
-      </Square>
+      </Ratio>
     </div>
   );
 };

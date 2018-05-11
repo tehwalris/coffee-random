@@ -4,7 +4,8 @@ export const colors = {
   background: "#FAFAF8",
   content: "#333333",
 
-  machine: "#333333",
+  machineDark: "#333333",
+  machineLight: "#c3c1bd",
   coffee: "#A05A2C",
   cup: "#FFFFFF",
 
@@ -26,6 +27,7 @@ export const colors = {
 export const sizes = {
   border: "2px",
   uiFontSize: "18px",
+  titleFontSize: "40px",
 
   inputHeightPx: 50,
   spacingPx: 15,

@@ -1,8 +1,6 @@
 import * as React from "react";
 import { LoginStore } from "../store";
-import { ControlGroup, InputGroup, Intent } from "@blueprintjs/core";
 import { css } from "glamor";
-import SaveTick from "../components/save-tick";
 import Button from "../components/button";
 import Input from "../components/input";
 import Header from "../components/header";
@@ -57,24 +55,6 @@ export default class LoginPage extends React.Component<Props> {
           >
             Login
           </Button>
-          <SaveTick tick={true} />
-          <ControlGroup vertical>
-            <InputGroup
-              value={store.username}
-              leftIcon="person"
-              placeholder="Username"
-              intent={store.failed ? Intent.DANGER : undefined}
-              large
-            />
-            <InputGroup
-              type="password"
-              value={store.password}
-              leftIcon="lock"
-              placeholder="Password"
-              intent={store.failed ? Intent.DANGER : undefined}
-              large
-            />
-          </ControlGroup>
         </div>
       </form>
     );

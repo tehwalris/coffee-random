@@ -10,7 +10,7 @@ const styles = {
     alignItems: "center",
     height: "130px",
     paddingBottom: "5px",
-    backgroundColor: colors.machine,
+    backgroundColor: colors.machineDark,
   }),
   coffee: css({
     flexGrow: "1",
