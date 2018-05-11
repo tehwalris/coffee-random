@@ -1,9 +1,9 @@
 import * as React from "react";
 import { ColumnStore } from "../store";
 import { Button, Intent } from "@blueprintjs/core";
-import Machine from "../components/machine";
 import { sizes } from "../style";
 import { css } from "glamor";
+import Machine from "../components/machine";
 
 interface Props {
   store: ColumnStore;
@@ -22,7 +22,7 @@ export default ({ store }: Props) => (
     <div {...styles.title}>
       Make your<br />coffee here
     </div>
-    <Machine arrowPos={1} />
+    <Machine column={1} />
     {store.failed
       ? "Ok, try this column:"
       : "Take your coffee from this column:"}

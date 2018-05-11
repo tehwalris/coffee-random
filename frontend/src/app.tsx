@@ -5,6 +5,7 @@ import ColumnPage from "./pages/column";
 import RatingPage from "./pages/rating";
 import { css } from "glamor";
 import { colors } from "./style";
+import { unreachable } from "./util";
 
 interface State {
   store: Store;
@@ -69,10 +70,6 @@ class App extends React.Component<{}, State> {
       </div>
     );
   }
-}
-
-function unreachable(x: never): never {
-  throw new Error("unreachable");
 }
 
 export default App;

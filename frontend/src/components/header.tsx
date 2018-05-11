@@ -22,6 +22,6 @@ const styles = {
 export default () => (
   <div {...styles.wrapper}>
     <div {...styles.coffee} />
-    <Cup widthPx={60} />
+    <Cup width="60px" />
   </div>
 );
