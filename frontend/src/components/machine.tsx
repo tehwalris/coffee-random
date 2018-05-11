@@ -60,6 +60,7 @@ const INITIAL_PLAN: PureProps = {
   arrowPos: OUTSIDE_POS,
   heads: times(4, () => DEFAULT_HEAD) as Heads,
   coffee: 0,
+  blonding: 0,
 };
 
 export default class Machine extends React.Component<Props, State> {
@@ -127,6 +128,7 @@ export default class Machine extends React.Component<Props, State> {
       arrowPos: position,
       heads: times(4, () => DEFAULT_HEAD) as Heads,
       coffee: 0,
+      blonding: 0,
     };
   }
 
@@ -149,6 +151,7 @@ export default class Machine extends React.Component<Props, State> {
       arrowPos: position,
       heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: coffee / 2,
+      blonding: 0,
     };
   }
 
@@ -165,6 +168,7 @@ export default class Machine extends React.Component<Props, State> {
       arrowPos: position,
       heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: 0.5,
+      blonding: Math.max(0, Math.min(1, stageT / POUR_MS)),
     };
   }
 
@@ -184,6 +188,7 @@ export default class Machine extends React.Component<Props, State> {
       arrowPos: position,
       heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: 0.5 + coffee / 2,
+      blonding: 1,
     };
   }
 
@@ -196,6 +201,7 @@ export default class Machine extends React.Component<Props, State> {
       arrowPos: position,
       heads: times(4, i => DEFAULT_HEAD) as Heads,
       coffee: 0,
+      blonding: 0,
     };
   }
 

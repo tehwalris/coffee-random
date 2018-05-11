@@ -8,6 +8,8 @@ export const colors = {
   machineMedium: "#808080",
   machineLight: "#c3c1bd",
   coffee: "#A05A2C",
+  coffeeDarkRGB: [0x85, 0x44, 0x19],
+  coffeeLightRGB: [0xd1, 0xa5, 0x64],
   cup: "#FFFFFF",
 
   primaryBackground: "#333333",

@@ -10,6 +10,7 @@ export interface Props {
   arrowPos: number; // 0 is left head, 3 is right head, any float values are allowed
   heads: Heads;
   coffee: number; // [0, 1] // 0 - no coffee, 0.5 - full coffee, 1 - no coffee (0.25 some coffee from the top)
+  blonding: number; // [0, 1] // 0 - dark coffee, 1 - blonde coffee
 }
 
 // see head.tsx
@@ -88,16 +89,20 @@ const styles = {
     position: "absolute",
     bottom: `${100 - STAND_OFFSET_PERCENT}%`,
   }),
-  coffee: (t: number) => {
+  coffee: (t: number, b: number) => {
     const top = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.max(0, 2 * t - 1));
     const bottom = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.min(1, 2 * t));
+    const color = colors.coffeeDarkRGB.map((v, i) =>
+      mix(v, colors.coffeeLightRGB[i], b),
+    );
     return css({
+      willChange: "transform",
       position: "absolute",
       top: `${top}%`,
       width: `${COFFEE_WIDTH_PERCENT}%`,
       height: `${bottom - top}%`,
       marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
-      background: colors.coffee,
+      background: `rgb(${color.map(Math.floor).join(", ")})`,
     });
   },
 };
@@ -108,12 +113,12 @@ const Triangle = ({ down }: { down: boolean }) => (
   </svg>
 );
 
-export default ({ arrowPos, heads, coffee }: Props) => (
+export default ({ arrowPos, heads, coffee, blonding }: Props) => (
   <div {...styles.body}>
     <Ratio width="100%" ratio={0.45}>
       <div {...styles.layerMid(centerOfHeadPercent(arrowPos))}>
         <Triangle down={true} />
-        <div {...styles.coffee(coffee)} />
+        <div {...styles.coffee(coffee, blonding)} />
         <div {...styles.cupWrapper}>
           <Cup width={`${CUP_WIDTH_PERCENT}%`} tilt="15deg" center />
         </div>
