@@ -27,6 +27,13 @@ export default ({ width, light, door }: Props) => (
   <Ratio width={width} ratio={0.79}>
     <svg viewBox="0,0,1,0.79" {...styles.svg}>
       <rect
+        width="0.6"
+        height="0.5"
+        x="0.25"
+        y={RECT_UP_Y}
+        fill={colors.machineDark}
+      />
+      <rect
         width="0.5"
         height="0.2"
         x="0.25"

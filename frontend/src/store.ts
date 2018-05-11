@@ -95,11 +95,16 @@ export class LoginStore extends BaseState {
 }
 
 export class ColumnStore extends BaseState {
-  column = this.random();
+  column = this.random(-1);
   failed = false;
 
-  private random(): number {
-    return random(1, COLUMN_COUNT);
+  private random(not: number): number {
+    while (true) {
+      const v = random(0, COLUMN_COUNT - 1);
+      if (v !== not) {
+        return v;
+      }
+    }
   }
 
   onDone = () => {
@@ -107,7 +112,7 @@ export class ColumnStore extends BaseState {
   };
 
   onCannot = () => {
-    this.column = this.random();
+    this.column = this.random(this.column);
     this.failed = true;
     this.update(this);
   };
