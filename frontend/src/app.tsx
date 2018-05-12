@@ -9,6 +9,11 @@ import { unreachable } from "./util";
 
 interface State {
   store: Store;
+  dev: {
+    login: LoginStore;
+    column: ColumnStore;
+    rating: RatingStore;
+  };
 }
 
 const LAYOUT_DEV = true;
@@ -33,7 +38,33 @@ class App extends React.Component<{}, State> {
     this.setState({ store });
   };
 
-  state: State = { store: new LoginStore(this.onUpdate) };
+  private onUpdateDev = (store: Store) => {
+    if (!this.state) {
+      // HACK this is for the dev mode anyway
+      console.log("HACK delaying");
+      setTimeout(() => this.onUpdateDev(store), 100);
+      return;
+    }
+    const { dev } = this.state;
+    if (store instanceof LoginStore) {
+      this.setState({ dev: { ...dev, login: store } });
+    }
+    if (store instanceof ColumnStore) {
+      this.setState({ dev: { ...dev, column: store } });
+    }
+    if (store instanceof RatingStore) {
+      this.setState({ dev: { ...dev, rating: store } });
+    }
+  };
+
+  state: State = {
+    store: new LoginStore(this.onUpdate),
+    dev: {
+      login: new LoginStore(this.onUpdateDev),
+      column: new ColumnStore(this.onUpdateDev),
+      rating: new RatingStore(this.onUpdateDev),
+    },
+  };
 
   render() {
     if (LAYOUT_DEV) {
@@ -52,20 +83,20 @@ class App extends React.Component<{}, State> {
     return unreachable(store);
   }
 
-  renderLayoutDev() {
-    const noop = () => {
-      /*noop*/
-    };
+  private renderLayoutDev() {
+    const {
+      dev: { login, column, rating },
+    } = this.state;
     return (
       <div {...styles.layoutDevWrapper}>
         <div {...styles.fakePhone}>
-          <LoginPage store={this.state.store as LoginStore} />
+          <LoginPage store={login} />
         </div>
         <div {...styles.fakePhone}>
-          <ColumnPage store={new ColumnStore(noop)} />
+          <ColumnPage store={column} />
         </div>
         <div {...styles.fakePhone}>
-          <RatingPage store={new RatingStore(noop)} />
+          <RatingPage store={rating} />
         </div>
       </div>
     );

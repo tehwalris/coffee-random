@@ -38,13 +38,13 @@ enum Stage {
 
 const SPRING = createSpring({
   stepMillis: 5,
-  precision: 0.001,
+  precision: 0.005,
   stiffness: 30,
   damping: 10,
 });
 
 // Switch stage from MoveEnter/MoveLeave when this is stillFrames >= SWITCH_STILL_FRAMES
-const SWITCH_STILL_FRAMES = 3;
+const SWITCH_STILL_FRAMES = 2;
 
 const DOOR_MS = 2000;
 const COFFEE_DROP_MS = 80;
@@ -154,16 +154,22 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   private planMoveLeave(stageT: number, dt: number): PureProps {
-    if (this.state.column < 2 === this.props.column < 2) {
+    const { position } = this.state;
+    const reachedOuter =
+      Math.abs(position - getOutsidePos(this.state.column)) < 0.1;
+    const sameSide = this.state.column < 2 === this.props.column < 2;
+    if (
+      sameSide ||
+      (this.state.stillFrames >= SWITCH_STILL_FRAMES && reachedOuter)
+    ) {
       this.setState({
         abort: false,
         column: this.props.column,
-        stillFrames: 0,
+        position: sameSide ? position : getOutsidePos(this.props.column),
       });
       this.switchStage(Stage.MoveEnter);
     } else {
-      const { position, velocity, column } = this.state;
-      this.setState({ column: this.props.column });
+      const { velocity, column } = this.state;
       this.setState(
         SPRING({
           position,
