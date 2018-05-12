@@ -1,5 +1,5 @@
 import * as React from "react";
-import { mix, easeOutQuad } from "../util";
+import { mix, easeOutQuad, easeInQuad } from "../util";
 import { colors } from "../style";
 
 interface Props {
@@ -61,11 +61,13 @@ export default class SaveTick extends React.Component<Props> {
 
   private getPoints(): Point[] {
     const { tick } = this.props;
-    const a = spinnerConfig(Math.PI / 2 + this.props.t * Math.PI * 2);
+    const a = spinnerConfig(
+      Math.PI / 2 + (tick ? easeInQuad(this.props.t) : this.props.t) * Math.PI,
+    );
     if (!tick) {
       return configToPoints(a);
     }
-    const t = easeOutQuad(Math.min(1, this.props.t * 3));
+    const t = easeOutQuad(Math.min(1, this.props.t * 1.25));
     return configToPoints(mixConfig(a, TICK_CONFIG, t));
   }
 }

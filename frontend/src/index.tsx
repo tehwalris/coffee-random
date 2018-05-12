@@ -14,6 +14,7 @@ css.global("body", {
   overflow: "hidden",
   backgroundColor: colors.machineMedium,
   color: colors.content,
+  userSelect: "none",
 });
 
 ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);

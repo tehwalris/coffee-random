@@ -18,7 +18,10 @@ class BaseState {
 
   constructor(arg: UpdateHandler | BaseState) {
     if (arg instanceof BaseState) {
-      Object.assign(this, arg);
+      this.update = arg.update;
+      this.username = arg.username;
+      this.password = arg.password;
+      this.column = arg.column;
     } else {
       this.update = arg;
     }
