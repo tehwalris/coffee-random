@@ -27,13 +27,14 @@ const STAND_OFFSET_PERCENT = 75;
 const CUP_WIDTH_PERCENT = 8;
 const COFFEE_WIDTH_PERCENT = 1;
 const COFFEE_TOP = 43;
-const COFFEE_BOTTOM = 65;
+const COFFEE_BOTTOM = 64;
 
 const styles = {
   body: css({
     position: "relative",
     height: "100%",
     backgroundColor: colors.machineDark,
+    margin: "40px 0",
   }),
   row: css({
     position: "absolute",
@@ -85,8 +86,8 @@ const styles = {
     willChange: "transform",
   }),
   cupWrapper: css({
-    display: "inline-grid",
     position: "absolute",
+    width: "100%",
     bottom: `${100 - STAND_OFFSET_PERCENT}%`,
   }),
   coffee: (t: number, b: number) => {

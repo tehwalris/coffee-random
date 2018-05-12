@@ -39,8 +39,8 @@ enum Stage {
 const SPRING = createSpring({
   stepMillis: 5,
   precision: 0.005,
-  stiffness: 30,
-  damping: 10,
+  stiffness: 45,
+  damping: 12,
 });
 
 // Switch stage from MoveEnter/MoveLeave when this is stillFrames >= SWITCH_STILL_FRAMES

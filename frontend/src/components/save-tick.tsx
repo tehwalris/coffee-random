@@ -3,6 +3,7 @@ import SaveTickPure from "./save-tick-pure";
 
 interface Props {
   tick: boolean;
+  size: string;
 }
 
 interface State {
@@ -53,10 +54,11 @@ export default class SaveTick extends React.Component<Props, State> {
   };
 
   render() {
+    const { size } = this.props;
     const { tick, t } = this.state;
     return (
       <div>
-        <SaveTickPure tick={tick} t={t} />
+        <SaveTickPure tick={tick} t={t} size={size} />
       </div>
     );
   }

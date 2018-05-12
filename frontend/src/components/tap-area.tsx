@@ -13,11 +13,10 @@ interface Props {
 
 const styles = {
   outer: css({
-    border: "1px solid black",
-    width: "100%",
     height: "100%",
   }),
   inner: css({
+    height: "100%",
     pointerEvents: "none",
     userSelect: "none",
   }),

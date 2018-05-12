@@ -16,7 +16,7 @@ interface State {
   };
 }
 
-const LAYOUT_DEV = true;
+const LAYOUT_DEV = false;
 
 const styles = {
   layoutDevWrapper: css({
@@ -24,12 +24,23 @@ const styles = {
     justifyContent: "center",
   }),
   fakePhone: css({
-    height: "590px",
-    width: "360px",
     margin: "20px 10px",
     border: `1px solid ${colors.fakePhoneBorder}`,
+  }),
+  wrapper: css({
+    width: "100vw",
+    height: "100vh",
+    overflow: "hidden",
     backgroundColor: colors.background,
     color: colors.content,
+
+    "@media(min-width: 450px)": {
+      height: "570px",
+      width: "360px",
+      margin: "100px auto",
+      boxShadow: "0 20px 100px rgba(0, 0, 0, 0.5)",
+      outline: "1px solid rgba(0, 0, 0, 0.1)",
+    },
   }),
 };
 
@@ -41,7 +52,7 @@ class App extends React.Component<{}, State> {
   private onUpdateDev = (store: Store) => {
     if (!this.state) {
       // HACK this is for the dev mode anyway
-      console.log("HACK delaying");
+      console.log("HACK delaying"); // tslint:disable-line:no-console
       setTimeout(() => this.onUpdateDev(store), 100);
       return;
     }
@@ -67,6 +78,10 @@ class App extends React.Component<{}, State> {
   };
 
   render() {
+    return <div {...styles.wrapper}>{this.renderInner()}</div>;
+  }
+
+  renderInner() {
     if (LAYOUT_DEV) {
       return this.renderLayoutDev();
     }
@@ -89,15 +104,15 @@ class App extends React.Component<{}, State> {
     } = this.state;
     return (
       <div {...styles.layoutDevWrapper}>
-        <div {...styles.fakePhone}>
-          <LoginPage store={login} />
-        </div>
-        <div {...styles.fakePhone}>
-          <ColumnPage store={column} />
-        </div>
-        <div {...styles.fakePhone}>
-          <RatingPage store={rating} />
-        </div>
+        {[
+          <LoginPage store={login} />,
+          <ColumnPage store={column} />,
+          <RatingPage store={rating} />,
+        ].map((e, i) => (
+          <div key={i} {...styles.wrapper} {...styles.fakePhone}>
+            {e}
+          </div>
+        ))}
       </div>
     );
   }

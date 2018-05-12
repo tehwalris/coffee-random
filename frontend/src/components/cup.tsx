@@ -1,5 +1,6 @@
 import * as React from "react";
 import { colors } from "../style";
+import Ratio from "./ratio";
 
 interface Props {
   width: string;
@@ -11,10 +12,11 @@ const HEIGHT = 0.65;
 
 export default ({ width, center, tilt }: Props) => {
   return (
-    <div style={{ display: "inline-grid" }}>
+    <Ratio ratio={HEIGHT} width={width}>
       <svg
         viewBox={`${center ? "0.5" : "0"},0,1,${HEIGHT}`}
-        width={width}
+        width="100%"
+        height="100%"
         style={{ overflow: "visible" }}
       >
         <polygon
@@ -22,7 +24,7 @@ export default ({ width, center, tilt }: Props) => {
           fill={colors.cup}
         />
       </svg>
-    </div>
+    </Ratio>
   );
 };
 

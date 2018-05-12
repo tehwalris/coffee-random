@@ -30,6 +30,7 @@ export const colors = {
 export const sizes = {
   border: "2px",
   uiFontSize: "18px",
+  uiFontSizeSmall: "16px",
   titleFontSize: "40px",
 
   inputHeightPx: 50,

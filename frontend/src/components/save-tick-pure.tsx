@@ -1,9 +1,11 @@
 import * as React from "react";
 import { mix, easeOutQuad } from "../util";
+import { colors } from "../style";
 
 interface Props {
   tick: boolean;
   t: number; // [0, 1]
+  size: string;
 }
 
 interface Config {
@@ -33,13 +35,24 @@ export default class SaveTick extends React.Component<Props> {
     const pointStr = this.getPoints()
       .map(({ x, y }) => `${x},${y}`)
       .join(" ");
+    const { size } = this.props;
     return (
-      <svg width="100px" height="100px" viewBox="-1 -1 2 2">
-        <circle r="1" stroke="black" strokeWidth="0.01" fill="none" />
+      <svg
+        width={size}
+        height={size}
+        viewBox="-1 -1 2 2"
+        style={{ overflow: "visible" }}
+      >
+        <circle
+          r="1"
+          stroke={colors.machineDark}
+          strokeWidth="0.1"
+          fill="white"
+        />
         <polyline
           points={pointStr}
-          stroke="black"
-          strokeWidth="0.085"
+          stroke={colors.machineDark}
+          strokeWidth="0.1"
           fill="none"
         />
       </svg>
