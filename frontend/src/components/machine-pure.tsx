@@ -33,8 +33,7 @@ const styles = {
   body: css({
     position: "relative",
     height: "100%",
-    backgroundColor: colors.machineDark,
-    margin: "40px 0",
+    margin: "0 0 40px 0",
   }),
   row: css({
     position: "absolute",
@@ -90,13 +89,14 @@ const styles = {
     width: "100%",
     bottom: `${100 - STAND_OFFSET_PERCENT}%`,
   }),
-  coffee: (t: number, b: number) => {
+  // tslint:disable-next-line:no-any
+  coffee: (t: number, b: number): any => {
     const top = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.max(0, 2 * t - 1));
     const bottom = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.min(1, 2 * t));
     const color = colors.coffeeDarkRGB.map((v, i) =>
       mix(v, colors.coffeeLightRGB[i], b),
     );
-    return css({
+    return {
       willChange: "transform",
       position: "absolute",
       top: `${top}%`,
@@ -104,7 +104,7 @@ const styles = {
       height: `${bottom - top}%`,
       marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
       background: `rgb(${color.map(Math.floor).join(", ")})`,
-    });
+    };
   },
 };
 
@@ -119,7 +119,7 @@ export default ({ arrowPos, heads, coffee, blonding }: Props) => (
     <Ratio width="100%" ratio={0.45}>
       <div {...styles.layerMid(centerOfHeadPercent(arrowPos))}>
         <Triangle down={true} />
-        <div {...styles.coffee(coffee, blonding)} />
+        <div style={styles.coffee(coffee, blonding)} />
         <div {...styles.cupWrapper}>
           <Cup width={`${CUP_WIDTH_PERCENT}%`} tilt="15deg" center />
         </div>

@@ -5,36 +5,40 @@ import { css } from "glamor";
 import Machine from "../components/machine";
 import Button from "../components/button";
 import LinkButton from "../components/link-button";
+import Title from "../components/title";
+import CoverAnimate, { Target } from "../components/cover-animate";
 
 interface Props {
   store: ColumnStore;
 }
 
 const styles = {
-  title: css({
-    margin: `${2 * sizes.pagePaddingPx}px ${sizes.pagePaddingPx}px`,
-    textAlign: "center",
-    fontSize: sizes.titleFontSize,
-  }),
   doneButton: css({
     margin: `${2 * sizes.spacingPx}px auto ${sizes.spacingPx}px auto`,
   }),
   cannotButtonWrapper: css({
     textAlign: "center",
   }),
+  lowerContent: css({
+    position: "relative", // prevents this from being underneath CoverAnimate
+  }),
 };
 
 export default ({ store }: Props) => (
   <div>
-    <div {...styles.title}>
+    <Title>
       Make your<br />coffee here
-    </div>
-    <Machine column={store.column} />
-    <Button onClick={store.onDone} className={styles.doneButton.toString()}>
-      Done!
-    </Button>
-    <div {...styles.cannotButtonWrapper}>
-      <LinkButton onClick={store.onCannot}>It's broken</LinkButton>
+    </Title>
+    <CoverAnimate target={Target.Machine}>
+      <Machine column={store.column} />
+    </CoverAnimate>
+    <div {...styles.lowerContent}>
+      <Button onClick={store.onDone} className={styles.doneButton.toString()}>
+        Done!
+      </Button>
+      <div {...styles.cannotButtonWrapper}>
+        <LinkButton onClick={store.onCannot}>It's broken</LinkButton>
+      </div>
     </div>
   </div>
 );
