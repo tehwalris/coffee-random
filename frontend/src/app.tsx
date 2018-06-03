@@ -1,12 +1,15 @@
 import * as React from "react";
 import { Store, LoginStore, ColumnStore, RatingStore } from "./store";
+import ColumnTop from "./pages/column-top";
+import ColumnBottom from "./pages/column-bottom";
 import LoginPage from "./pages/login";
-import ColumnPage from "./pages/column";
-import RatingPage from "./pages/rating";
+import RatingTop from "./pages/rating-top";
+import CompositePage from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
 import { unreachable } from "./util";
 import posed, { PoseGroup } from "react-pose";
+import { Target } from "./components/cover-animate";
 
 interface State {
   store: Store;
@@ -19,17 +22,7 @@ interface State {
   };
 }
 
-const LAYOUT_DEV = false;
-
 const styles = {
-  layoutDevWrapper: css({
-    display: "flex",
-    justifyContent: "center",
-  }),
-  fakePhone: css({
-    margin: "20px 10px",
-    border: `1px solid ${colors.fakePhoneBorder}`,
-  }),
   outer: css({
     position: "relative",
     width: "100vw",
@@ -51,15 +44,16 @@ const styles = {
     width: "100%",
     height: "100%",
   }),
+  section: css({
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  }),
 };
 
-const Page = posed.div({
-  enter: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-  },
+const Section = posed.div({
+  enter: {},
+  exit: {},
 });
 
 class App extends React.Component<{}, State> {
@@ -107,17 +101,14 @@ class App extends React.Component<{}, State> {
   };
 
   render() {
-    if (LAYOUT_DEV) {
-      return this.renderLayoutDev();
-    }
     const { store, storeIndex } = this.state;
     return (
       <div {...styles.outer}>
-        <PoseGroup animateOnMount>
+        <PoseGroup>
           {[
-            <Page key={storeIndex} {...styles.inner}>
+            <Section key={storeIndex} {...styles.section}>
               {this.renderInner(store)}
-            </Page>,
+            </Section>,
           ]}
         </PoseGroup>
       </div>
@@ -129,31 +120,24 @@ class App extends React.Component<{}, State> {
       return <LoginPage store={store} />;
     }
     if (store instanceof ColumnStore) {
-      return <ColumnPage store={store} />;
+      return (
+        <CompositePage
+          target={Target.Machine}
+          top={<ColumnTop />}
+          bottom={<ColumnBottom store={store} />}
+        />
+      );
     }
     if (store instanceof RatingStore) {
-      return <RatingPage store={store} />;
+      return (
+        <CompositePage
+          target={Target.Square}
+          top={<RatingTop />}
+          bottom={<div />}
+        />
+      );
     }
     return unreachable(store);
-  }
-
-  private renderLayoutDev() {
-    const {
-      dev: { login, column, rating },
-    } = this.state;
-    return (
-      <div {...styles.layoutDevWrapper}>
-        {[
-          <LoginPage store={login} />,
-          <ColumnPage store={column} />,
-          <RatingPage store={rating} />,
-        ].map((e, i) => (
-          <div key={i} {...styles.outer} {...styles.fakePhone}>
-            {e}
-          </div>
-        ))}
-      </div>
-    );
   }
 }
 

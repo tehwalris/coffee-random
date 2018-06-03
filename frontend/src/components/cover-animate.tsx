@@ -10,7 +10,8 @@ export enum Target {
 }
 
 interface Props {
-  children: React.ReactChild;
+  squareChild: React.ReactChild;
+  machineChild: React.ReactChild;
   target: Target;
 }
 
@@ -54,8 +55,9 @@ const styles = {
   }),
   bottomSquare: css({
     position: "absolute",
-    width: "100%",
+    width: "200%",
     height: "100%",
+    left: "-50%",
     bottom: "-100%",
     background: colors.background,
   }),
@@ -91,7 +93,7 @@ const square = {
   }),
 };
 
-export default ({ children, target }: Props) => {
+export default ({ squareChild, machineChild, target }: Props) => {
   const e = target === Target.Machine ? machine : square;
   return (
     <Ratio width="100%" ratio={target === Target.Machine ? 0.45 : 1}>
@@ -99,13 +101,13 @@ export default ({ children, target }: Props) => {
         <div {...styles.outer}>
           <div {...styles.ratio}>
             <Ratio width="100%" ratio={1}>
-              {target === Target.Square ? children : undefined}
+              {squareChild}
             </Ratio>
             <div {...styles.bottomSquare} />
           </div>
           <div {...styles.contentMachine}>
             <Ratio width="100%" ratio={0.45}>
-              {target === Target.Square ? undefined : children}
+              {machineChild}
             </Ratio>
           </div>
           <e.Left pose="enter" {...styles.left} />
