@@ -1,5 +1,5 @@
 import * as React from "react";
-import posed, { PoseGroup } from "react-pose";
+import posed from "react-pose";
 import CoverAnimate, { Target } from "./cover-animate";
 import { css } from "glamor";
 import Machine from "./machine";
@@ -11,6 +11,7 @@ interface Props {
   bottom: React.ReactChild;
   target: Target;
   column: number;
+  storeIndex: number;
   ratingStore?: RatingStore;
 }
 
@@ -34,20 +35,24 @@ const styles = {
   }),
 };
 
-export default ({ top, bottom, target, column, ratingStore }: Props) => (
+export default ({
+  top,
+  bottom,
+  target,
+  column,
+  storeIndex,
+  ratingStore,
+}: Props) => (
   <div>
     <Section>{top}</Section>
     <CoverAnimate
       squareChild={
-        <PoseGroup>
-          {ratingStore
-            ? [
-                <Section key={0} {...styles.top}>
-                  <RatingSquare store={ratingStore} />
-                </Section>,
-              ]
-            : []}
-        </PoseGroup>
+        <Child
+          pose={target === Target.Square ? "visible" : "hidden"}
+          {...styles.top}
+        >
+          {ratingStore && <RatingSquare store={ratingStore} />}
+        </Child>
       }
       machineChild={
         <Child pose={target === Target.Machine ? "visible" : "hidden"}>

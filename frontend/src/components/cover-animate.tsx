@@ -64,38 +64,23 @@ const styles = {
   }),
 };
 
-const machine = {
+const p = {
   Left: posed.div({
-    enter: { x: "0px" },
-    exit: { x: `${sizes.pagePaddingPx}px` },
+    machine: { x: "0px" },
+    square: { x: `${sizes.pagePaddingPx}px` },
   }),
   Right: posed.div({
-    enter: { x: "0px" },
-    exit: { x: `-${sizes.pagePaddingPx}px` },
+    machine: { x: "0px" },
+    square: { x: `-${sizes.pagePaddingPx}px` },
   }),
   BottomMachine: posed.div({
-    enter: { y: "-55%" },
-    exit: { y: "0%" },
-  }),
-};
-
-const square = {
-  Left: posed.div({
-    enter: { x: `${sizes.pagePaddingPx}px` },
-    exit: { x: "0px" },
-  }),
-  Right: posed.div({
-    enter: { x: `-${sizes.pagePaddingPx}px` },
-    exit: { x: "0px" },
-  }),
-  BottomMachine: posed.div({
-    enter: { y: "0%" },
-    exit: { y: "-55%" },
+    machine: { y: "-55%" },
+    square: { y: "0%" },
   }),
 };
 
 export default ({ squareChild, machineChild, target }: Props) => {
-  const e = target === Target.Machine ? machine : square;
+  const pose = target === Target.Machine ? "machine" : "square";
   return (
     <Ratio width="100%" ratio={target === Target.Machine ? 0.45 : 1}>
       <Ratio width="100%" ratio={1}>
@@ -111,9 +96,9 @@ export default ({ squareChild, machineChild, target }: Props) => {
               {machineChild}
             </Ratio>
           </div>
-          <e.Left pose="enter" {...styles.left} />
-          <e.Right {...styles.right} />
-          <e.BottomMachine {...styles.bottomMachine} />
+          <p.Left pose={pose} {...styles.left} />
+          <p.Right pose={pose} {...styles.right} />
+          <p.BottomMachine pose={pose} {...styles.bottomMachine} />
         </div>
       </Ratio>
     </Ratio>

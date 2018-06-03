@@ -8,7 +8,7 @@ import CompositePage from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
 import { unreachable } from "./util";
-import posed, { PoseGroup } from "react-pose";
+import posed from "react-pose";
 import { Target } from "./components/cover-animate";
 
 interface State {
@@ -101,21 +101,18 @@ class App extends React.Component<{}, State> {
   };
 
   render() {
-    const { store, storeIndex } = this.state;
+    const { store } = this.state;
     return (
       <div {...styles.outer}>
-        <PoseGroup>
-          {[
-            <Section key={storeIndex} {...styles.section}>
-              {this.renderInner(store)}
-            </Section>,
-          ]}
-        </PoseGroup>
+        <Section pose="enter" {...styles.section}>
+          {this.renderInner(store)}
+        </Section>,
       </div>
     );
   }
 
   renderInner(store: Store) {
+    const { storeIndex } = this.state;
     if (store instanceof LoginStore) {
       return <LoginPage store={store} />;
     }
@@ -126,6 +123,7 @@ class App extends React.Component<{}, State> {
           top={<ColumnTop />}
           bottom={<ColumnBottom store={store} />}
           column={store.column}
+          storeIndex={storeIndex}
         />
       );
     }
@@ -136,6 +134,7 @@ class App extends React.Component<{}, State> {
           top={<RatingTop />}
           bottom={<div />}
           column={store.column}
+          storeIndex={storeIndex}
           ratingStore={store}
         />
       );
