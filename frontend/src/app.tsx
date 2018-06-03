@@ -125,6 +125,7 @@ class App extends React.Component<{}, State> {
           target={Target.Machine}
           top={<ColumnTop />}
           bottom={<ColumnBottom store={store} />}
+          column={store.column}
         />
       );
     }
@@ -134,6 +135,8 @@ class App extends React.Component<{}, State> {
           target={Target.Square}
           top={<RatingTop />}
           bottom={<div />}
+          column={store.column}
+          ratingStore={store}
         />
       );
     }

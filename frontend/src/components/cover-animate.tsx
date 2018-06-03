@@ -29,6 +29,7 @@ const styles = {
     position: "absolute",
     top: "0",
     width: "100%",
+    pointerEvents: "none",
   }),
   left: css({
     position: "absolute",
