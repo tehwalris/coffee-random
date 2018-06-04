@@ -8,7 +8,7 @@ import CompositePage from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
 import { unreachable } from "./util";
-import posed from "react-pose";
+import posed, { PoseGroup } from "react-pose";
 import { Target } from "./components/cover-animate";
 
 interface State {
@@ -101,12 +101,16 @@ class App extends React.Component<{}, State> {
   };
 
   render() {
-    const { store } = this.state;
+    const { store, storeIndex } = this.state;
     return (
       <div {...styles.outer}>
-        <Section pose="enter" {...styles.section}>
-          {this.renderInner(store)}
-        </Section>,
+        <PoseGroup animateOnMount>
+          {[
+            <Section key={storeIndex} {...styles.section}>
+              {this.renderInner(store)}
+            </Section>,
+          ]}
+        </PoseGroup>
       </div>
     );
   }

@@ -2,7 +2,7 @@ import * as React from "react";
 import { css } from "glamor";
 import Ratio from "../components/ratio";
 import { sizes, colors } from "../style";
-import posed from "react-pose";
+import { mix } from "../util";
 
 export enum Target {
   Machine,
@@ -12,7 +12,8 @@ export enum Target {
 interface Props {
   squareChild: React.ReactChild;
   machineChild: React.ReactChild;
-  target: Target;
+  postMachineChild: React.ReactChild;
+  t: number; // [0, 1] [machine, square]
 }
 
 const styles = {
@@ -25,10 +26,24 @@ const styles = {
     position: "relative",
     margin: `0 ${sizes.pagePaddingPx}px`,
   }),
+  contentSquare: css({
+    willChange: "opacity",
+  }),
   contentMachine: css({
     position: "absolute",
     top: "0",
     width: "100%",
+    pointerEvents: "none",
+    willChange: "opacity",
+  }),
+  contentPost: css({
+    position: "absolute",
+    top: "0",
+    width: "100%",
+    height: "0",
+    overflow: "visible",
+  }),
+  contentPostFiller: css({
     pointerEvents: "none",
   }),
   left: css({
@@ -38,6 +53,7 @@ const styles = {
     top: "0",
     left: "-100%",
     background: colors.background,
+    willChange: "transform",
   }),
   right: css({
     position: "absolute",
@@ -46,6 +62,7 @@ const styles = {
     top: "0",
     right: "-100%",
     background: colors.background,
+    willChange: "transform",
   }),
   bottomMachine: css({
     position: "absolute",
@@ -53,6 +70,7 @@ const styles = {
     height: "100%",
     bottom: "-100%",
     background: colors.background,
+    willChange: "transform",
   }),
   bottomSquare: css({
     position: "absolute",
@@ -61,46 +79,44 @@ const styles = {
     left: "-50%",
     bottom: "-100%",
     background: colors.background,
+    willChange: "transform",
   }),
 };
 
-const p = {
-  Left: posed.div({
-    machine: { x: "0px" },
-    square: { x: `${sizes.pagePaddingPx}px` },
-  }),
-  Right: posed.div({
-    machine: { x: "0px" },
-    square: { x: `-${sizes.pagePaddingPx}px` },
-  }),
-  BottomMachine: posed.div({
-    machine: { y: "-55%" },
-    square: { y: "0%" },
-  }),
-};
-
-export default ({ squareChild, machineChild, target }: Props) => {
-  const pose = target === Target.Machine ? "machine" : "square";
+export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
+  const d = {
+    left: { transform: `translateX(${t * sizes.pagePaddingPx}px)` },
+    right: { transform: `translateX(-${t * sizes.pagePaddingPx}px)` },
+    bottomMachine: { transform: `translateY(${mix(-55, 0, t)}%)` },
+    contentSquare: { opacity: t },
+    contentMachine: { opacity: 1 - t },
+  };
   return (
-    <Ratio width="100%" ratio={target === Target.Machine ? 0.45 : 1}>
-      <Ratio width="100%" ratio={1}>
-        <div {...styles.outer}>
-          <div {...styles.ratio}>
+    <Ratio width="100%" ratio={1}>
+      <div {...styles.outer}>
+        <div {...styles.ratio}>
+          <div {...styles.contentSquare} style={d.contentSquare}>
             <Ratio width="100%" ratio={1}>
               {squareChild}
             </Ratio>
-            <div {...styles.bottomSquare} />
           </div>
-          <div {...styles.contentMachine}>
-            <Ratio width="100%" ratio={0.45}>
-              {machineChild}
-            </Ratio>
-          </div>
-          <p.Left pose={pose} {...styles.left} />
-          <p.Right pose={pose} {...styles.right} />
-          <p.BottomMachine pose={pose} {...styles.bottomMachine} />
+          <div {...styles.bottomSquare} />
         </div>
-      </Ratio>
+        <div {...styles.contentMachine} style={d.contentMachine}>
+          <Ratio width="100%" ratio={0.45}>
+            {machineChild}
+          </Ratio>
+        </div>
+        <div {...styles.left} style={d.left} />
+        <div {...styles.right} style={d.right} />
+        <div {...styles.bottomMachine} style={d.bottomMachine} />
+        <div {...styles.contentPost}>
+          <div {...styles.contentPostFiller}>
+            <Ratio width="100%" ratio={0.45} />
+          </div>
+          {postMachineChild}
+        </div>
+      </div>
     </Ratio>
   );
 };

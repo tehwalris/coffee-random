@@ -5,6 +5,7 @@ import { css } from "glamor";
 import Machine from "./machine";
 import { RatingStore } from "../store";
 import RatingSquare from "./rating-square";
+import { Spring } from "react-spring";
 
 interface Props {
   top: React.ReactChild;
@@ -18,11 +19,6 @@ interface Props {
 const Section = posed.div({
   enter: { opacity: 1 },
   exit: { opacity: 0 },
-});
-
-const Child = posed.div({
-  visible: { opacity: 1, height: "100%" },
-  hidden: { opacity: 0, height: "100%" },
 });
 
 const styles = {
@@ -45,24 +41,18 @@ export default ({
 }: Props) => (
   <div>
     <Section>{top}</Section>
-    <CoverAnimate
-      squareChild={
-        <Child
-          pose={target === Target.Square ? "visible" : "hidden"}
-          {...styles.top}
-        >
-          {ratingStore && <RatingSquare store={ratingStore} />}
-        </Child>
-      }
-      machineChild={
-        <Child pose={target === Target.Machine ? "visible" : "hidden"}>
-          <Machine column={column} />
-        </Child>
-      }
-      target={target}
-    />
-    <div {...styles.bottom}>
-      <Section>{bottom}</Section>
-    </div>
+    <Spring to={{ t: +(target === Target.Square) }}>
+      {({ t }: { t: number }) => (
+        <CoverAnimate
+          squareChild={
+            <div {...styles.top}>{<RatingSquare store={ratingStore} />}</div>
+          }
+          machineChild={<Machine column={column} />}
+          t={t}
+          postMachineChild={<Section>{bottom}</Section>}
+        />
+      )}
+    </Spring>
+    <div {...styles.bottom} />
   </div>
 );

@@ -7,7 +7,7 @@ import SaveTick from "../components/save-tick";
 import posed, { PoseGroup } from "react-pose";
 
 interface Props {
-  store: RatingStore;
+  store?: RatingStore;
 }
 
 const TICK_SIZE_PERCENT = 17;
@@ -62,11 +62,13 @@ const TickWrapperInner = posed.div({
 });
 
 export default ({ store }: Props) => {
-  const { rating } = store;
-  const state = store.getState();
+  const rating = store && store.rating;
+  const state = store && store.getState();
   return (
     <TapArea
-      onTap={({ x, y }) => store.onTapRating({ business: x, quality: 1 - y })}
+      onTap={({ x, y }) =>
+        store && store.onTapRating({ business: x, quality: 1 - y })
+      }
     >
       <div {...styles.ratingSquareInner}>
         <div {...styles.label("top", "0deg", false)}>Pretty good</div>
