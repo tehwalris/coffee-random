@@ -7,7 +7,7 @@ import RatingTop from "./pages/rating-top";
 import CompositePage from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
-import { unreachable } from "./util";
+import { unreachable, RENDER_DEBUG } from "./util";
 import posed from "react-pose";
 import { Target } from "./components/cover-animate";
 
@@ -27,9 +27,14 @@ const styles = {
     position: "relative",
     width: "100vw",
     height: "100vh",
-    overflow: "hidden",
     backgroundColor: colors.background,
     color: colors.content,
+
+    overflow: RENDER_DEBUG ? "visible" : "hidden",
+    transform: RENDER_DEBUG
+      ? "translateY(-100px) scale(0.75) rotateX(32deg) rotateY(-9deg) rotateZ(26deg)"
+      : undefined,
+    transformStyle: RENDER_DEBUG ? "preserve-3d" : undefined,
 
     "@media(min-width: 450px)": {
       height: "570px",

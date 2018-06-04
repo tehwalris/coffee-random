@@ -2,7 +2,7 @@ import * as React from "react";
 import { css } from "glamor";
 import Ratio from "../components/ratio";
 import { sizes, colors } from "../style";
-import { mix, easeInQuad } from "../util";
+import { mix, easeInQuad, RENDER_DEBUG } from "../util";
 
 export enum Target {
   Machine,
@@ -22,12 +22,15 @@ const styles = {
     height: "100%",
     background: colors.machineDark,
     willChange: "transform",
+    transformStyle: "preserve-3d",
   }),
   ratio: css({
     position: "relative",
     margin: `0 ${sizes.pagePaddingPx}px`,
+    transformStyle: "preserve-3d",
   }),
   contentSquare: css({
+    transform: RENDER_DEBUG ? "translateZ(5px)" : "translateZ(30px)",
     willChange: "opacity",
   }),
   contentMachine: css({
@@ -39,10 +42,11 @@ const styles = {
   }),
   contentPost: css({
     position: "absolute",
-    top: "0",
+    top: "45%",
     width: "100%",
-    height: "0",
+    height: "100%",
     overflow: "visible",
+    willChange: "transform",
   }),
   contentPostFiller: css({
     pointerEvents: "none",
@@ -53,7 +57,8 @@ const styles = {
     height: "100%",
     top: "0",
     left: "-100%",
-    background: colors.background,
+    background: RENDER_DEBUG ? "red" : colors.background,
+    opacity: RENDER_DEBUG ? 0.9 : undefined,
     willChange: "transform",
   }),
   right: css({
@@ -62,7 +67,8 @@ const styles = {
     height: "100%",
     top: "0",
     right: "-100%",
-    background: colors.background,
+    background: RENDER_DEBUG ? "green" : colors.background,
+    opacity: RENDER_DEBUG ? 0.9 : undefined,
     willChange: "transform",
   }),
   bottomMachine: css({
@@ -70,8 +76,10 @@ const styles = {
     width: "100%",
     height: "100%",
     bottom: "-100%",
-    background: colors.background,
+    background: RENDER_DEBUG ? "blue" : colors.background,
+    opacity: RENDER_DEBUG ? 0.6 : undefined,
     willChange: "transform",
+    pointerEvents: "none",
   }),
   bottomSquare: css({
     position: "absolute",
@@ -79,22 +87,38 @@ const styles = {
     height: "100%",
     left: "-50%",
     bottom: "-100%",
-    background: colors.background,
+    background: RENDER_DEBUG ? "yellow" : colors.background,
+    opacity: RENDER_DEBUG ? 0.9 : undefined,
     willChange: "transform",
   }),
 };
 
 export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
-  const d = {
+  const r = (s: string) => (RENDER_DEBUG ? s : "");
+  const d: { [key: string]: React.CSSProperties } = {
     outer: { transform: `translateY(-${t * 15}%)` },
-    left: { transform: `translateX(${t * sizes.pagePaddingPx}px)` },
-    right: { transform: `translateX(-${t * sizes.pagePaddingPx}px)` },
-    bottomMachine: { transform: `translateY(${mix(-55, 0, t)}%)` },
-    contentSquare: { opacity: easeInQuad(t) },
+    left: {
+      transform: `translateX(${t * sizes.pagePaddingPx}px) ${r(
+        "translateZ(10px)",
+      )}`,
+    },
+    right: {
+      transform: `translateX(-${t * sizes.pagePaddingPx}px) ${r(
+        "translateZ(10px)",
+      )}`,
+    },
+    bottomMachine: {
+      transform: `translateY(${mix(-55, 0, t)}%) ${r("translateZ(20px)")}`,
+    },
+    contentSquare: {
+      opacity: easeInQuad(t),
+      pointerEvents: t < 0.5 ? "none" : undefined,
+    },
     contentMachine: {
       opacity: easeInQuad(1 - t),
       transform: `translateY(${t * 45}%)`,
     },
+    contentPost: { transform: `translateY(${t * 20}%)` },
   };
   return (
     <Ratio width="100%" ratio={1}>
@@ -115,10 +139,7 @@ export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
         <div {...styles.left} style={d.left} />
         <div {...styles.right} style={d.right} />
         <div {...styles.bottomMachine} style={d.bottomMachine} />
-        <div {...styles.contentPost}>
-          <div {...styles.contentPostFiller}>
-            <Ratio width="100%" ratio={0.45} />
-          </div>
+        <div {...styles.contentPost} style={d.contentPost}>
           {postMachineChild}
         </div>
       </div>

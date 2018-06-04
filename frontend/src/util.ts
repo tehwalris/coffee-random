@@ -15,3 +15,5 @@ export function easeInQuad(t: number) {
 export function easeOutQuad(t: number) {
   return t * (2 - t);
 }
+
+export const RENDER_DEBUG = false;

@@ -13,15 +13,9 @@ interface Props {
 const TICK_SIZE_PERCENT = 17;
 
 const styles = {
-  title: css({
-    margin: `${2 * sizes.pagePaddingPx}px ${sizes.pagePaddingPx}px`,
-    textAlign: "center",
-    fontSize: sizes.titleFontSize,
-  }),
   ratingSquareInner: css({
     position: "relative",
     height: "100%",
-    backgroundColor: colors.machineDark,
     color: colors.machineLight,
     fontSize: sizes.uiFontSizeSmall,
   }),
