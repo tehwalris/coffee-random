@@ -3,8 +3,6 @@ import Title from "../components/title";
 
 export default () => (
   <div>
-    <Title>
-      How was it?<br />&nbsp;
-    </Title>
+    <Title>How was it?</Title>
   </div>
 );

@@ -1,11 +1,12 @@
 import * as React from "react";
-import posed from "react-pose";
+import posed, { PoseGroup } from "react-pose";
 import CoverAnimate, { Target } from "./cover-animate";
 import { css } from "glamor";
 import Machine from "./machine";
 import { RatingStore } from "../store";
 import RatingSquare from "./rating-square";
 import { Spring } from "react-spring";
+import Title from "../components/title";
 
 interface Props {
   top: React.ReactChild;
@@ -17,19 +18,36 @@ interface Props {
 }
 
 const Section = posed.div({
-  enter: { opacity: 1 },
-  exit: { opacity: 0 },
+  enter: { opacity: 1, top: 0 },
+  exit: { opacity: 0, top: 0 },
 });
 
 const styles = {
   top: css({
+    position: "relative",
     width: "100%",
     height: "100%",
   }),
   bottom: css({
     position: "relative",
   }),
+  section: css({
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    height: "100%",
+  }),
 };
+
+const s = (k: React.Key, c: React.ReactChild) => (
+  <PoseGroup>
+    {[
+      <Section key={k} {...styles.section}>
+        {c}
+      </Section>,
+    ]}
+  </PoseGroup>
+);
 
 export default ({
   top,
@@ -40,7 +58,10 @@ export default ({
   ratingStore,
 }: Props) => (
   <div>
-    <Section>{top}</Section>
+    <div>
+      <div {...styles.top}>{s(storeIndex, top)}</div>
+      <Title>&nbsp;</Title>
+    </div>
     <Spring to={{ t: +(target === Target.Square) }}>
       {({ t }: { t: number }) => (
         <CoverAnimate
@@ -48,11 +69,12 @@ export default ({
             <div {...styles.top}>{<RatingSquare store={ratingStore} />}</div>
           }
           machineChild={<Machine column={column} />}
+          postMachineChild={
+            <div {...styles.bottom}>{s(storeIndex, bottom)}</div>
+          }
           t={t}
-          postMachineChild={<Section>{bottom}</Section>}
         />
       )}
     </Spring>
-    <div {...styles.bottom} />
   </div>
 );

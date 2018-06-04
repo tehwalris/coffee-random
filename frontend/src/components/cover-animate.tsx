@@ -2,7 +2,7 @@ import * as React from "react";
 import { css } from "glamor";
 import Ratio from "../components/ratio";
 import { sizes, colors } from "../style";
-import { mix } from "../util";
+import { mix, easeInQuad } from "../util";
 
 export enum Target {
   Machine,
@@ -21,6 +21,7 @@ const styles = {
     position: "relative",
     height: "100%",
     background: colors.machineDark,
+    willChange: "transform",
   }),
   ratio: css({
     position: "relative",
@@ -34,7 +35,7 @@ const styles = {
     top: "0",
     width: "100%",
     pointerEvents: "none",
-    willChange: "opacity",
+    willChange: "transform",
   }),
   contentPost: css({
     position: "absolute",
@@ -85,15 +86,19 @@ const styles = {
 
 export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
   const d = {
+    outer: { transform: `translateY(-${t * 15}%)` },
     left: { transform: `translateX(${t * sizes.pagePaddingPx}px)` },
     right: { transform: `translateX(-${t * sizes.pagePaddingPx}px)` },
     bottomMachine: { transform: `translateY(${mix(-55, 0, t)}%)` },
-    contentSquare: { opacity: t },
-    contentMachine: { opacity: 1 - t },
+    contentSquare: { opacity: easeInQuad(t) },
+    contentMachine: {
+      opacity: easeInQuad(1 - t),
+      transform: `translateY(${t * 45}%)`,
+    },
   };
   return (
     <Ratio width="100%" ratio={1}>
-      <div {...styles.outer}>
+      <div {...styles.outer} style={d.outer}>
         <div {...styles.ratio}>
           <div {...styles.contentSquare} style={d.contentSquare}>
             <Ratio width="100%" ratio={1}>
