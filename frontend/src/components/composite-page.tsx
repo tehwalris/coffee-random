@@ -5,8 +5,9 @@ import { css } from "glamor";
 import Machine from "./machine";
 import { RatingStore } from "../store";
 import RatingSquare from "./rating-square";
-import { Spring } from "react-spring";
+import { Spring, config as springConfigs } from "react-spring";
 import Title from "../components/title";
+import { RENDER_DEBUG } from "../util";
 
 interface Props {
   top: React.ReactChild;
@@ -62,7 +63,10 @@ export default ({
       <div {...styles.top}>{s(storeIndex, top)}</div>
       <Title>&nbsp;</Title>
     </div>
-    <Spring to={{ t: +(target === Target.Square) }}>
+    <Spring
+      to={{ t: +(target === Target.Square) }}
+      config={RENDER_DEBUG ? springConfigs.slow : undefined}
+    >
       {({ t }: { t: number }) => (
         <CoverAnimate
           squareChild={
