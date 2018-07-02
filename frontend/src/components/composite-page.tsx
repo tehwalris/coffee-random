@@ -50,6 +50,10 @@ const s = (k: React.Key, c: React.ReactChild) => (
   </PoseGroup>
 );
 
+const springConfig = RENDER_DEBUG
+  ? springConfigs.slow
+  : { tension: 230, friction: 17 };
+
 export default ({
   top,
   bottom,
@@ -63,10 +67,7 @@ export default ({
       <div {...styles.top}>{s(storeIndex, top)}</div>
       <Title>&nbsp;</Title>
     </div>
-    <Spring
-      to={{ t: +(target === Target.Square) }}
-      config={RENDER_DEBUG ? springConfigs.slow : undefined}
-    >
+    <Spring to={{ t: +(target === Target.Square) }} config={springConfig}>
       {({ t }: { t: number }) => (
         <CoverAnimate
           squareChild={

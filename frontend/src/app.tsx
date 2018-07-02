@@ -15,11 +15,6 @@ interface State {
   store: Store;
   storeIndex: number; // incremented each time store is moved to lastStore
   lastStore?: Store; // store is moved here when the page (store class) changes
-  dev: {
-    login: LoginStore;
-    column: ColumnStore;
-    rating: RatingStore;
-  };
 }
 
 const styles = {
@@ -58,6 +53,12 @@ const Section = posed.div({
 
 class App extends React.Component<{}, State> {
   private onUpdate = (store: Store) => {
+    if (!this.state) {
+      // "onUpdate" can be called from the constructor of LoginStore
+      // which runs before the initial state is assigned.
+      setImmediate(() => this.onUpdate(store));
+      return;
+    }
     const { storeIndex, store: oldStore } = this.state;
     //tslint:disable-next-line:no-any
     if ((store as any).constructor !== (oldStore as any).constructor) {
@@ -71,33 +72,9 @@ class App extends React.Component<{}, State> {
     });
   };
 
-  private onUpdateDev = (store: Store) => {
-    if (!this.state) {
-      // HACK this is for the dev mode anyway
-      console.log("HACK delaying"); // tslint:disable-line:no-console
-      setTimeout(() => this.onUpdateDev(store), 100);
-      return;
-    }
-    const { dev } = this.state;
-    if (store instanceof LoginStore) {
-      this.setState({ dev: { ...dev, login: store } });
-    }
-    if (store instanceof ColumnStore) {
-      this.setState({ dev: { ...dev, column: store } });
-    }
-    if (store instanceof RatingStore) {
-      this.setState({ dev: { ...dev, rating: store } });
-    }
-  };
-
   state: State = {
     store: new LoginStore(this.onUpdate),
     storeIndex: 0,
-    dev: {
-      login: new LoginStore(this.onUpdateDev),
-      column: new ColumnStore(this.onUpdateDev),
-      rating: new RatingStore(this.onUpdateDev),
-    },
   };
 
   render() {
