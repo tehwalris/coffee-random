@@ -42,6 +42,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-around",
     padding: `0 ${HEAD_H_PADDING_PERCENT}%`,
+    boxSizing: "border-box",
   }),
   heads: css({
     top: "15%",
