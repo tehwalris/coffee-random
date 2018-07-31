@@ -7,9 +7,10 @@ import MachinePure, {
 import { unreachable, easeInQuad } from "../util";
 import { times } from "lodash";
 import { createSpring } from "../spring";
+import { COLUMN_COUNT } from "../store";
 
 interface Props {
-  column: number; // integer [0, 3]
+  column?: number; // integer [1, 4]
 }
 
 interface State {
@@ -18,7 +19,10 @@ interface State {
   lastT: number;
   isMounted: boolean;
   stage: Stage;
-  column: number; // integer [0, 3]
+
+  // HACK fake "column 0" (outside of machine) when no column supplied
+  column: number; // integer [1, 4] or 0
+
   position: number; // same as column, but float and wider range
   velocity: number;
   stillFrames: number; // number of consecutive frames where velocity === 0
@@ -83,7 +87,7 @@ export default class Machine extends React.Component<Props, State> {
   };
 
   componentWillMount() {
-    const { column } = this.props;
+    const column = this.props.column || 0; // see comment on State["column"]
     this.setState({ column, position: getOutsidePos(column) });
   }
 
@@ -157,15 +161,17 @@ export default class Machine extends React.Component<Props, State> {
     const { position } = this.state;
     const reachedOuter =
       Math.abs(position - getOutsidePos(this.state.column)) < 0.1;
-    const sameSide = this.state.column < 2 === this.props.column < 2;
+    const newColumn = this.props.column || 0; // see comment on State["column"]
+    const sameSide =
+      getOutsidePos(this.state.column) === getOutsidePos(newColumn);
     if (
       sameSide ||
       (this.state.stillFrames >= SWITCH_STILL_FRAMES && reachedOuter)
     ) {
       this.setState({
         abort: false,
-        column: this.props.column,
-        position: sameSide ? position : getOutsidePos(this.props.column),
+        column: newColumn,
+        position: sameSide ? position : getOutsidePos(newColumn),
       });
       this.switchStage(Stage.MoveEnter);
     } else {
@@ -181,9 +187,9 @@ export default class Machine extends React.Component<Props, State> {
     }
     if (
       this.state.stillFrames >= SWITCH_STILL_FRAMES &&
-      Math.abs(this.props.column - this.state.column) < 0.1
+      Math.abs(newColumn - this.state.column) < 0.1
     ) {
-      this.setState({ column: this.props.column });
+      this.setState({ column: newColumn });
       this.switchStage(Stage.MoveEnter);
     }
     return {
@@ -207,7 +213,7 @@ export default class Machine extends React.Component<Props, State> {
     };
     return {
       arrowPos: position,
-      heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: coffee / 2,
       blonding: 0,
     };
@@ -226,7 +232,7 @@ export default class Machine extends React.Component<Props, State> {
     this.setState({ blonding });
     return {
       arrowPos: position,
-      heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: 0.5,
       blonding,
     };
@@ -245,7 +251,7 @@ export default class Machine extends React.Component<Props, State> {
     const head: HeadProps = { door: 1 - door, light: false };
     return {
       arrowPos: position,
-      heads: times(4, i => (i === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
       coffee: 0.5 + coffee / 2,
       blonding,
     };
@@ -288,5 +294,7 @@ export default class Machine extends React.Component<Props, State> {
 }
 
 function getOutsidePos(column: number) {
-  return column < 2 ? -OUTSIDE_POS : 3 + OUTSIDE_POS;
+  return column <= Math.floor(COLUMN_COUNT / 2)
+    ? 1 - OUTSIDE_POS
+    : COLUMN_COUNT + OUTSIDE_POS;
 }

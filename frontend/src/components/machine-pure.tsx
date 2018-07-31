@@ -7,7 +7,7 @@ import Cup from "./cup";
 import { mix } from "../util";
 
 export interface Props {
-  arrowPos: number; // 0 is left head, 3 is right head, any float values are allowed
+  arrowPos: number; // 1 is left head, 4 is right head, any float values are allowed
   heads: Heads;
   coffee: number; // [0, 1] // 0 - no coffee, 0.5 - full coffee, 1 - no coffee (0.25 some coffee from the top)
   blonding: number; // [0, 1] // 0 - dark coffee, 1 - blonde coffee
@@ -146,5 +146,5 @@ export default ({ arrowPos, heads, coffee, blonding }: Props) => (
 
 function centerOfHeadPercent(i: number): number {
   let p = HEAD_H_PADDING_PERCENT;
-  return p + (100 - 2 * p) * ((i + 0.5) / 4);
+  return p + (100 - 2 * p) * ((i - 0.5) / 4);
 }

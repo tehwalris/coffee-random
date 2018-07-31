@@ -13,7 +13,7 @@ interface Props {
   top: React.ReactChild;
   bottom: React.ReactChild;
   target: Target;
-  column: number;
+  column?: number;
   storeIndex: number;
   ratingStore?: RatingStore;
 }

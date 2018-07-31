@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -20,11 +21,12 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 )
 
+const columnCount = 4
+
 var postgresURL = flag.String("postgres-url", "", "(required) URL of the database, example: myuser:mypass@172.17.0.2:5432/servis_registry?sslmode=disable")
 var httpLisAddr = flag.String("http-listen", ":80", "URL (like \":port\" or \"ip:port\") to use for HTTP (and GRPC-web)")
 
-// Server is a coffee-random server.
-type Server struct {
+type server struct {
 	DB          *sql.DB
 	WrappedGrpc *grpcweb.WrappedGrpcServer
 }
@@ -41,7 +43,7 @@ func main() {
 	ensure(e)
 	log.Printf("applied %v migrations", migCount)
 
-	ownS := Server{DB: db}
+	ownS := server{DB: db}
 	grpcS := grpc.NewServer()
 	pb.RegisterCoffeeSurveyServer(grpcS, &ownS)
 	ownS.WrappedGrpc = grpcweb.WrapServer(grpcS)
@@ -72,7 +74,7 @@ func loadFlags() {
 	}
 }
 
-func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	if s.WrappedGrpc.IsGrpcWebRequest(r) || s.WrappedGrpc.IsAcceptableGrpcCorsRequest(r) {
 		s.WrappedGrpc.ServeHTTP(w, r)
 	} else {
@@ -80,8 +82,8 @@ func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// AuthUser checks credentials and retruns the users ID.
-func (s *Server) AuthUser(ctx context.Context, uname string, pw string) (int, error) {
+// authUser checks credentials and retruns the users ID.
+func (s *server) authUser(ctx context.Context, uname string, pw string) (int, error) {
 	var id int
 	var hash string
 	e := s.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE username = $1", uname).Scan(&id, &hash)
@@ -95,17 +97,24 @@ func (s *Server) AuthUser(ctx context.Context, uname string, pw string) (int, er
 	return id, nil
 }
 
-// CheckCreds checks credentials.
-func (s *Server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.Empty, error) {
-	if _, e := s.AuthUser(ctx, r.Username, r.Password); e != nil {
+func (s *server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.Empty, error) {
+	if _, e := s.authUser(ctx, r.Username, r.Password); e != nil {
 		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
 	}
 	return &pb.Empty{}, nil
 }
 
-// Submit submits a new rating.
-func (s *Server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
-	userID, e := s.AuthUser(ctx, r.Username, r.Password)
+func (s *server) NextColumn(ctx context.Context, r *pb.NextColumnRequest) (*pb.NextColumnResponse, error) {
+	// TODO real implementation
+	// TODO auth
+	// TODO not_column
+	// TODO zero probablities
+
+	return &pb.NextColumnResponse{MachineColumn: uint32(rand.Intn(columnCount) + 1)}, nil
+}
+
+func (s *server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
+	userID, e := s.authUser(ctx, r.Username, r.Password)
 	if e != nil {
 		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
 	}

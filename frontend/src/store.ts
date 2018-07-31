@@ -1,10 +1,9 @@
 /* tslint:disable:no-use-before-declare */
 
 import { client } from "./api";
-import { random } from "lodash";
 
 const SAVE_TIMEOUT_MS = 3000;
-const COLUMN_COUNT = 4;
+export const COLUMN_COUNT = 4;
 
 type UpdateHandler = (store: Store) => void;
 
@@ -14,7 +13,7 @@ class BaseState {
   protected update: UpdateHandler;
   username = "";
   password = "";
-  column = 0;
+  column: number | undefined = undefined;
 
   constructor(arg: UpdateHandler | BaseState) {
     if (arg instanceof BaseState) {
@@ -98,27 +97,34 @@ export class LoginStore extends BaseState {
 }
 
 export class ColumnStore extends BaseState {
-  column = this.random(-1);
-  failed = false;
+  column: number | undefined = undefined;
 
-  private random(not: number): number {
-    while (true) {
-      const v = random(0, COLUMN_COUNT - 1);
-      if (v !== not) {
-        return v;
-      }
-    }
+  constructor(arg: UpdateHandler | BaseState) {
+    super(arg);
+    this.loadNextColumn();
+  }
+
+  private async loadNextColumn(): Promise<void> {
+    const res = await client.nextColumn({
+      username: this.username,
+      password: this.password,
+      notColumn: this.column || 0,
+    });
+    this.column = res.machineColumn;
+    this.update(this);
+  }
+
+  private hasColumn(): this is { column: number } {
+    return this.column !== undefined;
   }
 
   onDone = () => {
-    this.update(new RatingStore(this));
+    if (this.hasColumn()) {
+      this.update(new RatingStore(this));
+    }
   };
 
-  onCannot = () => {
-    this.column = this.random(this.column);
-    this.failed = true;
-    this.update(this);
-  };
+  onCannot = this.loadNextColumn.bind(this);
 }
 
 export interface Rating {
@@ -136,7 +142,12 @@ export class RatingStore extends BaseState {
   private saving = false;
   private savedAt: Date | undefined;
   private timeoutHandle: NodeJS.Timer | undefined;
+  column: number;
   rating: Rating | undefined;
+
+  constructor(arg: UpdateHandler | (BaseState & { column: number })) {
+    super(arg);
+  }
 
   getState(): RatingState {
     if (this.saving) {

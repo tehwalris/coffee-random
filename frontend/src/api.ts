@@ -1,4 +1,9 @@
-import { CheckCredsRequest, SubmitRequest } from "./generated/coffee_pb";
+import {
+  CheckCredsRequest,
+  SubmitRequest,
+  NextColumnResponse,
+  NextColumnRequest,
+} from "./generated/coffee_pb";
 import { CoffeeSurveyClient } from "./generated/coffee_pb_service";
 
 class Client {
@@ -18,6 +23,24 @@ class Client {
           reject(err);
         } else {
           resolve(undefined);
+        }
+      });
+    });
+  }
+
+  nextColumn(
+    _req: NextColumnRequest.AsObject,
+  ): Promise<NextColumnResponse.AsObject> {
+    const req = new NextColumnRequest();
+    req.setUsername(_req.username);
+    req.setPassword(_req.password);
+    req.setNotColumn(_req.notColumn);
+    return new Promise((resolve, reject) => {
+      this.client.nextColumn(req, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res!.toObject());
         }
       });
     });
