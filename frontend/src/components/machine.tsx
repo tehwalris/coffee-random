@@ -63,32 +63,34 @@ const DEFAULT_HEAD: HeadProps = {
   light: false,
 };
 
-const INITIAL_PLAN: PureProps = {
-  arrowPos: 0,
-  heads: times(4, () => DEFAULT_HEAD) as Heads,
-  coffee: 0,
-  blonding: 0,
-};
-
-export default class Machine extends React.Component<Props, State> {
-  state: State = {
+const freshState = (_column: number | undefined): State => {
+  const column = _column || 0; // see comment on State["column"]
+  return {
     t: 0,
     stageStartT: 0,
     lastT: 0,
     isMounted: true,
     stage: Stage.MoveEnter,
-    column: 0,
-    position: INITIAL_PLAN.arrowPos,
+    column: column || 0,
+    position: getOutsidePos(column),
     velocity: 0,
     stillFrames: 0,
-    plan: INITIAL_PLAN,
+    plan: {
+      arrowPos: 0,
+      heads: times(4, () => DEFAULT_HEAD) as Heads,
+      coffee: 0,
+      blonding: 0,
+    },
     abort: false,
     blonding: 0,
   };
+};
+
+export default class Machine extends React.Component<Props, State> {
+  state: State;
 
   componentWillMount() {
-    const column = this.props.column || 0; // see comment on State["column"]
-    this.setState({ column, position: getOutsidePos(column) });
+    this.setState(freshState(this.props.column));
   }
 
   componentDidMount() {
@@ -133,6 +135,10 @@ export default class Machine extends React.Component<Props, State> {
 
   private planMoveEnter(stageT: number, dt: number): PureProps {
     const { position, velocity, column, stillFrames, abort } = this.state;
+    if (!abort && this.props.column === undefined) {
+      // Don't plan anything until we know where the cup should be.
+      return this.state.plan;
+    }
     this.setState(
       SPRING({
         position,
