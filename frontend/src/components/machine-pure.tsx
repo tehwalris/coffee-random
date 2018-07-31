@@ -60,26 +60,23 @@ const styles = {
     height: `${TRIANGLE_PX}px`,
     margin: "3px 0",
   }),
-  triangleSVG: (down: boolean) =>
-    css({
-      position: "absolute",
-      [down ? "top" : "bottom"]: "-15px",
-      marginLeft: `${-0.5 * TRIANGLE_PX}px`,
-      width: `${TRIANGLE_PX}px`,
-      height: `${TRIANGLE_PX}px`,
-      transform: down ? "rotate(180deg)" : undefined,
-    }),
+  triangleSVG: css({
+    position: "absolute",
+    top: "-15px",
+    marginLeft: `${-0.5 * TRIANGLE_PX}px`,
+    width: `${TRIANGLE_PX}px`,
+    height: `${TRIANGLE_PX}px`,
+    transform: "rotate(180deg)",
+  }),
   triangePoly: css({
     fill: colors.machineDark,
   }),
-  layerMid: (offsetPercent: number) =>
-    css({
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-      willChange: "transform",
-      transform: `translateX(${offsetPercent}%)`,
-    }),
+  layerMid: css({
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    willChange: "transform",
+  }),
   layerTop: css({
     height: "100%",
     position: "relative",
@@ -90,61 +87,73 @@ const styles = {
     width: "100%",
     bottom: `${100 - STAND_OFFSET_PERCENT}%`,
   }),
-  // tslint:disable-next-line:no-any
-  coffee: (t: number, b: number): any => {
-    const top = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.max(0, 2 * t - 1));
-    const bottom = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.min(1, 2 * t));
-    const color = colors.coffeeDarkRGB.map((v, i) =>
-      mix(v, colors.coffeeLightRGB[i], b),
-    );
-    return {
-      willChange: "transform",
-      position: "absolute",
-      top: `${top}%`,
-      width: `${COFFEE_WIDTH_PERCENT}%`,
-      height: `${bottom - top}%`,
-      marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
-      background: `rgb(${color.map(Math.floor).join(", ")})`,
-    };
-  },
+  coffee: css({
+    willChange: "transform",
+    position: "absolute",
+    width: `${COFFEE_WIDTH_PERCENT}%`,
+    marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
+  }),
 };
 
-const Triangle = ({ down }: { down: boolean }) => (
-  <svg viewBox="0,0,1,1" {...styles.triangleSVG(down)}>
-    <polygon points="0.5 0.42, 1 1, 0 1" {...styles.triangePoly} />
-  </svg>
-);
-
-export default ({ arrowPos, heads, coffee, blonding }: Props) => (
-  <div {...styles.body}>
-    <Ratio width="100%" ratio={0.45}>
-      <div {...styles.layerMid(centerOfHeadPercent(arrowPos))}>
-        <Triangle down={true} />
-        <div style={styles.coffee(coffee, blonding)} />
-        <div {...styles.cupWrapper}>
-          <Cup width={`${CUP_WIDTH_PERCENT}%`} tilt="15deg" center />
-        </div>
-        <Triangle down={false} />
-      </div>
-      <div {...styles.layerTop}>
-        <div {...styles.row} {...styles.heads}>
-          {heads.map((e, i) => (
-            <Head key={i} width="17%" door={e.door} light={e.light} />
-          ))}
-        </div>
-        <div {...styles.row} {...styles.stands}>
-          {[0, 1].map(i => (
-            <Ratio key={i} width="42%" ratio={0.11}>
-              <div {...styles.stand} />
-            </Ratio>
-          ))}
-        </div>
-      </div>
-    </Ratio>
-  </div>
-);
+function dynamicCoffeeStyles(t: number, b: number): React.CSSProperties {
+  const top = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.max(0, 2 * t - 1));
+  const bottom = mix(COFFEE_TOP, COFFEE_BOTTOM, Math.min(1, 2 * t));
+  const color = colors.coffeeDarkRGB.map((v, i) =>
+    mix(v, colors.coffeeLightRGB[i], b),
+  );
+  return {
+    willChange: "transform",
+    position: "absolute",
+    top: `${top}%`,
+    width: `${COFFEE_WIDTH_PERCENT}%`,
+    height: `${bottom - top}%`,
+    marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
+    background: `rgb(${color.map(Math.floor).join(", ")})`,
+  };
+}
 
 function centerOfHeadPercent(i: number): number {
   let p = HEAD_H_PADDING_PERCENT;
   return p + (100 - 2 * p) * ((i - 0.5) / 4);
+}
+
+export default class MachinePure extends React.Component<Props> {
+  render() {
+    const { arrowPos, heads, coffee, blonding } = this.props;
+    const d: { [key: string]: React.CSSProperties } = {
+      layerMid: {
+        transform: `translateX(${centerOfHeadPercent(arrowPos)}%)`,
+      },
+      coffee: dynamicCoffeeStyles(coffee, blonding),
+    };
+    return (
+      <div {...styles.body}>
+        <Ratio width="100%" ratio={0.45}>
+          <div {...styles.layerMid} style={d.layerMid}>
+            <svg viewBox="0,0,1,1" {...styles.triangleSVG}>
+              <polygon points="0.5 0.42, 1 1, 0 1" {...styles.triangePoly} />
+            </svg>
+            <div {...styles.coffee} style={d.coffee} />
+            <div {...styles.cupWrapper}>
+              <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
+            </div>
+          </div>
+          <div {...styles.layerTop}>
+            <div {...styles.row} {...styles.heads}>
+              {heads.map((e, i) => (
+                <Head key={i} width="17%" door={e.door} light={e.light} />
+              ))}
+            </div>
+            <div {...styles.row} {...styles.stands}>
+              {[0, 1].map(i => (
+                <Ratio key={i} width="42%" ratio={0.11}>
+                  <div {...styles.stand} />
+                </Ratio>
+              ))}
+            </div>
+          </div>
+        </Ratio>
+      </div>
+    );
+  }
 }

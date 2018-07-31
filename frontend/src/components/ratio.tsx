@@ -1,7 +1,6 @@
 // Based on https://spin.atomicobject.com/2015/07/14/css-responsive-square/
 
 import * as React from "react";
-import { css } from "glamor";
 
 interface Props {
   children?: React.ReactChild | React.ReactChild[];
@@ -10,24 +9,25 @@ interface Props {
 }
 
 export default ({ children, width, ratio }: Props) => {
-  const styles = {
-    outer: css({
+  // Not using glamor here, since these styles mostly depend on props.
+  const styles: { [key: string]: React.CSSProperties } = {
+    outer: {
       position: "relative",
       width,
-    }),
-    after: css({
+    },
+    after: {
       paddingBottom: `${Math.floor(ratio * 100)}%`,
-    }),
-    inner: css({
+    },
+    inner: {
       position: "absolute",
       width: "100%",
       height: "100%",
-    }),
+    },
   };
   return (
-    <div {...styles.outer}>
-      <div {...styles.inner}>{children}</div>
-      <div {...styles.after} />
+    <div style={styles.outer}>
+      <div style={styles.inner}>{children}</div>
+      <div style={styles.after} />
     </div>
   );
 };
