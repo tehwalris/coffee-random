@@ -107,6 +107,10 @@ export default class Machine extends React.Component<Props, State> {
     }
   }
 
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    return nextProps.column !== this.props.column || nextState !== this.state;
+  }
+
   render() {
     return <MachinePure {...this.state.plan} />;
   }

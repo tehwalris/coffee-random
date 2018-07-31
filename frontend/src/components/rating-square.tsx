@@ -55,35 +55,38 @@ const TickWrapperInner = posed.div({
   exit: { scale: 0, opacity: 0 },
 });
 
-export default ({ store }: Props) => {
-  const rating = store && store.rating;
-  const state = store && store.getState();
-  return (
-    <TapArea
-      onTap={({ x, y }) =>
-        store && store.onTapRating({ business: x, quality: 1 - y })
-      }
-    >
-      <div {...styles.ratingSquareInner}>
-        <div {...styles.label("top", "0deg", false)}>Pretty good</div>
-        <div {...styles.label("bottom", "0deg", false)}>Terrible</div>
-        <div {...styles.label("left", "-90deg", true)}>No people</div>
-        <div {...styles.label("right", "90deg", true)}>Huge queue</div>
-        <PoseGroup animateOnMount>
-          {rating
-            ? [
-                <TickWrapperOuter
-                  key={`${rating.quality}:${rating.business}`}
-                  {...styles.tickWrapperOuter(rating)}
-                >
-                  <TickWrapperInner {...styles.tickWrapperInner}>
-                    <SaveTick tick={state === RatingState.Ok} size="100%" />
-                  </TickWrapperInner>
-                </TickWrapperOuter>,
-              ]
-            : []}
-        </PoseGroup>
-      </div>
-    </TapArea>
-  );
-};
+export default class RatingSquare extends React.Component<Props> {
+  render() {
+    const { store } = this.props;
+    const rating = store && store.rating;
+    const state = store && store.getState();
+    return (
+      <TapArea
+        onTap={({ x, y }) =>
+          store && store.onTapRating({ business: x, quality: 1 - y })
+        }
+      >
+        <div {...styles.ratingSquareInner}>
+          <div {...styles.label("top", "0deg", false)}>Pretty good</div>
+          <div {...styles.label("bottom", "0deg", false)}>Terrible</div>
+          <div {...styles.label("left", "-90deg", true)}>No people</div>
+          <div {...styles.label("right", "90deg", true)}>Huge queue</div>
+          <PoseGroup animateOnMount>
+            {rating
+              ? [
+                  <TickWrapperOuter
+                    key={`${rating.quality}:${rating.business}`}
+                    {...styles.tickWrapperOuter(rating)}
+                  >
+                    <TickWrapperInner {...styles.tickWrapperInner}>
+                      <SaveTick tick={state === RatingState.Ok} size="100%" />
+                    </TickWrapperInner>
+                  </TickWrapperOuter>,
+                ]
+              : []}
+          </PoseGroup>
+        </div>
+      </TapArea>
+    );
+  }
+}

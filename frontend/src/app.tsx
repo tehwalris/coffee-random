@@ -8,7 +8,6 @@ import CompositePage from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
-import posed from "react-pose";
 import { Target } from "./components/cover-animate";
 
 interface State {
@@ -46,11 +45,6 @@ const styles = {
   }),
 };
 
-const Section = posed.div({
-  enter: {},
-  exit: {},
-});
-
 class App extends React.Component<{}, State> {
   private onUpdate = (store: Store) => {
     if (!this.state) {
@@ -79,11 +73,7 @@ class App extends React.Component<{}, State> {
 
   render() {
     const { store } = this.state;
-    return (
-      <div {...styles.outer}>
-        <Section>{this.renderInner(store)}</Section>
-      </div>
-    );
+    return <div {...styles.outer}>{this.renderInner(store)}</div>;
   }
 
   renderInner(store: Store) {

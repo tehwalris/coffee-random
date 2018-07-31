@@ -144,7 +144,6 @@ func (s *server) NextColumn(ctx context.Context, r *pb.NextColumnRequest) (*pb.N
 	}
 
 	c := WeightedRand(weights) + 1 // column numbers start at 1
-	fmt.Printf("%v - %v\n", c, weights)
 	return &pb.NextColumnResponse{MachineColumn: uint32(c)}, nil
 }
 
