@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"time"
 
@@ -105,12 +104,48 @@ func (s *server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.E
 }
 
 func (s *server) NextColumn(ctx context.Context, r *pb.NextColumnRequest) (*pb.NextColumnResponse, error) {
-	// TODO real implementation
-	// TODO auth
-	// TODO not_column
-	// TODO zero probablities
+	userID, e := s.authUser(ctx, r.Username, r.Password)
+	if e != nil {
+		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
+	}
 
-	return &pb.NextColumnResponse{MachineColumn: uint32(rand.Intn(columnCount) + 1)}, nil
+	rows, e := s.DB.QueryContext(ctx,
+		"SELECT machine_column, COUNT(*) cnt FROM ratings WHERE user_id = $1 GROUP BY machine_column",
+		userID)
+	if e != nil {
+		return nil, internalError(e)
+	}
+	defer rows.Close()
+
+	var max int
+	counts := make([]int, columnCount)
+	for rows.Next() {
+		var i int
+		var v int
+		rows.Scan(&i, &v)
+		i-- // column numbers start at 1
+		if i >= 0 && i < columnCount {
+			counts[i] = v
+			if v > max {
+				max = v
+			}
+		}
+	}
+	if e := rows.Err(); e != nil {
+		return nil, internalError(e)
+	}
+
+	weights := make([]float32, columnCount)
+	for i, c := range counts {
+		weights[i] = float32(max + 1 - c)
+		if uint32(i+1) == r.NotColumn {
+			weights[i] = 0
+		}
+	}
+
+	c := WeightedRand(weights) + 1 // column numbers start at 1
+	fmt.Printf("%v - %v\n", c, weights)
+	return &pb.NextColumnResponse{MachineColumn: uint32(c)}, nil
 }
 
 func (s *server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
