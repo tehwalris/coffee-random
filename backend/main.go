@@ -104,6 +104,10 @@ func (s *server) CheckCreds(ctx context.Context, r *pb.CheckCredsRequest) (*pb.E
 }
 
 func (s *server) NextColumn(ctx context.Context, r *pb.NextColumnRequest) (*pb.NextColumnResponse, error) {
+	if !(validCol(r.NotColumn) || r.NotColumn == 0) {
+		return nil, grpc.Errorf(codes.InvalidArgument, "invalid field: not_column")
+	}
+
 	userID, e := s.authUser(ctx, r.Username, r.Password)
 	if e != nil {
 		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
@@ -148,6 +152,10 @@ func (s *server) NextColumn(ctx context.Context, r *pb.NextColumnRequest) (*pb.N
 }
 
 func (s *server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, error) {
+	if !validCol(r.MachineColumn) || !validRating(r.Quality) || !validRating(r.Business) {
+		return nil, grpc.Errorf(codes.InvalidArgument, "invalid field(s): machine_column, quality or business")
+	}
+
 	userID, e := s.authUser(ctx, r.Username, r.Password)
 	if e != nil {
 		return nil, grpc.Errorf(codes.Unauthenticated, "wrong username or password")
@@ -159,4 +167,12 @@ func (s *server) Submit(ctx context.Context, r *pb.SubmitRequest) (*pb.Empty, er
 		return nil, internalError(e)
 	}
 	return &pb.Empty{}, nil
+}
+
+func validCol(c uint32) bool {
+	return c > 0 && c <= columnCount
+}
+
+func validRating(v float32) bool {
+	return v >= 0 && v <= 1
 }
