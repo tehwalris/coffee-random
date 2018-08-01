@@ -95,17 +95,14 @@ const styles = {
 
 export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
   const r = (s: string) => (RENDER_DEBUG ? s : "");
+  const sidePx = Math.max(0, t * sizes.pagePaddingPx);
   const d: { [key: string]: React.CSSProperties } = {
     outer: { transform: `translateY(-${t * 15}%)` },
     left: {
-      transform: `translateX(${t * sizes.pagePaddingPx}px) ${r(
-        "translateZ(10px)",
-      )}`,
+      transform: `translateX(${sidePx}px) ${r("translateZ(10px)")}`,
     },
     right: {
-      transform: `translateX(-${t * sizes.pagePaddingPx}px) ${r(
-        "translateZ(10px)",
-      )}`,
+      transform: `translateX(-${sidePx}px) ${r("translateZ(10px)")}`,
     },
     bottomMachine: {
       transform: `translateY(${mix(-55, 0, t)}%) ${r("translateZ(20px)")}`,
@@ -116,7 +113,7 @@ export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
     },
     contentMachine: {
       opacity: easeInQuad(1 - t),
-      transform: `translateY(${t * 45}%)`,
+      transform: `translateY(${t * 25}%)`,
     },
     contentPost: { transform: `translateY(${t * 20}%)` },
   };

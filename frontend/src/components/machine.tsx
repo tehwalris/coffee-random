@@ -43,14 +43,15 @@ enum Stage {
 const SPRING = createSpring({
   stepMillis: 5,
   precision: 0.005,
-  stiffness: 45,
-  damping: 12,
+  stiffness: 120,
+  damping: 17,
 });
 
 // Switch stage from MoveEnter/MoveLeave when this is stillFrames >= SWITCH_STILL_FRAMES
 const SWITCH_STILL_FRAMES = 2;
 
-const DOOR_MS = 2000;
+const DOOR_MS_PRE = 2000;
+const DOOR_MS_POST = 1000;
 const COFFEE_DROP_MS = 80;
 const OUTSIDE_POS = 1;
 const BLINK_MS = 1000;
@@ -212,13 +213,13 @@ export default class Machine extends React.Component<Props, State> {
 
   private planPrePour(stageT: number): PureProps {
     const { position, column } = this.state;
-    const _coffee = (stageT - DOOR_MS) / COFFEE_DROP_MS;
+    const _coffee = (stageT - DOOR_MS_PRE) / COFFEE_DROP_MS;
     const coffee = easeInQuad(Math.max(0, Math.min(1, _coffee)));
     if (coffee >= 1) {
       this.switchStage(Stage.Pour);
     }
     const head: HeadProps = {
-      door: Math.max(0, Math.min(1, stageT / DOOR_MS)),
+      door: Math.max(0, Math.min(1, stageT / DOOR_MS_PRE)),
       light: false,
     };
     return {
@@ -253,7 +254,7 @@ export default class Machine extends React.Component<Props, State> {
     const coffee = easeInQuad(
       Math.max(0, Math.min(1, stageT / COFFEE_DROP_MS)),
     );
-    const _door = (stageT - COFFEE_DROP_MS) / DOOR_MS;
+    const _door = (stageT - COFFEE_DROP_MS) / DOOR_MS_POST;
     const door = Math.max(0, Math.min(1, _door));
     if (door >= 1) {
       this.switchStage(abort ? Stage.MoveLeave : Stage.Delay);

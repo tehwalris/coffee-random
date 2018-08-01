@@ -56,7 +56,7 @@ const s = (k: React.Key, c: React.ReactChild) => (
 
 const springConfig = RENDER_DEBUG
   ? springConfigs.slow
-  : { tension: 230, friction: 17 };
+  : { tension: 120, friction: 11 };
 
 function toSpringTarget(target: Target): number {
   return +(target === Target.Square);
