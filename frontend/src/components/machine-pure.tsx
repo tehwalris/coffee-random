@@ -1,7 +1,7 @@
 import * as React from "react";
 import { css } from "glamor";
 import { colors } from "../style";
-import Ratio from "../components/ratio";
+import Ratio from "./ratio";
 import Head from "./head";
 import Cup from "./cup";
 import { mix } from "../util";

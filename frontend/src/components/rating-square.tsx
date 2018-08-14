@@ -1,9 +1,9 @@
 import * as React from "react";
 import { RatingStore, RatingState, Rating } from "../store";
-import TapArea from "../components/tap-area";
+import TapArea from "./tap-area";
 import { css } from "glamor";
 import { sizes, colors } from "../style";
-import SaveTick from "../components/save-tick";
+import SaveTick from "./save-tick";
 import posed, { PoseGroup } from "react-pose";
 
 interface Props {

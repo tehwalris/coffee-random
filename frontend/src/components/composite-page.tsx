@@ -6,7 +6,7 @@ import Machine from "./machine";
 import { RatingStore } from "../store";
 import RatingSquare from "./rating-square";
 import { Spring, config as springConfigs } from "react-spring";
-import Title from "../components/title";
+import Title from "./title";
 import { RENDER_DEBUG } from "../util";
 
 interface Props {
