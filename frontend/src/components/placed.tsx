@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Placement } from "./placement-parent";
 
 // The Placed component wraps a react child and a placement function.
 // It is used to pass contents to PlacementParent.
@@ -9,12 +10,6 @@ import * as React from "react";
 interface Props<T> {
   child: React.ReactChild;
   place: (inputs: T) => Placement;
-}
-
-export interface Placement {
-  x: number;
-  y: number;
-  opacity: number;
 }
 
 export default function Placed<T>(props: Props<T>) {
