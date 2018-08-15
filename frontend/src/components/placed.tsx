@@ -8,12 +8,12 @@ import { Placement } from "./placement-parent";
 // state from the page component, since they are rendered together and later split.
 
 interface Props<T> {
-  child: React.ReactChild;
+  children?: React.ReactChild;
   place: (inputs: T) => Placement;
 }
 
 export default function Placed<T>(props: Props<T>) {
-  return undefined;
+  return null;
 }
 
 export type PlacedChild<T> = React.ReactElement<Props<T>>;

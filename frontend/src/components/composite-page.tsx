@@ -1,13 +1,13 @@
 import * as React from "react";
 import posed, { PoseGroup } from "react-pose";
-import CoverAnimate, { Target } from "./cover-animate";
+import { Target } from "./cover-animate";
 import { css } from "glamor";
-import Machine from "./machine";
 import { RatingStore } from "../store";
-import RatingSquare from "./rating-square";
 import { Spring, config as springConfigs } from "react-spring";
 import Title from "./title";
 import { RENDER_DEBUG } from "../util";
+import PlacementParent, { Placement } from "./placement-parent";
+import Placed from "./placed";
 
 interface Props {
   top: React.ReactChild;
@@ -16,6 +16,8 @@ interface Props {
   column?: number;
   storeIndex: number;
   ratingStore?: RatingStore;
+  widthPx: number;
+  heightPx: number;
 }
 
 interface State {
@@ -61,6 +63,56 @@ function toSpringTarget(target: Target): number {
   return +(target === Target.Square);
 }
 
+interface Inputs {
+  winW: number;
+  winH: number;
+  t: number;
+}
+
+interface Rect {
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+}
+
+interface Derived extends Inputs {
+  square: Rect;
+  machine: Rect;
+}
+
+const consts = {
+  squarePadPx: 25,
+  squareYPx: -50,
+  machineRatio: 0.45,
+};
+
+function derive(inputs: Inputs): Derived {
+  const d = inputs.winW - 2 * consts.squarePadPx;
+  return {
+    ...inputs,
+    square: { w: d, h: d, x: consts.squarePadPx, y: consts.squareYPx },
+    machine: {
+      w: inputs.winW,
+      h: inputs.winW * consts.machineRatio,
+      x: 0,
+      y: 0,
+    },
+  };
+}
+
+function getWrapperSize(derived: Derived) {
+  return { width: derived.winW, height: derived.square.h };
+}
+
+const place: { [key: string]: (derived: Derived) => Placement } = {
+  demoSquare: ({ square }) => ({
+    ...square,
+    style: { background: "green" },
+  }),
+  demoMachine: ({ machine }) => ({ ...machine, style: { background: "blue" } }),
+};
+
 export default class CompositePage extends React.Component<Props, State> {
   componentWillMount() {
     this.setState({ t: toSpringTarget(this.props.target) });
@@ -81,7 +133,7 @@ export default class CompositePage extends React.Component<Props, State> {
   }
 
   render() {
-    const { top, bottom, column, storeIndex, ratingStore } = this.props;
+    const { top, storeIndex, bottom, widthPx, heightPx } = this.props;
     return (
       <div>
         <div>
@@ -90,20 +142,17 @@ export default class CompositePage extends React.Component<Props, State> {
         </div>
         <Spring to={{ t: this.state.t }} config={springConfig}>
           {({ t }: { t: number }) => (
-            <CoverAnimate
-              squareChild={
-                <div {...styles.top}>
-                  {<RatingSquare store={ratingStore} />}
-                </div>
-              }
-              machineChild={<Machine column={column} />}
-              postMachineChild={
-                <div {...styles.bottom}>{s(storeIndex, bottom)}</div>
-              }
-              t={t}
-            />
+            <PlacementParent
+              inputs={{ winW: widthPx, winH: heightPx, t }}
+              derive={derive}
+              getWrapperSize={getWrapperSize}
+            >
+              <Placed key="demoSquare" place={place.demoSquare} />
+              <Placed key="demoMachine" place={place.demoMachine} />
+            </PlacementParent>
           )}
         </Spring>
+        <div>{bottom}</div>
       </div>
     );
   }

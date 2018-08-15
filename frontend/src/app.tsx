@@ -16,6 +16,22 @@ interface State {
   lastStore?: Store; // store is moved here when the page (store class) changes
 }
 
+const FAKE_PHONE = {
+  breakPx: 450,
+  heightPx: 570,
+  widthPx: 360,
+};
+
+const phoneDims = {
+  widthPx: window.innerWidth,
+  heightPx: window.innerHeight,
+};
+
+if (phoneDims.widthPx >= FAKE_PHONE.breakPx) {
+  phoneDims.widthPx = FAKE_PHONE.widthPx;
+  phoneDims.heightPx = FAKE_PHONE.heightPx;
+}
+
 const styles = {
   outer: css({
     position: "relative",
@@ -30,9 +46,9 @@ const styles = {
       : undefined,
     transformStyle: RENDER_DEBUG ? "preserve-3d" : undefined,
 
-    "@media(min-width: 450px)": {
-      height: "570px",
-      width: "360px",
+    [`@media(min-width: ${FAKE_PHONE.breakPx}px)`]: {
+      height: FAKE_PHONE.heightPx,
+      width: FAKE_PHONE.widthPx,
       margin: "100px auto",
       boxShadow: "0 20px 100px rgba(0, 0, 0, 0.5)",
       outline: "1px solid rgba(0, 0, 0, 0.1)",
@@ -84,6 +100,7 @@ class App extends React.Component<{}, State> {
     if (store instanceof ColumnStore) {
       return (
         <CompositePage
+          {...phoneDims}
           target={Target.Machine}
           top={<ColumnTop />}
           bottom={<ColumnBottom store={store} />}
@@ -95,6 +112,7 @@ class App extends React.Component<{}, State> {
     if (store instanceof RatingStore) {
       return (
         <CompositePage
+          {...phoneDims}
           target={Target.Square}
           top={<RatingTop />}
           bottom={<div />}
