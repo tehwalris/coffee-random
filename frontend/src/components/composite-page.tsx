@@ -94,13 +94,21 @@ class Rect {
 export interface Derived extends Inputs {
   square: Rect;
   machine: Rect;
-  current: Rect;
+  current: {
+    whole: Rect;
+    machineLeft: Rect;
+    machineRight: Rect;
+  };
+  heads: [Rect, Rect, Rect, Rect];
 }
 
 const consts = {
   squarePadPx: 25,
   squareYPx: -50,
   machineRatio: 0.45,
+  machinePaddingHOuterPx: 18,
+  machinePaddingHInnerPx: 15,
+  headWPartOfHalf: 0.42,
 };
 
 function derive(inputs: Inputs): Derived {
@@ -112,11 +120,47 @@ function derive(inputs: Inputs): Derived {
     0,
     0,
   );
+  const currentWhole = machine.mix(square, inputs.t);
+  const machineHalfW =
+    (machine.w -
+      2 * consts.machinePaddingHOuterPx -
+      2 * consts.machinePaddingHInnerPx) /
+    2;
+  const machineLeft = new Rect(
+    machineHalfW,
+    machine.h,
+    currentWhole.x + consts.machinePaddingHOuterPx,
+    currentWhole.y,
+  );
+  const machineRight = new Rect(
+    machineHalfW,
+    machine.h,
+    currentWhole.x +
+      currentWhole.w -
+      machineHalfW -
+      consts.machinePaddingHOuterPx,
+    currentWhole.y,
+  );
+  const heads: Rect[] = [
+    [machineLeft, "left"],
+    [machineLeft, "right"],
+    [machineRight, "left"],
+    [machineRight, "right"],
+  ].map(([outer, side]: [Rect, "left" | "right"]) => {
+    const w = outer.w * consts.headWPartOfHalf;
+    const x = outer.x + (side === "left" ? 0 : outer.w - w);
+    return new Rect(w, outer.h, x, outer.y);
+  });
   return {
     ...inputs,
     square,
     machine,
-    current: machine.mix(square, inputs.t),
+    current: {
+      whole: currentWhole,
+      machineLeft,
+      machineRight,
+    },
+    heads: heads as [Rect, Rect, Rect, Rect],
   };
 }
 
@@ -129,8 +173,14 @@ const place: { [key: string]: (derived: Derived) => Placement } = {
     ...square,
     style: { background: "green" },
   }),
-  demoMachine: ({ machine }) => ({ ...machine, style: { background: "blue" } }),
-  demoCurrent: ({ current }) => ({ ...current, style: { background: "red" } }),
+  demoMachine: ({ machine }) => ({
+    ...machine,
+    style: { background: "blue" },
+  }),
+  demoCurrent: ({ current }) => ({
+    ...current.whole,
+    style: { background: "red" },
+  }),
 };
 
 export default class CompositePage extends React.Component<Props, State> {
@@ -168,8 +218,8 @@ export default class CompositePage extends React.Component<Props, State> {
               getWrapperSize={getWrapperSize}
             >
               <Placed key="demoSquare" place={place.demoSquare} />
-              <Placed key="demoMachine" place={place.demoMachine} />
               <Placed key="demoCurrent" place={place.demoCurrent} />
+              <Placed key="demoMachine" place={place.demoMachine} />
               <Machine />
             </PlacementParent>
           )}

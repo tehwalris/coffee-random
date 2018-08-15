@@ -96,6 +96,15 @@ const styles = {
     width: `${COFFEE_WIDTH_PERCENT}%`,
     marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
   }),
+
+  // TODO rename and move new styles
+
+  newHeads: css({
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "15%",
+  }),
 };
 
 function dynamicCoffeeStyles(t: number, b: number): React.CSSProperties {
@@ -142,11 +151,6 @@ export default class MachinePure extends React.Component<Props> {
             </div>
           </div>
           <div {...styles.layerTop}>
-            <div {...styles.row} {...styles.heads}>
-              {heads.map((e, i) => (
-                <Head key={i} width="17%" door={e.door} light={e.light} />
-              ))}
-            </div>
             <div {...styles.row} {...styles.stands}>
               {[0, 1].map(i => (
                 <Ratio key={i} width="42%" ratio={0.11}>
@@ -165,12 +169,19 @@ export default class MachinePure extends React.Component<Props> {
       >
         {whole}
       </Placed>,
-      <Placed
-        place={(derived: Derived) => ({ ...derived.current })}
-        render={render}
-      >
-        walrus
-      </Placed>,
+      ...[0, 1, 2, 3].map(i => (
+        <Placed
+          place={(derived: Derived) => ({ ...derived.heads[i] })}
+          render={render}
+        >
+          <Head
+            key={i}
+            width="100%"
+            door={heads[i].door}
+            light={heads[i].light}
+          />
+        </Placed>
+      )),
     ];
   }
 }
