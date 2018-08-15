@@ -9,6 +9,7 @@ import { RENDER_DEBUG, mix } from "../util";
 import PlacementParent, { Placement } from "./placement-parent";
 import Placed from "./placed";
 import Machine from "./machine";
+import { sum, zipWith } from "lodash";
 
 interface Props {
   top: React.ReactChild;
@@ -94,12 +95,8 @@ class Rect {
 export interface Derived extends Inputs {
   square: Rect;
   machine: Rect;
-  current: {
-    whole: Rect;
-    machineLeft: Rect;
-    machineRight: Rect;
-  };
-  heads: [Rect, Rect, Rect, Rect];
+  current: Rect;
+  heads: Rect[];
 }
 
 const consts = {
@@ -108,8 +105,34 @@ const consts = {
   machineRatio: 0.45,
   machinePaddingHOuterPx: 18,
   machinePaddingHInnerPx: 15,
-  headWPartOfHalf: 0.42,
+  headWPartOfOuter: 0.17,
 };
+
+function layoutHeads(outer: Rect, headW: number): Rect[] {
+  const op = consts.machinePaddingHOuterPx;
+  const ip = consts.machinePaddingHInnerPx;
+  const flexPad = outer.w / 2 - op - ip;
+  let c = 0;
+  return [outer.x + op, flexPad, 2 * ip, flexPad].map((v, i) => {
+    c += v;
+    const x = i % 2 === 0 ? c : c - headW;
+    return new Rect(headW, outer.h, x, outer.y);
+  });
+}
+
+function spaceEvenlyX(rects: Rect[]): Rect[] {
+  const xMin = Math.min(...rects.map(r => r.x));
+  const xMax = Math.max(...rects.map(r => r.x + r.w));
+  const wTot = xMax - xMin;
+  const wUsed = sum(rects.map(r => r.w));
+  const space = (wTot - wUsed) / (rects.length - 1);
+  let c = xMin;
+  return rects.map(r => {
+    const out = new Rect(r.w, r.h, c, r.y);
+    c += r.w + space;
+    return out;
+  });
+}
 
 function derive(inputs: Inputs): Derived {
   const d = inputs.winW - 2 * consts.squarePadPx;
@@ -120,47 +143,19 @@ function derive(inputs: Inputs): Derived {
     0,
     0,
   );
-  const currentWhole = machine.mix(square, inputs.t);
-  const machineHalfW =
-    (machine.w -
-      2 * consts.machinePaddingHOuterPx -
-      2 * consts.machinePaddingHInnerPx) /
-    2;
-  const machineLeft = new Rect(
-    machineHalfW,
-    machine.h,
-    currentWhole.x + consts.machinePaddingHOuterPx,
-    currentWhole.y,
+  const current = machine.mix(square, inputs.t);
+  const headW = machine.w * consts.headWPartOfOuter;
+  const headsMachine = layoutHeads(machine, headW);
+  const headsSquare = spaceEvenlyX(layoutHeads(square, headW));
+  const heads = zipWith(headsMachine, headsSquare, (a, b) =>
+    a.mix(b, inputs.t),
   );
-  const machineRight = new Rect(
-    machineHalfW,
-    machine.h,
-    currentWhole.x +
-      currentWhole.w -
-      machineHalfW -
-      consts.machinePaddingHOuterPx,
-    currentWhole.y,
-  );
-  const heads: Rect[] = [
-    [machineLeft, "left"],
-    [machineLeft, "right"],
-    [machineRight, "left"],
-    [machineRight, "right"],
-  ].map(([outer, side]: [Rect, "left" | "right"]) => {
-    const w = outer.w * consts.headWPartOfHalf;
-    const x = outer.x + (side === "left" ? 0 : outer.w - w);
-    return new Rect(w, outer.h, x, outer.y);
-  });
   return {
     ...inputs,
     square,
     machine,
-    current: {
-      whole: currentWhole,
-      machineLeft,
-      machineRight,
-    },
-    heads: heads as [Rect, Rect, Rect, Rect],
+    current,
+    heads,
   };
 }
 
@@ -178,7 +173,7 @@ const place: { [key: string]: (derived: Derived) => Placement } = {
     style: { background: "blue" },
   }),
   demoCurrent: ({ current }) => ({
-    ...current.whole,
+    ...current,
     style: { background: "red" },
   }),
 };
