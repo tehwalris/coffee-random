@@ -5,7 +5,7 @@ import { css } from "glamor";
 import { RatingStore } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
 import Title from "./title";
-import { RENDER_DEBUG } from "../util";
+import { RENDER_DEBUG, mix } from "../util";
 import PlacementParent, { Placement } from "./placement-parent";
 import Placed from "./placed";
 
@@ -69,16 +69,31 @@ interface Inputs {
   t: number;
 }
 
-interface Rect {
-  w: number;
-  h: number;
-  x: number;
-  y: number;
+class Rect {
+  constructor(
+    public w: number,
+    public h: number,
+    public x: number,
+    public y: number,
+  ) {
+    this.w = w;
+    this.h = h;
+    this.x = x;
+    this.y = y;
+  }
+
+  mix(other: Rect, t: number): Rect {
+    // tslint:disable-next-line:no-any
+    return new (Rect as any)(
+      ...["w", "h", "x", "y"].map(k => mix(this[k], other[k], t)),
+    );
+  }
 }
 
 interface Derived extends Inputs {
   square: Rect;
   machine: Rect;
+  current: Rect;
 }
 
 const consts = {
@@ -89,15 +104,18 @@ const consts = {
 
 function derive(inputs: Inputs): Derived {
   const d = inputs.winW - 2 * consts.squarePadPx;
+  const square = new Rect(d, d, consts.squarePadPx, consts.squareYPx);
+  const machine = new Rect(
+    inputs.winW,
+    inputs.winW * consts.machineRatio,
+    0,
+    0,
+  );
   return {
     ...inputs,
-    square: { w: d, h: d, x: consts.squarePadPx, y: consts.squareYPx },
-    machine: {
-      w: inputs.winW,
-      h: inputs.winW * consts.machineRatio,
-      x: 0,
-      y: 0,
-    },
+    square,
+    machine,
+    current: machine.mix(square, inputs.t),
   };
 }
 
@@ -111,6 +129,7 @@ const place: { [key: string]: (derived: Derived) => Placement } = {
     style: { background: "green" },
   }),
   demoMachine: ({ machine }) => ({ ...machine, style: { background: "blue" } }),
+  demoCurrent: ({ current }) => ({ ...current, style: { background: "red" } }),
 };
 
 export default class CompositePage extends React.Component<Props, State> {
@@ -149,6 +168,7 @@ export default class CompositePage extends React.Component<Props, State> {
             >
               <Placed key="demoSquare" place={place.demoSquare} />
               <Placed key="demoMachine" place={place.demoMachine} />
+              <Placed key="demoCurrent" place={place.demoCurrent} />
             </PlacementParent>
           )}
         </Spring>
