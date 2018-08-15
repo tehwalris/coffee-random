@@ -5,8 +5,11 @@ import Ratio from "./ratio";
 import Head from "./head";
 import Cup from "./cup";
 import { mix } from "../util";
+import Placed from "./placed";
+import { Derived } from "./composite-page";
+import { PlaceableProps } from "./placement-parent";
 
-export interface Props {
+export interface Props extends PlaceableProps<Derived> {
   arrowPos: number; // 1 is left head, 4 is right head, any float values are allowed
   heads: Heads;
   coffee: number; // [0, 1] // 0 - no coffee, 0.5 - full coffee, 1 - no coffee (0.25 some coffee from the top)
@@ -119,14 +122,14 @@ function centerOfHeadPercent(i: number): number {
 
 export default class MachinePure extends React.Component<Props> {
   render() {
-    const { arrowPos, heads, coffee, blonding } = this.props;
+    const { arrowPos, heads, coffee, blonding, render } = this.props;
     const d: { [key: string]: React.CSSProperties } = {
       layerMid: {
         transform: `translateX(${centerOfHeadPercent(arrowPos)}%)`,
       },
       coffee: dynamicCoffeeStyles(coffee, blonding),
     };
-    return (
+    const whole = (
       <div {...styles.body}>
         <Ratio width="100%" ratio={0.45}>
           <div {...styles.layerMid} style={d.layerMid}>
@@ -155,5 +158,19 @@ export default class MachinePure extends React.Component<Props> {
         </Ratio>
       </div>
     );
+    return [
+      <Placed
+        place={(derived: Derived) => ({ ...derived.machine })}
+        render={render}
+      >
+        {whole}
+      </Placed>,
+      <Placed
+        place={(derived: Derived) => ({ ...derived.current })}
+        render={render}
+      >
+        walrus
+      </Placed>,
+    ];
   }
 }

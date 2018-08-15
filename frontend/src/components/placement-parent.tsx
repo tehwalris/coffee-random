@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PlacedChild } from "./placed";
+import { BaseProps as PlacedProps } from "./placed";
 
 export interface Placement {
   x: number;
@@ -9,29 +9,52 @@ export interface Placement {
   style?: React.CSSProperties;
 }
 
+export type PlaceableProps<D> = {
+  render?: (props: PlacedProps<D>) => React.ReactChild;
+};
+
+type Placeable<D> = React.ReactElement<PlaceableProps<D>>;
+
 interface Props<I, D extends I> {
   inputs: I;
   derive: (inputs: I) => D;
-  children: PlacedChild<D>[];
+  children: Placeable<D>[];
   getWrapperSize: (derived: D) => { width: number; height: number };
 }
 
 export default class PlacementParent<I, D extends I> extends React.Component<
   Props<I, D>
 > {
+  lastInputs: I | undefined;
+  lastDerived: D | undefined;
+
+  getDerived = (): D => {
+    const { inputs, derive } = this.props;
+    if (inputs === this.lastInputs) {
+      return this.lastDerived!;
+    }
+    this.lastInputs = inputs;
+    this.lastDerived = derive(inputs);
+    return this.lastDerived;
+  };
+
   render() {
     const { inputs, derive, children, getWrapperSize } = this.props;
     const derived = derive(inputs);
     return (
       <div style={{ ...getWrapperSize(derived), position: "relative" }}>
-        {children.map(({ props: { children: c, place }, key }, i) => (
-          <div key={key || i} style={this.placementToStyle(place(derived))}>
-            {c}
-          </div>
-        ))}
+        {children.map(c =>
+          React.cloneElement(c, { render: this.renderPlaced }),
+        )}
       </div>
     );
   }
+
+  renderPlaced = ({ children: c, place }: PlacedProps<D>): React.ReactChild => {
+    return (
+      <div style={this.placementToStyle(place(this.getDerived()))}>{c}</div>
+    );
+  };
 
   private placementToStyle({
     x,

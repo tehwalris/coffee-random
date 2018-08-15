@@ -8,8 +8,10 @@ import { unreachable, easeInQuad } from "../util";
 import { times } from "lodash";
 import { createSpring } from "../spring";
 import { COLUMN_COUNT } from "../store";
+import { PlaceableProps } from "./placement-parent";
+import { Derived } from "./composite-page";
 
-interface Props {
+interface Props extends PlaceableProps<Derived> {
   column?: number; // integer [1, 4]
 }
 
@@ -113,7 +115,7 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   render() {
-    return <MachinePure {...this.state.plan} />;
+    return <MachinePure {...this.state.plan} render={this.props.render} />;
   }
 
   private plan(): PureProps {

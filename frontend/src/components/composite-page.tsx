@@ -8,6 +8,7 @@ import Title from "./title";
 import { RENDER_DEBUG, mix } from "../util";
 import PlacementParent, { Placement } from "./placement-parent";
 import Placed from "./placed";
+import Machine from "./machine";
 
 interface Props {
   top: React.ReactChild;
@@ -90,7 +91,7 @@ class Rect {
   }
 }
 
-interface Derived extends Inputs {
+export interface Derived extends Inputs {
   square: Rect;
   machine: Rect;
   current: Rect;
@@ -169,6 +170,7 @@ export default class CompositePage extends React.Component<Props, State> {
               <Placed key="demoSquare" place={place.demoSquare} />
               <Placed key="demoMachine" place={place.demoMachine} />
               <Placed key="demoCurrent" place={place.demoCurrent} />
+              <Machine />
             </PlacementParent>
           )}
         </Spring>
