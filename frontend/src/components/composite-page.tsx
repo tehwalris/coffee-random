@@ -5,7 +5,7 @@ import { css } from "glamor";
 import { RatingStore } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
 import Title from "./title";
-import { RENDER_DEBUG, mix } from "../util";
+import { RENDER_DEBUG, mix, easeInQuad } from "../util";
 import PlacementParent from "./placement-parent";
 import Machine from "./machine";
 import { sum, zipWith } from "lodash";
@@ -113,8 +113,8 @@ const consts = {
 };
 
 function layoutHeads(target: Rect, reference: Rect): Rect[] {
-  const op = consts.machinePaddingHOuter * target.w;
-  const ip = consts.machinePaddingHInner * target.w;
+  const op = consts.machinePaddingHOuter * reference.w;
+  const ip = consts.machinePaddingHInner * reference.w;
   const flexPad = target.w / 2 - op - ip;
   const headY = target.y + consts.headToTop * reference.h;
   const headW = consts.headW * reference.w;
@@ -170,7 +170,7 @@ function derive(inputs: Inputs): Derived {
     current,
     heads: zipWith(headsMachine, headsSquare, (a, b) => a.mix(b, inputs.t)),
     platforms: layoutPlatforms(current, machine),
-    machineOpacity: Math.max(0, Math.min(1, 1 - inputs.t)),
+    machineOpacity: Math.max(0, Math.min(1, easeInQuad(1 - inputs.t))),
   };
 }
 
