@@ -26,11 +26,10 @@ export type Heads = [HeadProps, HeadProps, HeadProps, HeadProps];
 
 const HEAD_H_PADDING_PERCENT = 2;
 const TRIANGLE_PX = 15;
-const STAND_OFFSET_PERCENT = 75;
 const CUP_WIDTH_PERCENT = 8;
 const COFFEE_WIDTH_PERCENT = 1;
-const COFFEE_TOP = 43;
-const COFFEE_BOTTOM = 64;
+const COFFEE_TOP = -5;
+const COFFEE_BOTTOM = 68;
 
 const styles = {
   body: css({
@@ -51,7 +50,6 @@ const styles = {
     top: "15%",
   }),
   stands: css({
-    top: `${STAND_OFFSET_PERCENT}%`,
     padding: `0 1%`,
   }),
   stand: css({
@@ -88,7 +86,7 @@ const styles = {
   cupWrapper: css({
     position: "absolute",
     width: "100%",
-    bottom: `${100 - STAND_OFFSET_PERCENT}%`,
+    bottom: 0,
   }),
   coffee: css({
     willChange: "transform",
@@ -164,6 +162,7 @@ export default class MachinePure extends React.Component<Props> {
     );
     return [
       <Placed
+        key="machine"
         place={({ machine }: Derived) => ({
           ...machine,
           style: { opacity: 0 },
@@ -173,14 +172,29 @@ export default class MachinePure extends React.Component<Props> {
         {whole}
       </Placed>,
       <Placed
+        key="current"
         place={({ current }: Derived) => ({
           ...current,
           style: { backgroundColor: colors.machineDark },
         })}
         render={render}
       />,
+      <Placed
+        key="midLayer"
+        place={({ midLayer, machineOpacity: o }: Derived) => ({
+          ...midLayer(arrowPos),
+          style: { opacity: o },
+        })}
+        render={render}
+      >
+        <div {...styles.coffee} style={d.coffee} />
+        <div {...styles.cupWrapper}>
+          <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
+        </div>
+      </Placed>,
       ...[0, 1, 2, 3].map(i => (
         <Placed
+          key={`head ${i}`}
           place={({ heads: h, machineOpacity: o }: Derived) => ({
             ...h[i],
             style: { opacity: o },
@@ -197,6 +211,7 @@ export default class MachinePure extends React.Component<Props> {
       )),
       ...[0, 1].map(i => (
         <Placed
+          key={`platform ${i}`}
           place={({ platforms, machineOpacity: o }: Derived) => ({
             ...platforms[i],
             style: { backgroundColor: colors.machineLight, opacity: o },

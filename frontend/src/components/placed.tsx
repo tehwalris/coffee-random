@@ -8,7 +8,7 @@ import { Placement, PlaceableProps } from "./placement-parent";
 // state from the page component, since they are rendered together and later split.
 
 export interface BaseProps<T> {
-  children?: React.ReactChild;
+  children?: React.ReactChild | React.ReactChild[];
   place: (inputs: T) => Placement;
 }
 

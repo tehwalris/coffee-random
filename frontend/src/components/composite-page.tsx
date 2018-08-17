@@ -2,13 +2,14 @@ import * as React from "react";
 import posed, { PoseGroup } from "react-pose";
 import { Target } from "./cover-animate";
 import { css } from "glamor";
-import { RatingStore } from "../store";
+import { RatingStore, COLUMN_COUNT } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
 import Title from "./title";
 import { RENDER_DEBUG, mix, easeInQuad } from "../util";
 import PlacementParent from "./placement-parent";
 import Machine from "./machine";
-import { sum, zipWith } from "lodash";
+import { HEAD_RATIO } from "./head";
+import { sum, tail, zipWith } from "lodash";
 
 interface Props {
   top: React.ReactChild;
@@ -97,6 +98,7 @@ export interface Derived extends Inputs {
   current: Rect;
   heads: Rect[];
   platforms: Rect[];
+  midLayer: (headI: number) => Rect;
   machineOpacity: number;
 }
 
@@ -118,11 +120,12 @@ function layoutHeads(target: Rect, reference: Rect): Rect[] {
   const flexPad = target.w / 2 - op - ip;
   const headY = target.y + consts.headToTop * reference.h;
   const headW = consts.headW * reference.w;
+  const headH = headW * HEAD_RATIO;
   let c = 0;
   return [target.x + op, flexPad, 2 * ip, flexPad].map((v, i) => {
     c += v;
     const x = i % 2 === 0 ? c : c - headW;
-    return new Rect(headW, target.h, x, headY);
+    return new Rect(headW, headH, x, headY);
   });
 }
 
@@ -135,6 +138,30 @@ function layoutPlatforms(target: Rect, reference: Rect): Rect[] {
   return [op, target.w - pw - op].map(v => {
     return new Rect(pw, ph, target.x + v, py);
   });
+}
+
+function layoutMidLayer(current: Rect, machine: Rect): (headI: number) => Rect {
+  const headsStill = layoutHeads(machine, machine);
+  const refHeadStill = headsStill[0];
+  const refPlatformStill = layoutPlatforms(machine, machine)[0];
+  const refPlatformCurrent = layoutPlatforms(current, machine)[0];
+
+  const tempStartY = refHeadStill.y + refHeadStill.h;
+  const tempEndY = refPlatformStill.y;
+  const h = tempEndY - tempStartY;
+  const y = refPlatformCurrent.y - h;
+
+  const headCenters = headsStill.map(e => e.x + e.w / 2);
+  const headDeltas = zipWith(tail(headCenters), headCenters, (a, b) => a - b);
+  return (_headI: number) => {
+    const headI = _headI - 1; // use zero based head indices, unlike rest of app
+    const roundedI = Math.floor(Math.max(0, Math.min(COLUMN_COUNT - 2, headI)));
+    const progress = headI - roundedI;
+    const start = headCenters[roundedI];
+    const delta = headDeltas[roundedI];
+    const x = machine.x + mix(start, start + delta, progress);
+    return new Rect(machine.w, h, x, y);
+  };
 }
 
 function spaceEvenlyX(rects: Rect[]): Rect[] {
@@ -163,14 +190,19 @@ function derive(inputs: Inputs): Derived {
   const current = machine.mix(square, inputs.t);
   const headsMachine = layoutHeads(machine, machine);
   const headsSquare = spaceEvenlyX(layoutHeads(square, machine));
+  const heads = zipWith(headsMachine, headsSquare, (a, b) =>
+    a.mix(b, inputs.t),
+  );
+  const platforms = layoutPlatforms(current, machine);
   return {
     ...inputs,
     square,
     machine,
     current,
-    heads: zipWith(headsMachine, headsSquare, (a, b) => a.mix(b, inputs.t)),
-    platforms: layoutPlatforms(current, machine),
+    heads,
+    platforms,
     machineOpacity: Math.max(0, Math.min(1, easeInQuad(1 - inputs.t))),
+    midLayer: layoutMidLayer(current, machine),
   };
 }
 
@@ -198,7 +230,7 @@ export default class CompositePage extends React.Component<Props, State> {
   }
 
   render() {
-    const { top, storeIndex, bottom, widthPx, heightPx } = this.props;
+    const { top, storeIndex, bottom, widthPx, heightPx, column } = this.props;
     return (
       <div>
         <div>
@@ -212,7 +244,7 @@ export default class CompositePage extends React.Component<Props, State> {
               derive={derive}
               getWrapperSize={getWrapperSize}
             >
-              <Machine />
+              <Machine column={column} />
             </PlacementParent>
           )}
         </Spring>

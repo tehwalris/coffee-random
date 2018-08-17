@@ -22,12 +22,13 @@ const styles = {
 
 const RECT_UP_Y = 0.22;
 const RECT_DOWN_Y = 0.35;
+export const HEAD_RATIO = 0.79;
 
 export default class Head extends React.PureComponent<Props> {
   render() {
     const { width, light, door } = this.props;
     return (
-      <Ratio width={width} ratio={0.79}>
+      <Ratio width={width} ratio={HEAD_RATIO}>
         <svg viewBox="0,0,1,0.79" {...styles.svg}>
           <rect
             width="0.6"
