@@ -164,14 +164,27 @@ export default class MachinePure extends React.Component<Props> {
     );
     return [
       <Placed
-        place={(derived: Derived) => ({ ...derived.machine })}
+        place={({ machine }: Derived) => ({
+          ...machine,
+          style: { opacity: 0 },
+        })}
         render={render}
       >
         {whole}
       </Placed>,
+      <Placed
+        place={({ current }: Derived) => ({
+          ...current,
+          style: { backgroundColor: colors.machineDark },
+        })}
+        render={render}
+      />,
       ...[0, 1, 2, 3].map(i => (
         <Placed
-          place={(derived: Derived) => ({ ...derived.heads[i] })}
+          place={({ heads: h, machineOpacity: o }: Derived) => ({
+            ...h[i],
+            style: { opacity: o },
+          })}
           render={render}
         >
           <Head
@@ -181,6 +194,15 @@ export default class MachinePure extends React.Component<Props> {
             light={heads[i].light}
           />
         </Placed>
+      )),
+      ...[0, 1].map(i => (
+        <Placed
+          place={({ platforms, machineOpacity: o }: Derived) => ({
+            ...platforms[i],
+            style: { backgroundColor: colors.machineLight, opacity: o },
+          })}
+          render={render}
+        />
       )),
     ];
   }

@@ -18,7 +18,7 @@ type Placeable<D> = React.ReactElement<PlaceableProps<D>>;
 interface Props<I, D extends I> {
   inputs: I;
   derive: (inputs: I) => D;
-  children: Placeable<D>[];
+  children: Placeable<D> | Placeable<D>[];
   getWrapperSize: (derived: D) => { width: number; height: number };
 }
 
@@ -43,7 +43,7 @@ export default class PlacementParent<I, D extends I> extends React.Component<
     const derived = derive(inputs);
     return (
       <div style={{ ...getWrapperSize(derived), position: "relative" }}>
-        {children.map(c =>
+        {React.Children.toArray(children).map((c: Placeable<D>) =>
           React.cloneElement(c, { render: this.renderPlaced }),
         )}
       </div>

@@ -6,8 +6,7 @@ import { RatingStore } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
 import Title from "./title";
 import { RENDER_DEBUG, mix } from "../util";
-import PlacementParent, { Placement } from "./placement-parent";
-import Placed from "./placed";
+import PlacementParent from "./placement-parent";
 import Machine from "./machine";
 import { sum, zipWith } from "lodash";
 
@@ -97,26 +96,44 @@ export interface Derived extends Inputs {
   machine: Rect;
   current: Rect;
   heads: Rect[];
+  platforms: Rect[];
+  machineOpacity: number;
 }
 
 const consts = {
   squarePadPx: 25,
   squareYPx: -50,
   machineRatio: 0.45,
-  machinePaddingHOuterPx: 18,
-  machinePaddingHInnerPx: 15,
-  headWPartOfOuter: 0.17,
+  machinePaddingHOuter: 0.05,
+  machinePaddingHInner: 0.04,
+  headW: 0.17,
+  headToTop: 0.1,
+  platformH: 0.1,
+  platformToBottom: 0.15,
 };
 
-function layoutHeads(outer: Rect, headW: number): Rect[] {
-  const op = consts.machinePaddingHOuterPx;
-  const ip = consts.machinePaddingHInnerPx;
-  const flexPad = outer.w / 2 - op - ip;
+function layoutHeads(target: Rect, reference: Rect): Rect[] {
+  const op = consts.machinePaddingHOuter * target.w;
+  const ip = consts.machinePaddingHInner * target.w;
+  const flexPad = target.w / 2 - op - ip;
+  const headY = target.y + consts.headToTop * reference.h;
+  const headW = consts.headW * reference.w;
   let c = 0;
-  return [outer.x + op, flexPad, 2 * ip, flexPad].map((v, i) => {
+  return [target.x + op, flexPad, 2 * ip, flexPad].map((v, i) => {
     c += v;
     const x = i % 2 === 0 ? c : c - headW;
-    return new Rect(headW, outer.h, x, outer.y);
+    return new Rect(headW, target.h, x, headY);
+  });
+}
+
+function layoutPlatforms(target: Rect, reference: Rect): Rect[] {
+  const op = consts.machinePaddingHOuter * reference.w;
+  const ip = consts.machinePaddingHInner * reference.w;
+  const ph = consts.platformH * reference.h;
+  const pw = reference.w / 2 - op - ip;
+  const py = target.y + target.h - consts.platformToBottom * reference.h - ph;
+  return [op, target.w - pw - op].map(v => {
+    return new Rect(pw, ph, target.x + v, py);
   });
 }
 
@@ -144,39 +161,22 @@ function derive(inputs: Inputs): Derived {
     0,
   );
   const current = machine.mix(square, inputs.t);
-  const headW = machine.w * consts.headWPartOfOuter;
-  const headsMachine = layoutHeads(machine, headW);
-  const headsSquare = spaceEvenlyX(layoutHeads(square, headW));
-  const heads = zipWith(headsMachine, headsSquare, (a, b) =>
-    a.mix(b, inputs.t),
-  );
+  const headsMachine = layoutHeads(machine, machine);
+  const headsSquare = spaceEvenlyX(layoutHeads(square, machine));
   return {
     ...inputs,
     square,
     machine,
     current,
-    heads,
+    heads: zipWith(headsMachine, headsSquare, (a, b) => a.mix(b, inputs.t)),
+    platforms: layoutPlatforms(current, machine),
+    machineOpacity: Math.max(0, Math.min(1, 1 - inputs.t)),
   };
 }
 
 function getWrapperSize(derived: Derived) {
   return { width: derived.winW, height: derived.square.h };
 }
-
-const place: { [key: string]: (derived: Derived) => Placement } = {
-  demoSquare: ({ square }) => ({
-    ...square,
-    style: { background: "green" },
-  }),
-  demoMachine: ({ machine }) => ({
-    ...machine,
-    style: { background: "blue" },
-  }),
-  demoCurrent: ({ current }) => ({
-    ...current,
-    style: { background: "red" },
-  }),
-};
 
 export default class CompositePage extends React.Component<Props, State> {
   componentWillMount() {
@@ -212,9 +212,6 @@ export default class CompositePage extends React.Component<Props, State> {
               derive={derive}
               getWrapperSize={getWrapperSize}
             >
-              <Placed key="demoSquare" place={place.demoSquare} />
-              <Placed key="demoCurrent" place={place.demoCurrent} />
-              <Placed key="demoMachine" place={place.demoMachine} />
               <Machine />
             </PlacementParent>
           )}
