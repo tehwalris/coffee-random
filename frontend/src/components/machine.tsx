@@ -13,6 +13,7 @@ import { Derived } from "./composite-page";
 
 interface Props extends PlaceableProps<Derived> {
   column?: number; // integer [1, 4]
+  stopPour: boolean;
 }
 
 interface State {
@@ -238,7 +239,11 @@ export default class Machine extends React.Component<Props, State> {
       door: 1,
       light: stageT % (2 * BLINK_MS) < BLINK_MS,
     };
-    if ((abort && stageT > MIN_POUR_MS) || stageT > POUR_MS) {
+    if (
+      this.props.stopPour ||
+      (abort && stageT > MIN_POUR_MS) ||
+      stageT > POUR_MS
+    ) {
       this.switchStage(Stage.PostPour);
     }
     const blonding = Math.max(0, Math.min(1, stageT / POUR_MS));

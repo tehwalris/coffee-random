@@ -1,7 +1,6 @@
 import * as React from "react";
 import { css } from "glamor";
 import { colors } from "../style";
-import Ratio from "./ratio";
 import Head from "./head";
 import Cup from "./cup";
 import { mix } from "../util";
@@ -24,65 +23,12 @@ export interface HeadProps {
 
 export type Heads = [HeadProps, HeadProps, HeadProps, HeadProps];
 
-const HEAD_H_PADDING_PERCENT = 2;
-const TRIANGLE_PX = 15;
 const CUP_WIDTH_PERCENT = 8;
 const COFFEE_WIDTH_PERCENT = 1;
 const COFFEE_TOP = -5;
 const COFFEE_BOTTOM = 68;
 
 const styles = {
-  body: css({
-    position: "relative",
-    height: "100%",
-    margin: "0 0 40px 0",
-  }),
-  row: css({
-    position: "absolute",
-    width: "100%",
-    top: "15%",
-    display: "flex",
-    justifyContent: "space-around",
-    padding: `0 ${HEAD_H_PADDING_PERCENT}%`,
-    boxSizing: "border-box",
-  }),
-  heads: css({
-    top: "15%",
-  }),
-  stands: css({
-    padding: `0 1%`,
-  }),
-  stand: css({
-    height: "100%",
-    backgroundColor: colors.machineLight,
-  }),
-  arrowRow: css({
-    position: "relative",
-    height: `${TRIANGLE_PX}px`,
-    margin: "3px 0",
-  }),
-  triangleSVG: css({
-    position: "absolute",
-    top: "-15px",
-    marginLeft: `${-0.5 * TRIANGLE_PX}px`,
-    width: `${TRIANGLE_PX}px`,
-    height: `${TRIANGLE_PX}px`,
-    transform: "rotate(180deg)",
-  }),
-  triangePoly: css({
-    fill: colors.machineDark,
-  }),
-  layerMid: css({
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    willChange: "transform",
-  }),
-  layerTop: css({
-    height: "100%",
-    position: "relative",
-    willChange: "transform",
-  }),
   cupWrapper: css({
     position: "absolute",
     width: "100%",
@@ -93,15 +39,6 @@ const styles = {
     position: "absolute",
     width: `${COFFEE_WIDTH_PERCENT}%`,
     marginLeft: `${-0.5 * COFFEE_WIDTH_PERCENT}%`,
-  }),
-
-  // TODO rename and move new styles
-
-  newHeads: css({
-    width: "100%",
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "15%",
   }),
 };
 
@@ -122,55 +59,10 @@ function dynamicCoffeeStyles(t: number, b: number): React.CSSProperties {
   };
 }
 
-function centerOfHeadPercent(i: number): number {
-  let p = HEAD_H_PADDING_PERCENT;
-  return p + (100 - 2 * p) * ((i - 0.5) / 4);
-}
-
 export default class MachinePure extends React.Component<Props> {
   render() {
     const { arrowPos, heads, coffee, blonding, render } = this.props;
-    const d: { [key: string]: React.CSSProperties } = {
-      layerMid: {
-        transform: `translateX(${centerOfHeadPercent(arrowPos)}%)`,
-      },
-      coffee: dynamicCoffeeStyles(coffee, blonding),
-    };
-    const whole = (
-      <div {...styles.body}>
-        <Ratio width="100%" ratio={0.45}>
-          <div {...styles.layerMid} style={d.layerMid}>
-            <svg viewBox="0,0,1,1" {...styles.triangleSVG}>
-              <polygon points="0.5 0.42, 1 1, 0 1" {...styles.triangePoly} />
-            </svg>
-            <div {...styles.coffee} style={d.coffee} />
-            <div {...styles.cupWrapper}>
-              <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
-            </div>
-          </div>
-          <div {...styles.layerTop}>
-            <div {...styles.row} {...styles.stands}>
-              {[0, 1].map(i => (
-                <Ratio key={i} width="42%" ratio={0.11}>
-                  <div {...styles.stand} />
-                </Ratio>
-              ))}
-            </div>
-          </div>
-        </Ratio>
-      </div>
-    );
     return [
-      <Placed
-        key="machine"
-        place={({ machine }: Derived) => ({
-          ...machine,
-          style: { opacity: 0 },
-        })}
-        render={render}
-      >
-        {whole}
-      </Placed>,
       <Placed
         key="current"
         place={({ current }: Derived) => ({
@@ -180,17 +72,26 @@ export default class MachinePure extends React.Component<Props> {
         render={render}
       />,
       <Placed
-        key="midLayer"
+        key="cup"
         place={({ midLayer, machineOpacity: o }: Derived) => ({
-          ...midLayer(arrowPos),
+          ...midLayer(arrowPos, true),
           style: { opacity: o },
         })}
         render={render}
       >
-        <div {...styles.coffee} style={d.coffee} />
         <div {...styles.cupWrapper}>
           <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
         </div>
+      </Placed>,
+      <Placed
+        key="coffee"
+        place={({ midLayer, machineOpacity: o }: Derived) => ({
+          ...midLayer(arrowPos, false),
+          style: { opacity: o },
+        })}
+        render={render}
+      >
+        <div {...styles.coffee} style={dynamicCoffeeStyles(coffee, blonding)} />
       </Placed>,
       ...[0, 1, 2, 3].map(i => (
         <Placed

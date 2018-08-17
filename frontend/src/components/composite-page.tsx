@@ -98,7 +98,7 @@ export interface Derived extends Inputs {
   current: Rect;
   heads: Rect[];
   platforms: Rect[];
-  midLayer: (headI: number) => Rect;
+  midLayer: (headI: number, move: boolean) => Rect;
   machineOpacity: number;
 }
 
@@ -140,11 +140,16 @@ function layoutPlatforms(target: Rect, reference: Rect): Rect[] {
   });
 }
 
-function layoutMidLayer(current: Rect, machine: Rect): (headI: number) => Rect {
+function layoutMidLayer(
+  current: Rect,
+  machine: Rect,
+): (headI: number, move: boolean) => Rect {
   const headsStill = layoutHeads(machine, machine);
   const refHeadStill = headsStill[0];
-  const refPlatformStill = layoutPlatforms(machine, machine)[0];
-  const refPlatformCurrent = layoutPlatforms(current, machine)[0];
+  const platformsStill = layoutPlatforms(machine, machine);
+  const refPlatformStill = platformsStill[0];
+  const platformsCurrent = layoutPlatforms(current, machine);
+  const refPlatformCurrent = platformsCurrent[0];
 
   const tempStartY = refHeadStill.y + refHeadStill.h;
   const tempEndY = refPlatformStill.y;
@@ -153,13 +158,17 @@ function layoutMidLayer(current: Rect, machine: Rect): (headI: number) => Rect {
 
   const headCenters = headsStill.map(e => e.x + e.w / 2);
   const headDeltas = zipWith(tail(headCenters), headCenters, (a, b) => a - b);
-  return (_headI: number) => {
+  return (_headI: number, move: boolean) => {
     const headI = _headI - 1; // use zero based head indices, unlike rest of app
     const roundedI = Math.floor(Math.max(0, Math.min(COLUMN_COUNT - 2, headI)));
     const progress = headI - roundedI;
     const start = headCenters[roundedI];
     const delta = headDeltas[roundedI];
-    const x = machine.x + mix(start, start + delta, progress);
+    let x = mix(start, start + delta, progress) + machine.x;
+    const pi = +(headI + 0.5 > COLUMN_COUNT / 2);
+    if (move) {
+      x += platformsCurrent[pi].x - platformsStill[pi].x;
+    }
     return new Rect(machine.w, h, x, y);
   };
 }
@@ -244,7 +253,7 @@ export default class CompositePage extends React.Component<Props, State> {
               derive={derive}
               getWrapperSize={getWrapperSize}
             >
-              <Machine column={column} />
+              <Machine column={column} stopPour={t !== 0} />
             </PlacementParent>
           )}
         </Spring>
