@@ -267,17 +267,29 @@ export default class CompositePage extends React.Component<Props, State> {
               getWrapperSize={getWrapperSize}
             >
               <Placed
+                place={({ winW, machine }: Derived) => ({
+                  x: 0,
+                  y: machine.y + machine.h,
+                  w: winW,
+                  h: winW,
+                  style: {
+                    pointerEvents: t > 0 ? "none" : undefined,
+                  },
+                })}
+              >
+                {s(storeIndex, bottom)}
+              </Placed>
+              <Placed
                 place={({ current }: Derived) => ({
                   ...current,
                   style: { backgroundColor: colors.machineDark },
                 })}
               />
-              <Machine column={column} stopPour={t !== 0} />
-              <RatingSquare store={ratingStore} />
+              <Machine column={column} stopPour={t > 0} />
+              <RatingSquare store={ratingStore} pointerEvents={t > 0} />
             </PlacementParent>
           )}
         </Spring>
-        <div>{bottom}</div>
       </div>
     );
   }
