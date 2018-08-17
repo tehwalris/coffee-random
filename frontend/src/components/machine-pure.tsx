@@ -64,14 +64,6 @@ export default class MachinePure extends React.Component<Props> {
     const { arrowPos, heads, coffee, blonding, render } = this.props;
     return [
       <Placed
-        key="current"
-        place={({ current }: Derived) => ({
-          ...current,
-          style: { backgroundColor: colors.machineDark },
-        })}
-        render={render}
-      />,
-      <Placed
         key="cup"
         place={({ midLayer, machineOpacity: o }: Derived) => ({
           ...midLayer(arrowPos, true),

@@ -5,8 +5,11 @@ import { css } from "glamor";
 import { sizes, colors } from "../style";
 import SaveTick from "./save-tick";
 import posed, { PoseGroup } from "react-pose";
+import Placed from "./placed";
+import { Derived } from "./composite-page";
+import { PlaceableProps } from "./placement-parent";
 
-interface Props {
+interface Props extends PlaceableProps<Derived> {
   store?: RatingStore;
 }
 
@@ -57,10 +60,10 @@ const TickWrapperInner = posed.div({
 
 export default class RatingSquare extends React.Component<Props> {
   render() {
-    const { store } = this.props;
+    const { store, render } = this.props;
     const rating = store && store.rating;
     const state = store && store.getState();
-    return (
+    const whole = (
       <TapArea
         onTap={({ x, y }) =>
           store && store.onTapRating({ business: x, quality: 1 - y })
@@ -88,5 +91,17 @@ export default class RatingSquare extends React.Component<Props> {
         </div>
       </TapArea>
     );
+    return [
+      <Placed
+        key="whole"
+        place={({ square, squareOpacity: o }: Derived) => ({
+          ...square,
+          style: { opacity: o },
+        })}
+        render={render}
+      >
+        {whole}
+      </Placed>,
+    ];
   }
 }

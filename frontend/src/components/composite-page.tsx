@@ -10,6 +10,9 @@ import PlacementParent from "./placement-parent";
 import Machine from "./machine";
 import { HEAD_RATIO } from "./head";
 import { sum, tail, zipWith } from "lodash";
+import RatingSquare from "./rating-square";
+import Placed from "./placed";
+import { colors } from "../style";
 
 interface Props {
   top: React.ReactChild;
@@ -100,6 +103,7 @@ export interface Derived extends Inputs {
   platforms: Rect[];
   midLayer: (headI: number, move: boolean) => Rect;
   machineOpacity: number;
+  squareOpacity: number;
 }
 
 const consts = {
@@ -211,6 +215,7 @@ function derive(inputs: Inputs): Derived {
     heads,
     platforms,
     machineOpacity: Math.max(0, Math.min(1, easeInQuad(1 - inputs.t))),
+    squareOpacity: Math.max(0, Math.min(1, easeInQuad(inputs.t))),
     midLayer: layoutMidLayer(current, machine),
   };
 }
@@ -239,7 +244,15 @@ export default class CompositePage extends React.Component<Props, State> {
   }
 
   render() {
-    const { top, storeIndex, bottom, widthPx, heightPx, column } = this.props;
+    const {
+      top,
+      storeIndex,
+      bottom,
+      widthPx,
+      heightPx,
+      column,
+      ratingStore,
+    } = this.props;
     return (
       <div>
         <div>
@@ -253,7 +266,14 @@ export default class CompositePage extends React.Component<Props, State> {
               derive={derive}
               getWrapperSize={getWrapperSize}
             >
+              <Placed
+                place={({ current }: Derived) => ({
+                  ...current,
+                  style: { backgroundColor: colors.machineDark },
+                })}
+              />
               <Machine column={column} stopPour={t !== 0} />
+              <RatingSquare store={ratingStore} />
             </PlacementParent>
           )}
         </Spring>
