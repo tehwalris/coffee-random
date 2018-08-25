@@ -45,7 +45,7 @@ export const colors = {
 export const sizes = {
   border: "2px",
   uiFontSize: "18px",
-  titleFontSize: "40px",
+  titleFontSize: "45px",
 
   inputHeightPx: 55,
   buttonWidthPx: 150,

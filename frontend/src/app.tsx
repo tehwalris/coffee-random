@@ -6,7 +6,7 @@ import LoginPage from "./pages/login";
 import RatingTop from "./pages/rating-top";
 import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
-import { colors } from "./style";
+import { colors, sizes } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
 
 interface State {
@@ -38,6 +38,7 @@ const styles = {
     height: "100vh",
     backgroundColor: colors.background,
     color: colors.content,
+    fontSize: sizes.uiFontSize,
 
     overflow: RENDER_DEBUG ? "visible" : "hidden",
     transform: RENDER_DEBUG
