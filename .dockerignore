@@ -1,4 +1,5 @@
 /vendor
 /pb/*.go
 /backend/backend
+/frontend/generated
 /frontend/node_modules
