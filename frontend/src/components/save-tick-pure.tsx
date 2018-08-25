@@ -43,16 +43,11 @@ export default class SaveTick extends React.Component<Props> {
         viewBox="-1 -1 2 2"
         style={{ overflow: "visible" }}
       >
-        <circle
-          r="1"
-          stroke={colors.machineDark}
-          strokeWidth="0.1"
-          fill="white"
-        />
+        <circle r="1" fill={colors.primaryBackground} />
         <polyline
           points={pointStr}
-          stroke={colors.machineDark}
-          strokeWidth="0.1"
+          stroke={colors.primaryContent}
+          strokeWidth="0.05"
           fill="none"
         />
       </svg>

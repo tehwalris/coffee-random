@@ -8,7 +8,7 @@ interface Props {
 
 const styles = {
   title: css({
-    margin: `${2 * sizes.pagePaddingPx}px ${sizes.pagePaddingPx}px`,
+    margin: `${sizes.spacingPx[3]}px ${sizes.spacingPx[1]}px`,
     textAlign: "center",
     fontSize: sizes.titleFontSize,
     lineHeight: "1.25em",

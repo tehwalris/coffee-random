@@ -26,7 +26,7 @@ const styles = {
   }),
   ratio: css({
     position: "relative",
-    margin: `0 ${sizes.pagePaddingPx}px`,
+    margin: `0 ${sizes.spacingPx[1]}px`,
     transformStyle: "preserve-3d",
   }),
   contentSquare: css({
@@ -95,7 +95,7 @@ const styles = {
 
 export default ({ squareChild, machineChild, postMachineChild, t }: Props) => {
   const r = (s: string) => (RENDER_DEBUG ? s : "");
-  const sidePx = Math.max(0, t * sizes.pagePaddingPx);
+  const sidePx = Math.max(0, t * sizes.spacingPx[1]);
   const d: { [key: string]: React.CSSProperties } = {
     outer: { transform: `translateY(-${t * 15}%)` },
     left: {

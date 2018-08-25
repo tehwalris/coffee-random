@@ -14,8 +14,6 @@ interface Props extends PlaceableProps<Derived> {
   pointerEvents: boolean;
 }
 
-const TICK_SIZE_PERCENT = 17;
-
 const styles = {
   tickWrapperOuter: ({ business, quality }: Rating) =>
     css({
@@ -26,10 +24,10 @@ const styles = {
       height: "100%",
     }),
   tickWrapperInner: css({
-    width: `${TICK_SIZE_PERCENT}%`,
-    height: `${TICK_SIZE_PERCENT}%`,
-    marginLeft: `${-0.5 * TICK_SIZE_PERCENT}%`,
-    marginTop: `${-0.5 * TICK_SIZE_PERCENT}%`,
+    width: sizes.tickSizePx,
+    height: sizes.tickSizePx,
+    marginLeft: -0.5 * sizes.tickSizePx,
+    marginTop: -0.5 * sizes.tickSizePx,
     willChange: "transform",
   }),
 };
@@ -57,7 +55,7 @@ export default class RatingSquare extends React.Component<Props> {
       position: "absolute",
       width: "100%",
       height: fullHeight ? "100%" : undefined,
-      [side]: `${sizes.spacingPx / 2}px`,
+      [side]: `${sizes.spacingPx[0]}px`,
       color: colors.machineLight,
       textAlign: "center",
       transform: `rotate(${rotation})`,

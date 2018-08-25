@@ -5,10 +5,10 @@ import { colors, sizes } from "../style";
 const styles = {
   button: css({
     display: "block",
-    width: 3 * sizes.inputHeightPx,
+    width: sizes.buttonWidthPx,
     height: sizes.inputHeightPx,
     fontSize: sizes.uiFontSize,
-    border: `${sizes.border} solid ${colors.primaryBorder}`,
+    border: "none",
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
   }),

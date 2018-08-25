@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ColumnStore } from "../store";
-import { sizes } from "../style";
+import { sizes, colors } from "../style";
 import { css } from "glamor";
 import Button from "../components/button";
 import LinkButton from "../components/link-button";
@@ -11,9 +11,10 @@ interface Props {
 
 const styles = {
   doneButton: css({
-    margin: `${2 * sizes.spacingPx}px auto ${sizes.spacingPx}px auto`,
+    margin: `${sizes.spacingPx[3]}px auto ${sizes.spacingPx[2]}px auto`,
   }),
   cannotButtonWrapper: css({
+    color: colors.contentLight,
     textAlign: "center",
   }),
 };

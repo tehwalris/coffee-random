@@ -1,39 +1,54 @@
+const b = {
+  greys: [
+    "#333333",
+    "#4B4542",
+    "#535353",
+    "#808080",
+    "#C4C4C4",
+    "#E5E5E5",
+    "#FAFAF8",
+  ],
+  theme: "#AF813D",
+  themeAlt: "#AF813D",
+};
+
 export const colors = {
   fakePhoneBorder: "#989898",
 
-  background: "#FAFAF8",
-  content: "#333333",
+  background: b.greys[6],
+  content: b.greys[0],
+  contentLight: b.greys[3],
 
-  machineDark: "#333333",
-  machineMedium: "#808080",
-  machineLight: "#c3c1bd",
+  machineDark: b.greys[2],
+  machineMedium: b.greys[3],
+  machineLight: b.greys[5],
   coffee: "#A05A2C",
   coffeeDarkRGB: [0x85, 0x44, 0x19],
   coffeeLightRGB: [0xd1, 0xa5, 0x64],
   cup: "#FFFFFF",
 
-  primaryBackground: "#333333",
-  primaryBorder: "#333333",
+  primaryBackground: b.theme,
+  primaryDetail: b.themeAlt,
   primaryContent: "#FFFFFF",
 
-  focusedBackground: "#FAFAF8",
-  focusedBorder: "#333333",
-  focusedContent: "#333333",
-  focusedPlaceholder: "#989898",
+  focusedBackground: "#FFFFFF",
+  focusedBorder: b.theme,
+  focusedContent: b.greys[0],
+  focusedPlaceholder: b.greys[4],
 
-  unfocusedBackground: "#FAFAF8",
-  unfocusedBorder: "#989898",
-  unfocusedContent: "#333333",
-  unfocusedPlaceholder: "#989898",
+  unfocusedBackground: "#FFFFFF",
+  unfocusedBorder: b.greys[4],
+  unfocusedContent: b.greys[0],
+  unfocusedPlaceholder: b.greys[4],
 };
 
 export const sizes = {
   border: "2px",
   uiFontSize: "18px",
-  uiFontSizeSmall: "16px",
   titleFontSize: "40px",
 
-  inputHeightPx: 50,
-  spacingPx: 15,
-  pagePaddingPx: 25,
+  inputHeightPx: 55,
+  buttonWidthPx: 150,
+  tickSizePx: 60,
+  spacingPx: [16, 25, 32, 60],
 };

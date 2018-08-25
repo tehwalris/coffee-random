@@ -12,13 +12,13 @@ interface Props {
 
 const styles = {
   wrapper: css({
-    padding: `${2 * sizes.pagePaddingPx}px ${sizes.pagePaddingPx}px`,
+    padding: `${sizes.spacingPx[3]}px ${sizes.spacingPx[1]}px`,
   }),
-  input: css({
-    marginBottom: sizes.spacingPx,
+  usernameInput: css({
+    marginBottom: sizes.spacingPx[0],
   }),
   loginButton: css({
-    margin: "0 auto",
+    margin: `${sizes.spacingPx[2]}px auto 0 auto`,
   }),
 };
 
@@ -33,7 +33,7 @@ export default class LoginPage extends React.Component<Props> {
         <Header />
         <div {...styles.wrapper}>
           <Input
-            className={styles.input.toString()}
+            className={styles.usernameInput.toString()}
             focused={true}
             value={store.username}
             onChange={store.onUsernameChange}
@@ -41,12 +41,10 @@ export default class LoginPage extends React.Component<Props> {
           />
           <Input
             type="password"
-            className={styles.input.toString()}
             focused={false}
             value={store.password}
             onChange={store.onPasswordChange}
             placeholder="Password"
-            {...styles.input}
           />
           <Button
             type="submit"
