@@ -11,6 +11,12 @@ const styles = {
     border: "none",
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
+    boxShadow: [
+      sizes.shadow.offsetXPx + "px",
+      sizes.shadow.offsetYPx + "px",
+      sizes.shadow.blurPx + "px",
+      `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
+    ].join(" "),
   }),
 };
 

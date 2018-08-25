@@ -1,6 +1,6 @@
 import * as React from "react";
 import { mix, easeOutQuad, easeInQuad } from "../util";
-import { colors } from "../style";
+import { colors, sizes } from "../style";
 
 interface Props {
   tick: boolean;
@@ -43,7 +43,22 @@ export default class SaveTick extends React.Component<Props> {
         viewBox="-1 -1 2 2"
         style={{ overflow: "visible" }}
       >
-        <circle r="1" fill={colors.primaryBackground} />
+        <defs>
+          <filter id="shadow">
+            <feOffset
+              in="SourceAlpha"
+              dx={(2 * sizes.shadow.offsetXPx) / sizes.tickSizePx}
+              dy={(2 * sizes.shadow.offsetYPx) / sizes.tickSizePx}
+              opacity={sizes.shadow.opacity}
+            />
+            <feComponentTransfer>
+              <feFuncA type="linear" slope={sizes.shadow.opacity} />
+            </feComponentTransfer>
+            <feGaussianBlur stdDeviation="0.05" />
+            <feBlend in="SourceGraphic" mode="normal" />
+          </filter>
+        </defs>
+        <circle r="1" fill={colors.primaryBackground} filter="url(#shadow)" />
         <polyline
           points={pointStr}
           stroke={colors.primaryContent}

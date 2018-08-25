@@ -4,11 +4,10 @@ import ColumnTop from "./pages/column-top";
 import ColumnBottom from "./pages/column-bottom";
 import LoginPage from "./pages/login";
 import RatingTop from "./pages/rating-top";
-import CompositePage from "./components/composite-page";
+import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
 import { colors } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
-import { Target } from "./components/cover-animate";
 
 interface State {
   store: Store;
@@ -18,7 +17,7 @@ interface State {
 
 const FAKE_PHONE = {
   breakPx: 450,
-  heightPx: 570,
+  heightPx: 640,
   widthPx: 360,
 };
 
@@ -49,7 +48,7 @@ const styles = {
     [`@media(min-width: ${FAKE_PHONE.breakPx}px)`]: {
       height: FAKE_PHONE.heightPx,
       width: FAKE_PHONE.widthPx,
-      margin: "100px auto",
+      margin: "20px auto",
       boxShadow: "0 20px 100px rgba(0, 0, 0, 0.5)",
       outline: "1px solid rgba(0, 0, 0, 0.1)",
     },

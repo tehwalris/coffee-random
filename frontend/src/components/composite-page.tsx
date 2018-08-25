@@ -1,6 +1,5 @@
 import * as React from "react";
 import posed, { PoseGroup } from "react-pose";
-import { Target } from "./cover-animate";
 import { css } from "glamor";
 import { RatingStore, COLUMN_COUNT } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
@@ -12,7 +11,12 @@ import { HEAD_RATIO } from "./head";
 import { sum, tail, zipWith } from "lodash";
 import RatingSquare from "./rating-square";
 import Placed from "./placed";
-import { colors } from "../style";
+import { colors, sizes } from "../style";
+
+export enum Target {
+  Machine,
+  Square,
+}
 
 interface Props {
   top: React.ReactChild;
@@ -116,6 +120,7 @@ const consts = {
   headToTop: 0.1,
   platformH: 0.1,
   platformToBottom: 0.15,
+  horizontalMorphSpeedup: 0.3,
 };
 
 function layoutHeads(target: Rect, reference: Rect): Rect[] {
@@ -200,7 +205,10 @@ function derive(inputs: Inputs): Derived {
     0,
     0,
   );
-  const current = machine.mix(square, inputs.t);
+  const _h = consts.horizontalMorphSpeedup;
+  const _a = machine.mix(square, inputs.t);
+  const _b = machine.mix(square, Math.max(0, (inputs.t - _h) / (1 - _h)));
+  const current = new Rect(_b.w, _a.h, _b.x, _a.y);
   const headsMachine = layoutHeads(machine, machine);
   const headsSquare = spaceEvenlyX(layoutHeads(square, machine));
   const heads = zipWith(headsMachine, headsSquare, (a, b) =>
@@ -282,7 +290,18 @@ export default class CompositePage extends React.Component<Props, State> {
               <Placed
                 place={({ current }: Derived) => ({
                   ...current,
-                  style: { backgroundColor: colors.machineDark },
+                  style: {
+                    backgroundColor: colors.machineDark,
+                    boxShadow: [
+                      4 *
+                        Math.max(0, Math.min(0.25, t)) *
+                        sizes.shadow.offsetXPx +
+                        "px",
+                      sizes.shadow.offsetYPx + "px",
+                      sizes.shadow.blurPx + "px",
+                      `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
+                    ].join(" "),
+                  },
                 })}
               />
               <Machine column={column} stopPour={t > 0} />

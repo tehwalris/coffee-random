@@ -49,6 +49,13 @@ export const sizes = {
 
   inputHeightPx: 55,
   buttonWidthPx: 150,
-  tickSizePx: 60,
-  spacingPx: [16, 25, 32, 60],
+  tickSizePx: 57,
+  spacingPx: [16, 25, 32, 70],
+
+  shadow: {
+    blurPx: 4,
+    offsetXPx: 3,
+    offsetYPx: 5,
+    opacity: 0.2,
+  },
 };
