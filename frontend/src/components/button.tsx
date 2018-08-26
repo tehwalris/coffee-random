@@ -35,6 +35,7 @@ const styles = {
     border: "none",
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
+    touchAction: "none",
 
     ":focus": { outline: "none" },
   }),
@@ -99,18 +100,18 @@ export default class Button extends React.Component<Props, State> {
     const overlayScale = tEnter;
     const overlayOpacity = Math.min(3 * tEnter, 1 - tLeave);
     const depression = Math.min(1, 10 * tEnter, 1 - tLeave);
-    const shadowScale = 1 - 0.7 * depression;
+    const shadowScale = 1 - 0.5 * depression;
     const shadowOpacity = (1 + depression) * sizes.shadow.opacity;
     const dynamic = {
       button: {
         transform: [
           `scale(${1 - 0.02 * depression})`,
-          `translateY(${-0.5 * shadowScale * sizes.shadow.offsetYPx}px)`,
+          `translateY(${-0.25 * shadowScale * sizes.shadow.offsetYPx}px)`,
         ].join(" "),
         boxShadow: [
           shadowScale * sizes.shadow.offsetXPx + "px",
           shadowScale * sizes.shadow.offsetYPx + "px",
-          sizes.shadow.blurPx + "px",
+          shadowScale * sizes.shadow.blurPx + "px",
           `rgba(0, 0, 0, ${shadowOpacity})`,
         ].join(" "),
       },
