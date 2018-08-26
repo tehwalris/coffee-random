@@ -5,10 +5,16 @@ import { colors, sizes } from "../style";
 type Props = React.InputHTMLAttributes<HTMLButtonElement>;
 
 interface State {
-  press?: { x: number; y: number };
+  now: number;
+  pressTime?: number;
+  releaseTime?: number;
+  lastPress?: { x: number; y: number };
+  currentPress?: { x: number; y: number };
 }
 
 const OVERLAY_ANGLE_RAD = Math.PI / 8;
+const OVERLAY_ENTER_TIME_MS = 200;
+const OVERLAY_LEAVE_TIME_MS = 300;
 
 // (Rotated) overlay just big enough to contain button
 const overlayWidth =
@@ -29,12 +35,6 @@ const styles = {
     border: "none",
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
-    boxShadow: [
-      sizes.shadow.offsetXPx + "px",
-      sizes.shadow.offsetYPx + "px",
-      sizes.shadow.blurPx + "px",
-      `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
-    ].join(" "),
 
     ":focus": { outline: "none" },
   }),
@@ -72,52 +72,122 @@ function cursorToOverlayOffsetX(cx: number, cy: number): number {
 }
 
 export default class Button extends React.Component<Props, State> {
-  state: State = {};
+  state: State = { now: 0 };
 
   componentDidMount() {
     document.addEventListener("mouseup", this.onRelease);
+    document.addEventListener("touchend", this.onRelease);
   }
 
   componentWillUnmount() {
     document.removeEventListener("mouseup", this.onRelease);
+    document.removeEventListener("touchend", this.onRelease);
   }
 
   render() {
-    const { press } = this.state;
-    const t = 0.2;
-    const overlayDynamic: React.CSSProperties = {
-      opacity: press ? 1 : 0,
-      transform: press
-        ? [
-            `rotate(${OVERLAY_ANGLE_RAD}rad)`,
-            `translateX(${-0.5 * overlayWidth +
-              cursorToOverlayOffsetX(press.x, press.y)}px)`,
-            `scaleX(${t})`,
-          ].join(" ")
-        : undefined,
+    const { lastPress, pressTime, releaseTime, now } = this.state;
+    const tEnter = pressTime
+      ? Math.max(0, Math.min(1, (now - pressTime) / OVERLAY_ENTER_TIME_MS))
+      : 0;
+    const tLeave = releaseTime
+      ? Math.max(0, Math.min(1, (now - releaseTime) / OVERLAY_LEAVE_TIME_MS))
+      : 0;
+    const dx =
+      pressTime && lastPress
+        ? cursorToOverlayOffsetX(lastPress.x, lastPress.y)
+        : 0;
+    const overlayScale = tEnter;
+    const overlayOpacity = Math.min(3 * tEnter, 1 - tLeave);
+    const depression = Math.min(1, 10 * tEnter, 1 - tLeave);
+    const shadowScale = 1 - 0.7 * depression;
+    const shadowOpacity = (1 + depression) * sizes.shadow.opacity;
+    const dynamic = {
+      button: {
+        transform: [
+          `scale(${1 - 0.02 * depression})`,
+          `translateY(${-0.5 * shadowScale * sizes.shadow.offsetYPx}px)`,
+        ].join(" "),
+        boxShadow: [
+          shadowScale * sizes.shadow.offsetXPx + "px",
+          shadowScale * sizes.shadow.offsetYPx + "px",
+          sizes.shadow.blurPx + "px",
+          `rgba(0, 0, 0, ${shadowOpacity})`,
+        ].join(" "),
+      },
+      overlay: {
+        opacity: overlayOpacity,
+        transform: pressTime
+          ? [
+              `rotate(${OVERLAY_ANGLE_RAD}rad)`,
+              `translateX(${-0.5 * overlayWidth + dx}px)`,
+              `scaleX(${overlayScale})`,
+              `translateX(${0.5 * overlayWidth - dx}px)`,
+            ].join(" ")
+          : undefined,
+      },
     };
     return (
       <button
         {...styles.button}
         {...this.props}
         onMouseDown={this.onMouseDown}
+        onTouchStart={this.onTouchStart}
         onBlur={this.onRelease}
+        style={dynamic.button}
       >
-        <div {...styles.overlay} style={overlayDynamic} />
+        <div {...styles.overlay} style={dynamic.overlay} />
         <div {...styles.content}>{this.props.children}</div>
       </button>
     );
   }
 
   onMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!this.state.press) {
-      this.setState({
-        press: { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY },
-      });
+    const { currentPress } = this.state;
+    if (!currentPress) {
+      this.onPress(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     }
   };
 
+  onTouchStart = (e: React.TouchEvent<HTMLButtonElement>) => {
+    const { currentPress } = this.state;
+    if (!currentPress) {
+      const touch = e.targetTouches.item(0);
+      const rect = e.currentTarget.getBoundingClientRect();
+      this.onPress(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+  };
+
+  onPress(x: number, y: number) {
+    window.requestAnimationFrame((now: number) => {
+      if (!this.state.releaseTime) {
+        // "if" needed to avoid race where "release" happens before the first animation frame for "press"
+        this.setState({
+          currentPress: { x, y },
+          lastPress: { x, y },
+          now,
+          pressTime: now,
+          releaseTime: undefined,
+        });
+      }
+      window.requestAnimationFrame(this.onFrame);
+    });
+  }
+
   onRelease = () => {
-    this.setState({ press: undefined });
+    if (this.state.currentPress || !this.state.releaseTime) {
+      this.setState({ currentPress: undefined, releaseTime: this.state.now });
+    }
+  };
+
+  onFrame = (now: number) => {
+    if (
+      this.state.currentPress ||
+      now - (this.state.releaseTime || now) <= OVERLAY_LEAVE_TIME_MS
+    ) {
+      this.setState({ now });
+      window.requestAnimationFrame(this.onFrame);
+    } else {
+      this.setState({ now, pressTime: undefined, releaseTime: undefined });
+    }
   };
 }
