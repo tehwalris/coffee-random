@@ -9,7 +9,8 @@ const b = {
     "#FAFAF8",
   ],
   theme: "#AF813D",
-  themeAlt: "#AF813D",
+  themeDarker: "#A05A2C",
+  themeLighter: "#FFF7E2",
 };
 
 export const colors = {
@@ -28,18 +29,24 @@ export const colors = {
   cup: "#FFFFFF",
 
   primaryBackground: b.theme,
-  primaryDetail: b.themeAlt,
+  primaryDetail: b.themeDarker,
   primaryContent: "#FFFFFF",
 
   focusedBackground: "#FFFFFF",
   focusedBorder: b.theme,
   focusedContent: b.greys[0],
   focusedPlaceholder: b.greys[4],
+  focusedSelectionBackground: b.theme,
+  focusedSelectionContent: "#FFFFFF",
 
   unfocusedBackground: "#FFFFFF",
   unfocusedBorder: b.greys[4],
   unfocusedContent: b.greys[0],
   unfocusedPlaceholder: b.greys[4],
+  unfocusedSelectionBackground: b.greys[4],
+  unfocusedSelectionContent: b.greys[0],
+
+  autofillBackground: b.themeLighter,
 };
 
 export const sizes = {

@@ -1,37 +1,86 @@
 import * as React from "react";
-import { css } from "glamor";
-import { sizes } from "../style";
+import { css, select as glamorSelect, keyframes } from "glamor";
+import { sizes, colors } from "../style";
 
 interface Props {
   className?: string;
   type?: "password";
-  focused: boolean;
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
+  autoFocus?: boolean;
 }
 
-const sharedStyles = {
+const focusedInputStyles = {
+  color: colors.focusedContent,
+  borderColor: colors.focusedBorder,
+  backgroundColor: colors.focusedBackground,
+  "::placeholder": { color: colors.focusedPlaceholder },
+  "::selection": {
+    backgroundColor: colors.focusedSelectionBackground,
+    color: colors.focusedSelectionContent,
+  },
+};
+
+const unfocusedInputStyles = {
+  color: colors.unfocusedContent,
+  borderColor: colors.unfocusedBorder,
+  backgroundColor: colors.unfocusedBackground,
+  "::placeholder": { color: colors.unfocusedPlaceholder },
+  "::selection": {
+    backgroundColor: colors.unfocusedSelectionBackground,
+    color: colors.unfocusedSelectionContent,
+  },
+};
+
+const styles = {
   input: css({
+    boxSizing: "border-box",
     width: "100%",
     height: sizes.inputHeightPx,
-    padding: "none",
+    margin: 0,
+    padding: `0 ${sizes.spacingPx[0]}px !important`,
+    borderWidth: sizes.border,
+    borderStyle: "solid",
     fontSize: sizes.uiFontSize,
+    fontFamily: "inherit",
+    boxShadow: [
+      "inset",
+      sizes.shadow.offsetXPx / 3 + "px",
+      sizes.shadow.offsetYPx / 3 + "px",
+      sizes.shadow.blurPx + "px",
+      `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
+    ].join(" "),
+
+    ":focus": {
+      ...focusedInputStyles,
+      outline: "none",
+    },
+
+    ":not(:focus)": unfocusedInputStyles,
   }),
-};
 
-const focusedStyles = {
-  input: css({}),
-};
-
-const unfocusedStyles = {
-  input: css({}),
+  // HACK Set the background color for autofilled inputs.
+  // Based on this: https://css-tricks.com/snippets/css/change-autocomplete-styles-webkit-browsers/
+  // It won't always work, but when it does, it will look a little nicer without being too confusing.
+  inputAutofill: glamorSelect(
+    ":-webkit-autofill",
+    css({
+      animation: `1s ${keyframes({
+        from: {
+          backgroundColor: colors.autofillBackground,
+          color: "inherit",
+        },
+        to: {},
+      })}`,
+      animationPlayState: "paused",
+    }),
+  ),
 };
 
 export default class Input extends React.Component<Props> {
   render() {
-    const { className, type, value, placeholder } = this.props;
-    const currentStyles = this.props.focused ? focusedStyles : unfocusedStyles;
+    const { className, type, value, placeholder, autoFocus } = this.props;
     return (
       <input
         className={className}
@@ -39,8 +88,12 @@ export default class Input extends React.Component<Props> {
         value={value}
         placeholder={placeholder}
         onChange={this.onChange}
-        {...sharedStyles.input}
-        {...currentStyles.input}
+        autoFocus={autoFocus}
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
+        {...styles.input}
+        {...styles.inputAutofill}
       />
     );
   }

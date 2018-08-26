@@ -1,6 +1,6 @@
 import * as React from "react";
 import { css } from "glamor";
-import { colors } from "../style";
+import { colors, sizes } from "../style";
 import Cup from "./cup";
 
 const styles = {
@@ -11,6 +11,12 @@ const styles = {
     height: "130px",
     paddingBottom: "5px",
     backgroundColor: colors.machineDark,
+    boxShadow: [
+      0,
+      sizes.shadow.offsetYPx + "px",
+      sizes.shadow.blurPx + "px",
+      `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
+    ].join(" "),
   }),
   coffee: css({
     flexGrow: "1",

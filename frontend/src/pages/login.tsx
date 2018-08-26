@@ -34,14 +34,13 @@ export default class LoginPage extends React.Component<Props> {
         <div {...styles.wrapper}>
           <Input
             className={styles.usernameInput.toString()}
-            focused={true}
             value={store.username}
             onChange={store.onUsernameChange}
             placeholder="Username"
+            autoFocus
           />
           <Input
             type="password"
-            focused={false}
             value={store.password}
             onChange={store.onPasswordChange}
             placeholder="Password"
