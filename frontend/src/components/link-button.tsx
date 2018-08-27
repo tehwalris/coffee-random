@@ -7,6 +7,14 @@ const styles = {
     border: "none",
     backgroundColor: "transparent",
     color: "inherit",
+
+    ":focus": {
+      outline: "none",
+    },
+
+    ":active": {
+      textDecoration: "underline",
+    },
   }),
 };
 
