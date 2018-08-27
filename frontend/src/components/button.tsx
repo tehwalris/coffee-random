@@ -72,8 +72,13 @@ function cursorToOverlayOffsetX(cx: number, cy: number): number {
   return rd * overlayWidth;
 }
 
+type Action = (now: number, next: () => void) => void;
+
 export default class Button extends React.Component<Props, State> {
   state: State = { now: 0 };
+  actionQueue: Action[] = [];
+  handlingActions = false;
+  didUnmount = false;
 
   componentDidMount() {
     document.addEventListener("mouseup", this.onRelease);
@@ -83,6 +88,7 @@ export default class Button extends React.Component<Props, State> {
   componentWillUnmount() {
     document.removeEventListener("mouseup", this.onRelease);
     document.removeEventListener("touchend", this.onRelease);
+    this.didUnmount = true;
   }
 
   render() {
@@ -129,6 +135,7 @@ export default class Button extends React.Component<Props, State> {
     };
     return (
       <button
+        tabIndex={-1}
         {...styles.button}
         {...this.props}
         onMouseDown={this.onMouseDown}
@@ -159,36 +166,86 @@ export default class Button extends React.Component<Props, State> {
   };
 
   onPress(x: number, y: number) {
-    window.requestAnimationFrame((now: number) => {
-      if (!this.state.releaseTime) {
-        // "if" needed to avoid race where "release" happens before the first animation frame for "press"
-        this.setState({
+    this.scheduleAction((now: number, next: () => void) => {
+      this.setState(
+        {
           currentPress: { x, y },
           lastPress: { x, y },
           now,
           pressTime: now,
           releaseTime: undefined,
-        });
-      }
-      window.requestAnimationFrame(this.onFrame);
+        },
+        next,
+      );
+      this.onFrame(now, next);
     });
   }
 
   onRelease = () => {
-    if (this.state.currentPress || !this.state.releaseTime) {
-      this.setState({ currentPress: undefined, releaseTime: this.state.now });
-    }
+    this.scheduleAction((now: number, next: () => void) => {
+      if (this.state.lastPress && !this.state.releaseTime) {
+        this.setState({ currentPress: undefined, now, releaseTime: now }, next);
+      } else {
+        next();
+      }
+    });
   };
 
-  onFrame = (now: number) => {
+  // scheduleAction runs a function on the earliest possible animation frame.
+  // ** Actions must always call "next" when they are done! **
+  // Actions may call next multiple times (only the first call is considered).
+  // All scheduled functions are run exactly once and in the order they were scheduled.
+  scheduleAction(_action: Action) {
+    this.actionQueue.push(_action);
+    window.requestAnimationFrame((now: number) => {
+      if (this.handlingActions) {
+        return;
+      }
+      this.handlingActions = true;
+      const handleNext = () => {
+        const current = this.actionQueue.shift();
+        if (!current) {
+          this.handlingActions = false;
+          return;
+        }
+        var nextCalled = false;
+        current(now, () => {
+          if (nextCalled) {
+            return;
+          }
+          nextCalled = true;
+          handleNext();
+        });
+      };
+      handleNext();
+    });
+  }
+
+  onFrame = (now: number, cb: () => void) => {
+    if (this.didUnmount) {
+      return;
+    }
     if (
-      this.state.currentPress ||
-      now - (this.state.releaseTime || now) <= OVERLAY_LEAVE_TIME_MS
+      this.state.lastPress &&
+      this.state.now - (this.state.releaseTime || this.state.now) <=
+        OVERLAY_LEAVE_TIME_MS
     ) {
-      this.setState({ now });
-      window.requestAnimationFrame(this.onFrame);
+      this.setState({ now }, cb);
+      window.requestAnimationFrame(t =>
+        this.onFrame(t, () => {
+          /* intentionally empty */
+        }),
+      );
     } else {
-      this.setState({ now, pressTime: undefined, releaseTime: undefined });
+      this.setState(
+        {
+          now,
+          lastPress: undefined,
+          pressTime: undefined,
+          releaseTime: undefined,
+        },
+        cb,
+      );
     }
   };
 }
