@@ -15,7 +15,7 @@ export default class Cup extends React.PureComponent<Props> {
     return (
       <Ratio ratio={HEIGHT} width={width}>
         <svg
-          viewBox={`${center ? "0.5" : "0"},0,1,${HEIGHT}`}
+          viewBox={`${center ? "0.5" : "0"},${1 - HEIGHT},1,${HEIGHT}`}
           width="100%"
           height="100%"
           style={{ overflow: "visible" }}
