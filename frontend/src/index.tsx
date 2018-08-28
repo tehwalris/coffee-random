@@ -15,8 +15,7 @@ css.global("body", {
   color: colors.content,
   userSelect: "none",
   perspective: RENDER_DEBUG ? "1000px" : undefined,
-  fontFamily:
-    "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif",
+  fontFamily: "Montserrat,Open Sans,Helvetica Neue,sans-serif",
 });
 
 ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);
