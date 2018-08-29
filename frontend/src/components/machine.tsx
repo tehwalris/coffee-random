@@ -1,9 +1,5 @@
 import * as React from "react";
-import MachinePure, {
-  Heads,
-  HeadProps,
-  Props as PureProps,
-} from "./machine-pure";
+import MachinePure, { Heads, HeadProps } from "./machine-pure";
 import { unreachable, easeInQuad } from "../util";
 import { times } from "lodash";
 import { createSpring } from "../spring";
@@ -14,6 +10,13 @@ import { Derived } from "./composite-page";
 interface Props extends PlaceableProps<Derived> {
   column?: number; // integer [1, 4]
   stopPour: boolean;
+}
+
+interface Plan {
+  arrowPos: number;
+  heads: Heads;
+  coffee: number;
+  blonding: number;
 }
 
 interface State {
@@ -29,7 +32,7 @@ interface State {
   position: number; // same as column, but float and wider range
   velocity: number;
   stillFrames: number; // number of consecutive frames where velocity === 0
-  plan: PureProps;
+  plan: Plan;
   abort: boolean; // true when column should switch
   blonding: number; // preserve blonding across stages on early aborts
 }
@@ -116,10 +119,16 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   render() {
-    return <MachinePure {...this.state.plan} render={this.props.render} />;
+    return (
+      <MachinePure
+        {...this.state.plan}
+        render={this.props.render}
+        freezeSlowAnimations={this.props.stopPour}
+      />
+    );
   }
 
-  private plan(): PureProps {
+  private plan(): Plan {
     const { t, stageStartT, lastT, stage } = this.state;
     const dt = t - lastT;
     const stageT = t - stageStartT;
@@ -141,7 +150,7 @@ export default class Machine extends React.Component<Props, State> {
     }
   }
 
-  private planMoveEnter(stageT: number, dt: number): PureProps {
+  private planMoveEnter(stageT: number, dt: number): Plan {
     const { position, velocity, column, stillFrames, abort } = this.state;
     if (!abort && this.props.column === undefined) {
       // Don't plan anything until we know where the cup should be.
@@ -171,7 +180,7 @@ export default class Machine extends React.Component<Props, State> {
     };
   }
 
-  private planMoveLeave(stageT: number, dt: number): PureProps {
+  private planMoveLeave(stageT: number, dt: number): Plan {
     const { position } = this.state;
     const reachedOuter =
       Math.abs(position - getOutsidePos(this.state.column)) < 0.1;
@@ -214,7 +223,7 @@ export default class Machine extends React.Component<Props, State> {
     };
   }
 
-  private planPrePour(stageT: number): PureProps {
+  private planPrePour(stageT: number): Plan {
     const { position, column } = this.state;
     const _coffee = (stageT - DOOR_MS_PRE) / COFFEE_DROP_MS;
     const coffee = easeInQuad(Math.max(0, Math.min(1, _coffee)));
@@ -233,7 +242,7 @@ export default class Machine extends React.Component<Props, State> {
     };
   }
 
-  private planPour(stageT: number): PureProps {
+  private planPour(stageT: number): Plan {
     const { position, column, abort } = this.state;
     const head: HeadProps = {
       door: 1,
@@ -256,7 +265,7 @@ export default class Machine extends React.Component<Props, State> {
     };
   }
 
-  private planPostPour(stageT: number): PureProps {
+  private planPostPour(stageT: number): Plan {
     const { position, column, blonding, abort } = this.state;
     const coffee = easeInQuad(
       Math.max(0, Math.min(1, stageT / COFFEE_DROP_MS)),
@@ -275,7 +284,7 @@ export default class Machine extends React.Component<Props, State> {
     };
   }
 
-  private planDelay(stageT: number): PureProps {
+  private planDelay(stageT: number): Plan {
     const { position, abort } = this.state;
     if (abort) {
       this.switchStage(Stage.MoveLeave);

@@ -13,6 +13,7 @@ export interface Props extends PlaceableProps<Derived> {
   heads: Heads;
   coffee: number; // [0, 1] // 0 - no coffee, 0.5 - full coffee, 1 - no coffee (0.25 some coffee from the top)
   blonding: number; // [0, 1] // 0 - dark coffee, 1 - blonde coffee
+  freezeSlowAnimations: boolean;
 }
 
 // see head.tsx
@@ -61,7 +62,14 @@ function dynamicCoffeeStyles(t: number, b: number): React.CSSProperties {
 
 export default class MachinePure extends React.Component<Props> {
   render() {
-    const { arrowPos, heads, coffee, blonding, render } = this.props;
+    const {
+      arrowPos,
+      heads,
+      coffee,
+      blonding,
+      render,
+      freezeSlowAnimations,
+    } = this.props;
     return [
       <Placed
         key="cup"
@@ -70,6 +78,7 @@ export default class MachinePure extends React.Component<Props> {
           style: { opacity: o },
         })}
         render={render}
+        updateFrom={() => false}
       >
         <div {...styles.cupWrapper}>
           <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
@@ -82,6 +91,7 @@ export default class MachinePure extends React.Component<Props> {
           style: { opacity: o },
         })}
         render={render}
+        updateFrom={() => coffee + blonding}
       >
         <div {...styles.coffee} style={dynamicCoffeeStyles(coffee, blonding)} />
       </Placed>,
@@ -93,6 +103,11 @@ export default class MachinePure extends React.Component<Props> {
             style: { opacity: o },
           })}
           render={render}
+          updateFrom={() =>
+            heads[i].door *
+            (heads[i].light ? 1 : -1) *
+            (freezeSlowAnimations ? 0 : 1)
+          }
         >
           <Head
             key={i}
@@ -110,6 +125,7 @@ export default class MachinePure extends React.Component<Props> {
             style: { backgroundColor: colors.machineLight, opacity: o },
           })}
           render={render}
+          updateFrom={() => false}
         />
       )),
     ];
