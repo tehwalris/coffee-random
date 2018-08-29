@@ -70,6 +70,8 @@ export default class PlacementParent<I, D extends I> extends React.Component<
       transform: `translate(${x}px, ${y}px)`,
       width: w,
       height: h,
+      willChange: "transform opacity",
+      contain: "size layout style",
       ...style,
     };
   }
