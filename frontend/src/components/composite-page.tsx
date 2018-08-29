@@ -313,8 +313,16 @@ export default class CompositePage extends React.Component<Props, State> {
                   },
                 })}
               />
-              <Machine column={column} stopPour={t > 0} />
-              <RatingSquare store={ratingStore} pointerEvents={t > 0} />
+              <Machine
+                column={column}
+                stopPour={t > 0}
+                stopEverything={t === 1}
+              />
+              <RatingSquare
+                store={ratingStore}
+                pointerEvents={t > 0}
+                stopInteraction={t === 0 || (t < 0.9 && this.state.t === 1)}
+              />
             </PlacementParent>
           )}
         </Spring>

@@ -12,6 +12,7 @@ import { PlaceableProps } from "./placement-parent";
 interface Props extends PlaceableProps<Derived> {
   store?: RatingStore;
   pointerEvents: boolean;
+  stopInteraction: boolean;
 }
 
 const styles = {
@@ -44,7 +45,7 @@ const TickWrapperInner = posed.div({
 
 export default class RatingSquare extends React.Component<Props> {
   render() {
-    const { store, render, pointerEvents } = this.props;
+    const { store, render, pointerEvents, stopInteraction } = this.props;
     const rating = store && store.rating;
     const state = store && store.getState();
     const labelStyle = (
@@ -73,6 +74,7 @@ export default class RatingSquare extends React.Component<Props> {
             pointerEvents: pointerEvents ? undefined : "none",
           },
         })}
+        updateFrom={() => false}
         render={render}
       >
         <div style={labelStyle("top", "0deg", false)}>Pretty good</div>
@@ -89,6 +91,7 @@ export default class RatingSquare extends React.Component<Props> {
             pointerEvents: pointerEvents ? undefined : "none",
           },
         })}
+        updateFrom={() => false}
         render={render}
       >
         <div style={labelStyle("bottom", "0deg", false)}>Terrible</div>
@@ -105,6 +108,7 @@ export default class RatingSquare extends React.Component<Props> {
             pointerEvents: pointerEvents ? undefined : "none",
           },
         })}
+        updateFrom={() => false}
         render={render}
       >
         <div style={labelStyle("left", "-90deg", true)}>No people</div>
@@ -121,6 +125,7 @@ export default class RatingSquare extends React.Component<Props> {
             pointerEvents: pointerEvents ? undefined : "none",
           },
         })}
+        updateFrom={() => false}
         render={render}
       >
         <div style={labelStyle("right", "90deg", true)}>Huge queue</div>
@@ -134,6 +139,7 @@ export default class RatingSquare extends React.Component<Props> {
             pointerEvents: pointerEvents ? undefined : "none",
           },
         })}
+        updateFrom={() => (stopInteraction ? false : {})}
         render={render}
       >
         <TapArea

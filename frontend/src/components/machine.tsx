@@ -10,6 +10,7 @@ import { Derived } from "./composite-page";
 interface Props extends PlaceableProps<Derived> {
   column?: number; // integer [1, 4]
   stopPour: boolean;
+  stopEverything: boolean;
 }
 
 interface Plan {
@@ -115,6 +116,9 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
+    if (nextProps.stopEverything) {
+      return false;
+    }
     return nextProps.column !== this.props.column || nextState !== this.state;
   }
 
