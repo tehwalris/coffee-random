@@ -1,5 +1,4 @@
 import * as React from "react";
-import posed, { PoseGroup } from "react-pose";
 import { css } from "glamor";
 import { RatingStore, COLUMN_COUNT } from "../store";
 import { Spring, config as springConfigs } from "react-spring";
@@ -12,6 +11,9 @@ import { sum, tail, zipWith } from "lodash";
 import RatingSquare from "./rating-square";
 import Placed from "./placed";
 import { colors, sizes } from "../style";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+
+const SECTION_FADE_TIME_MS = 150;
 
 export enum Target {
   Machine,
@@ -33,11 +35,6 @@ interface State {
   t: number; // [0, 1] - target postion of spring
 }
 
-const Section = posed.div({
-  enter: { opacity: 1, top: 0 },
-  exit: { opacity: 0, top: 0 },
-});
-
 const styles = {
   top: css({
     position: "relative",
@@ -52,18 +49,30 @@ const styles = {
     top: 0,
     width: "100%",
     height: "100%",
+
+    ".fade-enter": { opacity: 0 },
+    ".fade-enter-active": {
+      opacity: 1,
+      transition: `opacity ${SECTION_FADE_TIME_MS}ms ease-in-out`,
+    },
+    ".fade-exit": { opacity: 1 },
+    ".fade-exit-active": {
+      opacity: 0,
+      transition: `opacity ${SECTION_FADE_TIME_MS}ms ease-in-out`,
+    },
   }),
 };
 
 const s = (k: React.Key, c: React.ReactChild) => (
-  <PoseGroup>
+  <TransitionGroup>
     {[
-      <Section key={k} {...styles.section}>
-        {c}
-      </Section>,
+      <CSSTransition key={k} classNames="fade" timeout={SECTION_FADE_TIME_MS}>
+        <div {...styles.section}>{c}</div>
+      </CSSTransition>,
     ]}
-  </PoseGroup>
+  </TransitionGroup>
 );
+
 const springConfig = RENDER_DEBUG
   ? springConfigs.slow
   : { tension: 50, friction: 7 };
