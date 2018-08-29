@@ -95,7 +95,7 @@ export default class Input extends React.Component<Props> {
         {...styles.input}
         {...styles.inputAutofill}
         style={
-          type === "password"
+          type === "password" && value
             ? { fontFamily: "caption", fontSize: 20 }
             : undefined
         }
