@@ -72,6 +72,17 @@ export default class MachinePure extends React.Component<Props> {
     } = this.props;
     return [
       <Placed
+        key="coffee"
+        place={({ midLayer, machineOpacity: o }: Derived) => ({
+          ...midLayer(arrowPos, false),
+          style: { opacity: o },
+        })}
+        render={render}
+        updateFrom={() => coffee + blonding}
+      >
+        <div {...styles.coffee} style={dynamicCoffeeStyles(coffee, blonding)} />
+      </Placed>,
+      <Placed
         key="cup"
         place={({ midLayer, machineOpacity: o }: Derived) => ({
           ...midLayer(arrowPos, true),
@@ -83,17 +94,6 @@ export default class MachinePure extends React.Component<Props> {
         <div {...styles.cupWrapper}>
           <Cup width={`${CUP_WIDTH_PERCENT}%`} center />
         </div>
-      </Placed>,
-      <Placed
-        key="coffee"
-        place={({ midLayer, machineOpacity: o }: Derived) => ({
-          ...midLayer(arrowPos, false),
-          style: { opacity: o },
-        })}
-        render={render}
-        updateFrom={() => coffee + blonding}
-      >
-        <div {...styles.coffee} style={dynamicCoffeeStyles(coffee, blonding)} />
       </Placed>,
       ...[0, 1, 2, 3].map(i => (
         <Placed

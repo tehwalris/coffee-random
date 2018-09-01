@@ -1,6 +1,8 @@
 import * as React from "react";
 import { BaseProps as PlacedProps } from "./placed";
 
+const DPR = window.devicePixelRatio;
+
 export interface Placement {
   x: number;
   y: number;
@@ -56,6 +58,14 @@ export default class PlacementParent<I, D extends I> extends React.Component<
     );
   };
 
+  // round takes a value in CSS pixels a rounds it.
+  // The rounded value is a multiple of 1/DPR, so
+  // that when it is used for transforms, the transform
+  // is aligned to real device pixels.
+  private round(v: number): number {
+    return Math.round(v * DPR) / DPR;
+  }
+
   private placementToStyle({
     x,
     y,
@@ -67,9 +77,9 @@ export default class PlacementParent<I, D extends I> extends React.Component<
       position: "absolute",
       top: 0,
       left: 0,
-      transform: `translate(${x}px, ${y}px)`,
-      width: w,
-      height: h,
+      transform: `translate(${this.round(x)}px, ${this.round(y)}px)`,
+      width: this.round(w),
+      height: this.round(h),
       willChange: "transform opacity",
       contain: "size layout style",
       ...style,
