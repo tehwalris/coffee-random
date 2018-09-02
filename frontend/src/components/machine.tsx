@@ -243,9 +243,12 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   private planPrePour(stageT: number): Plan {
-    const { position, column } = this.state;
+    const { position, column, abort } = this.state;
     const _coffee = (stageT - DOOR_MS_PRE) / COFFEE_DROP_MS;
     const coffee = easeInQuad(Math.max(0, Math.min(1, _coffee)));
+    if (abort && coffee === 0) {
+      this.switchStage(Stage.MoveLeave);
+    }
     if (coffee >= 1) {
       this.switchStage(Stage.Pour);
     }

@@ -6,7 +6,7 @@ import Cup from "./cup";
 const styles = {
   wrapper: css({
     position: "relative",
-    height: "150px",
+    height: "160px",
     fontSize: sizes.titleFontSize,
     color: "white",
     backgroundColor: colors.machineDark,
@@ -20,8 +20,8 @@ const styles = {
   picture: css({
     position: "absolute",
     top: "0",
-    bottom: "15px",
-    right: "0.5em",
+    bottom: sizes.spacingPx[0],
+    right: sizes.spacingPx[1],
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -33,13 +33,13 @@ const styles = {
   }),
   textCoffee: css({
     position: "absolute",
-    top: "0.5em",
-    left: "0.5em",
+    top: sizes.spacingPx[1],
+    left: sizes.spacingPx[1],
   }),
   textRandom: css({
     position: "absolute",
-    top: "1.5em",
-    left: "2em",
+    top: `calc(${sizes.spacingPx[1]}px + 1em)`,
+    left: `calc(${sizes.spacingPx[1]}px + 1.2em)`,
   }),
 };
 
