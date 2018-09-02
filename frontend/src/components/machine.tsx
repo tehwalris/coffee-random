@@ -59,12 +59,13 @@ const SWITCH_STILL_FRAMES = 2;
 
 const DOOR_MS_PRE = 2000;
 const DOOR_MS_POST = 1000;
-const COFFEE_DROP_MS = 80;
+const COFFEE_DROP_MS = 150;
 const OUTSIDE_POS = 1;
 const BLINK_MS = 1000;
 const POUR_MS = 7000;
 const MIN_POUR_MS = 500;
 const NEXT_POUR_DELAY = 2000;
+const POST_POUR_EXTRA_DELAY_MS = 200;
 
 const DEFAULT_HEAD: HeadProps = {
   door: 0,
@@ -154,6 +155,20 @@ export default class Machine extends React.Component<Props, State> {
     }
   }
 
+  private planHeads(
+    activeColumn: number | undefined,
+    light: boolean = false,
+  ): Heads {
+    const dt = this.state.t - this.state.lastT;
+    const clamp = (v: number) => Math.max(0, Math.min(1, v));
+    return this.state.plan.heads.map((h, i) => ({
+      door: clamp(
+        h.door + dt / (i + 1 === activeColumn ? DOOR_MS_PRE : -DOOR_MS_POST),
+      ),
+      light,
+    })) as Heads;
+  }
+
   private planMoveEnter(stageT: number, dt: number): Plan {
     const { position, velocity, column, stillFrames, abort } = this.state;
     if (!abort && this.props.column === undefined) {
@@ -178,7 +193,7 @@ export default class Machine extends React.Component<Props, State> {
     }
     return {
       arrowPos: position,
-      heads: times(4, () => DEFAULT_HEAD) as Heads,
+      heads: this.planHeads(undefined),
       coffee: 0,
       blonding: 0,
     };
@@ -221,7 +236,7 @@ export default class Machine extends React.Component<Props, State> {
     }
     return {
       arrowPos: this.state.position,
-      heads: times(4, () => DEFAULT_HEAD) as Heads,
+      heads: this.planHeads(undefined),
       coffee: 0,
       blonding: 0,
     };
@@ -234,13 +249,9 @@ export default class Machine extends React.Component<Props, State> {
     if (coffee >= 1) {
       this.switchStage(Stage.Pour);
     }
-    const head: HeadProps = {
-      door: Math.max(0, Math.min(1, stageT / DOOR_MS_PRE)),
-      light: false,
-    };
     return {
       arrowPos: position,
-      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: this.planHeads(column, false),
       coffee: coffee / 2,
       blonding: 0,
     };
@@ -248,10 +259,6 @@ export default class Machine extends React.Component<Props, State> {
 
   private planPour(stageT: number): Plan {
     const { position, column, abort } = this.state;
-    const head: HeadProps = {
-      door: 1,
-      light: stageT % (2 * BLINK_MS) < BLINK_MS,
-    };
     if (
       this.props.stopPour ||
       (abort && stageT > MIN_POUR_MS) ||
@@ -259,30 +266,28 @@ export default class Machine extends React.Component<Props, State> {
     ) {
       this.switchStage(Stage.PostPour);
     }
+    const light = stageT % (2 * BLINK_MS) < BLINK_MS;
     const blonding = Math.max(0, Math.min(1, stageT / POUR_MS));
     this.setState({ blonding });
     return {
       arrowPos: position,
-      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: this.planHeads(column, light),
       coffee: 0.5,
       blonding,
     };
   }
 
   private planPostPour(stageT: number): Plan {
-    const { position, column, blonding, abort } = this.state;
+    const { position, blonding, abort } = this.state;
     const coffee = easeInQuad(
       Math.max(0, Math.min(1, stageT / COFFEE_DROP_MS)),
     );
-    const _door = (stageT - COFFEE_DROP_MS) / DOOR_MS_POST;
-    const door = Math.max(0, Math.min(1, _door));
-    if (door >= 1) {
+    if (stageT >= COFFEE_DROP_MS + POST_POUR_EXTRA_DELAY_MS) {
       this.switchStage(abort ? Stage.MoveLeave : Stage.Delay);
     }
-    const head: HeadProps = { door: 1 - door, light: false };
     return {
       arrowPos: position,
-      heads: times(4, i => (i + 1 === column ? head : DEFAULT_HEAD)) as Heads,
+      heads: this.planHeads(undefined),
       coffee: 0.5 + coffee / 2,
       blonding,
     };
@@ -297,7 +302,7 @@ export default class Machine extends React.Component<Props, State> {
     }
     return {
       arrowPos: position,
-      heads: times(4, i => DEFAULT_HEAD) as Heads,
+      heads: this.planHeads(undefined),
       coffee: 0,
       blonding: 0,
     };
