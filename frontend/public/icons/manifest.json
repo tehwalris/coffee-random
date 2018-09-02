@@ -2,6 +2,7 @@
   "name": "coffee-random",
   "short_name": "Coffee",
   "start_url": "/index.html",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/android-chrome-192x192.png",
