@@ -58,6 +58,11 @@ const styles = {
     },
 
     ":not(:focus)": unfocusedInputStyles,
+
+    '[type="password"]:not(:placeholder-shown)': {
+      fontFamily: "caption",
+      fontSize: 20,
+    },
   }),
 
   // HACK Set the background color for autofilled inputs.
@@ -94,11 +99,6 @@ export default class Input extends React.Component<Props> {
         spellCheck={false}
         {...styles.input}
         {...styles.inputAutofill}
-        style={
-          type === "password" && value
-            ? { fontFamily: "caption", fontSize: 20 }
-            : undefined
-        }
       />
     );
   }
