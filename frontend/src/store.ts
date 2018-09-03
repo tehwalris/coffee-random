@@ -13,6 +13,7 @@ class BaseState {
   protected update: UpdateHandler;
   username = "";
   password = "";
+  didAutoLogin = false;
   column: number | undefined = undefined;
 
   constructor(arg: UpdateHandler | BaseState) {
@@ -20,6 +21,7 @@ class BaseState {
       this.update = arg.update;
       this.username = arg.username;
       this.password = arg.password;
+      this.didAutoLogin = arg.didAutoLogin;
       this.column = arg.column;
     } else {
       this.update = arg;
@@ -80,6 +82,7 @@ export class LoginStore extends BaseState {
       await client.checkCreds(v);
       this.username = v.username;
       this.password = v.password;
+      this.didAutoLogin = true;
       this.tryAdvance();
     } catch (e) {
       console.error(e); //tslint:disable-line:no-console

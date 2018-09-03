@@ -8,6 +8,7 @@ import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
 import { colors, sizes } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
+import SlideDown from "./components/slide-down";
 
 interface State {
   store: Store;
@@ -95,30 +96,47 @@ class App extends React.Component<{}, State> {
   renderInner(store: Store) {
     const { storeIndex } = this.state;
     if (store instanceof LoginStore) {
-      return <LoginPage store={store} />;
+      return (
+        <SlideDown
+          noAnimate={store.didAutoLogin}
+          top={<LoginPage store={store} />}
+        />
+      );
     }
     if (store instanceof ColumnStore) {
       return (
-        <CompositePage
-          {...phoneDims}
-          target={Target.Machine}
-          top={<ColumnTop />}
-          bottom={<ColumnBottom store={store} />}
-          column={store.column}
-          storeIndex={storeIndex}
+        <SlideDown
+          noAnimate={store.didAutoLogin}
+          bottom={
+            <CompositePage
+              {...phoneDims}
+              target={Target.Machine}
+              top={<ColumnTop />}
+              bottom={<ColumnBottom store={store} />}
+              column={store.column}
+              storeIndex={storeIndex}
+            />
+          }
+          focusBottom
         />
       );
     }
     if (store instanceof RatingStore) {
       return (
-        <CompositePage
-          {...phoneDims}
-          target={Target.Square}
-          top={<RatingTop />}
-          bottom={<div />}
-          column={store.column}
-          storeIndex={storeIndex}
-          ratingStore={store}
+        <SlideDown
+          noAnimate={store.didAutoLogin}
+          bottom={
+            <CompositePage
+              {...phoneDims}
+              target={Target.Square}
+              top={<RatingTop />}
+              bottom={<div />}
+              column={store.column}
+              storeIndex={storeIndex}
+              ratingStore={store}
+            />
+          }
+          focusBottom
         />
       );
     }
