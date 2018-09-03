@@ -33,6 +33,11 @@ const unfocusedInputStyles = {
   },
 };
 
+const filledPasswordStyles = {
+  fontFamily: "caption",
+  fontSize: 20,
+};
+
 const styles = {
   input: css({
     boxSizing: "border-box",
@@ -59,10 +64,8 @@ const styles = {
 
     ":not(:focus)": unfocusedInputStyles,
 
-    '[type="password"]:not(:placeholder-shown)': {
-      fontFamily: "caption",
-      fontSize: 20,
-    },
+    '[type="password"]:not(:placeholder-shown)': filledPasswordStyles,
+    '[type="password"]:-webkit-autofill': filledPasswordStyles,
   }),
 
   // HACK Set the background color for autofilled inputs.
