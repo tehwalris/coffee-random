@@ -6,6 +6,7 @@ import { createSpring } from "../spring";
 import { COLUMN_COUNT } from "../store";
 import { PlaceableProps } from "./placement-parent";
 import { Derived } from "./composite-page";
+import { springConfigCup } from "../style";
 
 interface Props extends PlaceableProps<Derived> {
   column?: number; // integer [1, 4]
@@ -50,8 +51,8 @@ enum Stage {
 const SPRING = createSpring({
   stepMillis: 5,
   precision: 0.005,
-  stiffness: 120,
-  damping: 17,
+  stiffness: springConfigCup.tension,
+  damping: springConfigCup.friction,
 });
 
 // Switch stage from MoveEnter/MoveLeave when this is stillFrames >= SWITCH_STILL_FRAMES

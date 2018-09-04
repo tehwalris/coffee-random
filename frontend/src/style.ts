@@ -1,3 +1,6 @@
+import { config as springConfigs } from "react-spring";
+import { RENDER_DEBUG } from "./util";
+
 const b = {
   greys: [
     "#333333",
@@ -66,3 +69,11 @@ export const sizes = {
     opacity: 0.2,
   },
 };
+
+export const springConfigMain = RENDER_DEBUG
+  ? springConfigs.slow
+  : { tension: 50, friction: 7 };
+
+export const springConfigLoginSlide = { tension: 50, friction: 8.75 };
+
+export const springConfigCup = { tension: 120, friction: 17 };

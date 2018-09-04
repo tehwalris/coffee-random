@@ -1,16 +1,16 @@
 import * as React from "react";
 import { css } from "glamor";
 import { RatingStore, COLUMN_COUNT } from "../store";
-import { Spring, config as springConfigs } from "react-spring";
+import { Spring } from "react-spring";
 import Title from "./title";
-import { RENDER_DEBUG, mix, easeInQuad } from "../util";
+import { mix, easeInQuad } from "../util";
 import PlacementParent from "./placement-parent";
 import Machine from "./machine";
 import { HEAD_RATIO } from "./head";
 import { sum, tail, zipWith } from "lodash";
 import RatingSquare from "./rating-square";
 import Placed from "./placed";
-import { colors, sizes } from "../style";
+import { colors, sizes, springConfigMain } from "../style";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 const SECTION_FADE_TIME_MS = 150;
@@ -72,10 +72,6 @@ const s = (k: React.Key, c: React.ReactChild) => (
     ]}
   </TransitionGroup>
 );
-
-const springConfig = RENDER_DEBUG
-  ? springConfigs.slow
-  : { tension: 50, friction: 7 };
 
 function toSpringTarget(target: Target): number {
   return +(target === Target.Square);
@@ -276,7 +272,7 @@ export default class CompositePage extends React.Component<Props, State> {
           <div {...styles.top}>{s(storeIndex, top)}</div>
           <Title>&nbsp;</Title>
         </div>
-        <Spring to={{ t: this.state.t }} config={springConfig}>
+        <Spring to={{ t: this.state.t }} config={springConfigMain}>
           {({ t }: { t: number }) => (
             <PlacementParent
               inputs={{ winW: widthPx, winH: heightPx, t }}
