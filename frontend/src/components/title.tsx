@@ -1,6 +1,6 @@
 import * as React from "react";
 import { css } from "glamor";
-import { sizes } from "../style";
+import { sizes, smallDeviceMediaQuery } from "../style";
 
 interface Props {
   children: React.ReactChild | React.ReactChild[];
@@ -19,6 +19,13 @@ const styles = {
     fontSize: sizes.titleFontSize,
     lineHeight: "1.25em",
     height: "2.5em",
+
+    [smallDeviceMediaQuery]: {
+      margin: `${sizes.spacingPx[2] - TEXT_SELF_PADDING_PX}px ${
+        sizes.spacingPx[0]
+      }px`,
+      fontSize: sizes.smallDevice.titleFontSize,
+    },
   }),
 };
 

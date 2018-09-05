@@ -1,6 +1,6 @@
 import * as React from "react";
 import { css } from "glamor";
-import { colors, sizes } from "../style";
+import { colors, sizes, smallDeviceMediaQuery } from "../style";
 
 type Props = React.InputHTMLAttributes<HTMLButtonElement>;
 
@@ -31,13 +31,18 @@ const styles = {
     width: sizes.buttonWidthPx,
     height: sizes.inputHeightPx,
     overflow: "hidden",
-    fontSize: sizes.uiFontSize,
+    fontSize: "inherit",
     border: "none",
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
     touchAction: "none",
 
     ":focus": { outline: "none" },
+
+    [smallDeviceMediaQuery]: {
+      width: sizes.smallDevice.buttonWidthPx,
+      height: sizes.smallDevice.inputHeightPx,
+    },
   }),
   overlay: css({
     position: "absolute",

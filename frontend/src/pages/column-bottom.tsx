@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ColumnStore } from "../store";
-import { sizes, colors } from "../style";
+import { sizes, colors, smallDeviceMediaQuery } from "../style";
 import { css } from "glamor";
 import Button from "../components/button";
 import LinkButton from "../components/link-button";
@@ -12,6 +12,10 @@ interface Props {
 const styles = {
   doneButton: css({
     margin: `${sizes.spacingPx[3]}px auto ${sizes.spacingPx[2]}px auto`,
+
+    [smallDeviceMediaQuery]: {
+      margin: `${sizes.spacingPx[2]}px auto ${sizes.spacingPx[1]}px auto`,
+    },
   }),
   cannotButtonWrapper: css({
     color: colors.contentLight,

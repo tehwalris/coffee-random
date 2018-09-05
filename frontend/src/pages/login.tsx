@@ -4,7 +4,7 @@ import { css } from "glamor";
 import Button from "../components/button";
 import Input from "../components/input";
 import Header from "../components/header";
-import { sizes } from "../style";
+import { sizes, smallDeviceMediaQuery } from "../style";
 
 interface Props {
   store: LoginStore;
@@ -13,6 +13,10 @@ interface Props {
 const styles = {
   wrapper: css({
     padding: `${sizes.spacingPx[3]}px ${sizes.spacingPx[1]}px`,
+
+    [smallDeviceMediaQuery]: {
+      padding: `${sizes.spacingPx[2]}px ${sizes.spacingPx[0]}px`,
+    },
   }),
   usernameInput: css({
     marginBottom: sizes.spacingPx[0],

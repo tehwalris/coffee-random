@@ -2,7 +2,7 @@ import * as React from "react";
 import { RatingStore, RatingState, Rating } from "../store";
 import TapArea from "./tap-area";
 import { css } from "glamor";
-import { sizes, colors } from "../style";
+import { sizes, colors, smallDeviceMediaQuery } from "../style";
 import SaveTick from "./save-tick";
 import posed, { PoseGroup } from "react-pose";
 import Placed from "./placed";
@@ -30,6 +30,13 @@ const styles = {
     marginLeft: -0.5 * sizes.tickSizePx,
     marginTop: -0.5 * sizes.tickSizePx,
     willChange: "transform",
+
+    [smallDeviceMediaQuery]: {
+      width: sizes.smallDevice.tickSizePx,
+      height: sizes.smallDevice.tickSizePx,
+      marginLeft: -0.5 * sizes.smallDevice.tickSizePx,
+      marginTop: -0.5 * sizes.smallDevice.tickSizePx,
+    },
   }),
 };
 

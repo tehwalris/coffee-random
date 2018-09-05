@@ -1,6 +1,6 @@
 import * as React from "react";
 import { css, select as glamorSelect, keyframes } from "glamor";
-import { sizes, colors } from "../style";
+import { sizes, colors, smallDeviceMediaQuery } from "../style";
 
 interface Props {
   className?: string;
@@ -47,7 +47,7 @@ const styles = {
     padding: `0 ${sizes.spacingPx[0]}px !important`,
     borderWidth: sizes.border,
     borderStyle: "solid",
-    fontSize: sizes.uiFontSize,
+    fontSize: "inherit",
     fontFamily: "inherit",
     boxShadow: [
       "inset",
@@ -66,6 +66,10 @@ const styles = {
 
     '[type="password"]:not(:placeholder-shown)': filledPasswordStyles,
     '[type="password"]:-webkit-autofill': filledPasswordStyles,
+
+    [smallDeviceMediaQuery]: {
+      height: sizes.smallDevice.inputHeightPx,
+    },
   }),
 
   // HACK Set the background color for autofilled inputs.

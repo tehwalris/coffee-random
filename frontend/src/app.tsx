@@ -6,7 +6,7 @@ import LoginPage from "./pages/login";
 import RatingTop from "./pages/rating-top";
 import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
-import { colors, sizes } from "./style";
+import { colors, sizes, smallDeviceMediaQuery } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
 import SlideDown from "./components/slide-down";
 
@@ -35,8 +35,8 @@ if (phoneDims.widthPx >= FAKE_PHONE.breakPx) {
 const styles = {
   outer: css({
     position: "relative",
-    width: "100vw",
-    height: "100vh",
+    width: "100%",
+    height: "100%",
     backgroundColor: colors.background,
     color: colors.content,
     fontSize: sizes.uiFontSize,
@@ -53,6 +53,10 @@ const styles = {
       margin: "20px auto",
       boxShadow: "0 20px 100px rgba(0, 0, 0, 0.5)",
       outline: "1px solid rgba(0, 0, 0, 0.1)",
+    },
+
+    [smallDeviceMediaQuery]: {
+      fontSize: sizes.smallDevice.uiFontSize,
     },
   }),
   inner: css({

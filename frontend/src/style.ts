@@ -60,6 +60,15 @@ export const sizes = {
   inputHeightPx: 55,
   buttonWidthPx: 150,
   tickSizePx: 57,
+
+  smallDevice: {
+    uiFontSize: "16px",
+    titleFontSize: "36px",
+    inputHeightPx: 45,
+    buttonWidthPx: 120,
+    tickSizePx: 45,
+  },
+
   spacingPx: [16, 25, 32, 70],
 
   shadow: {
@@ -69,6 +78,9 @@ export const sizes = {
     opacity: 0.2,
   },
 };
+
+export const smallDeviceMediaQuery = "@media(max-width: 325px)";
+export const tooSmallWidth = "250px";
 
 export const springConfigMain = RENDER_DEBUG
   ? springConfigs.slow
