@@ -115,7 +115,6 @@ export default class Input extends React.Component<Props> {
       autoFocus,
       error,
     } = this.props;
-    console.log(error);
     return (
       <input
         className={className}
