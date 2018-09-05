@@ -41,6 +41,7 @@ export default class LoginPage extends React.Component<Props> {
             value={store.username}
             onChange={store.onUsernameChange}
             placeholder="Username"
+            error={store.failed}
             autoFocus
           />
           <Input
@@ -48,11 +49,15 @@ export default class LoginPage extends React.Component<Props> {
             value={store.password}
             onChange={store.onPasswordChange}
             placeholder="Password"
+            error={store.failed}
           />
           <Button
             type="submit"
             className={styles.loginButton.toString()}
-            disabled={!(store.username && store.password) || store.inProgress}
+            disabled={
+              !store.beforeFirstManualLogin &&
+              (!(store.username && store.password) || store.failed)
+            }
           >
             Login
           </Button>

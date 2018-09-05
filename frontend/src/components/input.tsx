@@ -9,6 +9,7 @@ interface Props {
   value: string;
   onChange: (v: string) => void;
   autoFocus?: boolean;
+  error: boolean;
 }
 
 const focusedInputStyles = {
@@ -32,6 +33,24 @@ const unfocusedInputStyles = {
     color: colors.unfocusedSelectionContent,
   },
 };
+
+// HACK Set the background color for autofilled inputs.
+// Based on this: https://css-tricks.com/snippets/css/change-autocomplete-styles-webkit-browsers/
+// It won't always work, but when it does, it will look a little nicer without being too confusing.
+const setAutofillBackground = (color: string) =>
+  glamorSelect(
+    ":-webkit-autofill",
+    css({
+      animation: `1s ${keyframes({
+        from: {
+          backgroundColor: color,
+          color: "inherit",
+        },
+        to: {},
+      })}`,
+      animationPlayState: "paused",
+    }),
+  );
 
 const filledPasswordStyles = {
   fontFamily: "caption",
@@ -71,28 +90,32 @@ const styles = {
       height: sizes.smallDevice.inputHeightPx,
     },
   }),
+  autofillNormal: setAutofillBackground(colors.autofillBackground),
+  autofillError: setAutofillBackground(colors.errorBackground),
+  inputError: css({
+    backgroundColor: colors.errorBackground + " !important",
 
-  // HACK Set the background color for autofilled inputs.
-  // Based on this: https://css-tricks.com/snippets/css/change-autocomplete-styles-webkit-browsers/
-  // It won't always work, but when it does, it will look a little nicer without being too confusing.
-  inputAutofill: glamorSelect(
-    ":-webkit-autofill",
-    css({
-      animation: `1s ${keyframes({
-        from: {
-          backgroundColor: colors.autofillBackground,
-          color: "inherit",
-        },
-        to: {},
-      })}`,
-      animationPlayState: "paused",
-    }),
-  ),
+    ":focus": {
+      borderColor: colors.errorBorder + " !important",
+
+      "::selection": {
+        backgroundColor: colors.errorBorder + " !important",
+      },
+    },
+  }),
 };
 
 export default class Input extends React.Component<Props> {
   render() {
-    const { className, type, value, placeholder, autoFocus } = this.props;
+    const {
+      className,
+      type,
+      value,
+      placeholder,
+      autoFocus,
+      error,
+    } = this.props;
+    console.log(error);
     return (
       <input
         className={className}
@@ -105,7 +128,8 @@ export default class Input extends React.Component<Props> {
         autoCapitalize="off"
         spellCheck={false}
         {...styles.input}
-        {...styles.inputAutofill}
+        {...(error ? styles.autofillError : styles.autofillNormal)}
+        {...(error ? styles.inputError : {})}
       />
     );
   }

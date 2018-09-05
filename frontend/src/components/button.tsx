@@ -36,8 +36,11 @@ const styles = {
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
     touchAction: "none",
+    transition: "background 0.5s ease",
 
     ":focus": { outline: "none" },
+
+    ":disabled": { backgroundColor: colors.machineDark },
 
     [smallDeviceMediaQuery]: {
       width: sizes.smallDevice.buttonWidthPx,

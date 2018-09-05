@@ -32,6 +32,7 @@ class BaseState {
 const LOGIN_LOCAL_STORAGE = "coffee-random-login";
 
 export class LoginStore extends BaseState {
+  beforeFirstManualLogin = true;
   failed = false;
   inProgress = false;
   initializing = true;
@@ -43,15 +44,18 @@ export class LoginStore extends BaseState {
 
   onUsernameChange = (username: string) => {
     this.username = username;
+    this.failed = false;
     this.update(this);
   };
 
   onPasswordChange = (password: string) => {
     this.password = password;
+    this.failed = false;
     this.update(this);
   };
 
   async onLogin() {
+    this.beforeFirstManualLogin = false;
     this.inProgress = true;
     this.failed = false;
     this.update(this);
