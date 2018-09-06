@@ -9,6 +9,7 @@ import { css } from "glamor";
 import { colors, sizes, smallDeviceMediaQuery } from "./style";
 import { unreachable, RENDER_DEBUG } from "./util";
 import SlideDown from "./components/slide-down";
+import FakeTouchCursor from "./components/fake-touch-cursor";
 
 interface State {
   store: Store;
@@ -21,6 +22,8 @@ const FAKE_PHONE = {
   heightPx: 640,
   widthPx: 360,
 };
+
+const USE_FAKE_CURSOR = document.body.clientWidth >= FAKE_PHONE.breakPx;
 
 const phoneDims = {
   widthPx: window.innerWidth,
@@ -94,7 +97,12 @@ class App extends React.Component<{}, State> {
 
   render() {
     const { store } = this.state;
-    return <div {...styles.outer}>{this.renderInner(store)}</div>;
+    return (
+      <div {...styles.outer}>
+        {this.renderInner(store)}
+        {USE_FAKE_CURSOR && <FakeTouchCursor />}
+      </div>
+    );
   }
 
   renderInner(store: Store) {
