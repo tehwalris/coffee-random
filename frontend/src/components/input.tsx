@@ -75,6 +75,7 @@ const styles = {
       sizes.shadow.blurPx + "px",
       `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
     ].join(" "),
+    transition: "border 0.1s ease",
 
     ":focus": {
       ...focusedInputStyles,
