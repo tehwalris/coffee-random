@@ -1,14 +1,15 @@
 import * as React from "react";
 import SaveTickPure from "./save-tick-pure";
 import { easeInQuad } from "../util";
+import { RatingState } from "../store";
 
 interface Props {
-  tick: boolean;
+  ratingState: RatingState;
   size: string;
 }
 
 interface State {
-  tick: boolean;
+  ratingState: RatingState;
   t: number;
   lastMs: number;
   isMounted: boolean;
@@ -19,7 +20,7 @@ const SPIN_TIME_MS = 500;
 
 export default class SaveTick extends React.Component<Props, State> {
   state: State = {
-    tick: false,
+    ratingState: RatingState.Saving,
     t: -0.75,
     lastMs: 0,
     isMounted: true,
@@ -36,8 +37,8 @@ export default class SaveTick extends React.Component<Props, State> {
 
   private onFrame = (nowMs: number) => {
     const { lastMs, t, isMounted } = this.state;
-    let { tick } = this.state;
-    if (tick && t > 1) {
+    let { ratingState } = this.state;
+    if (ratingState !== RatingState.Saving && t > 1) {
       return;
     }
     if (isMounted) {
@@ -48,11 +49,11 @@ export default class SaveTick extends React.Component<Props, State> {
       if (nextT >= 0) {
         this.setState({ firstSpin: false });
       }
-      if (!tick && nextT > 1) {
+      if (ratingState === RatingState.Saving && nextT > 1) {
         nextT = nextT % 1;
-        tick = this.props.tick;
+        ratingState = this.props.ratingState;
       }
-      this.setState({ lastMs: nowMs, t: nextT, tick });
+      this.setState({ lastMs: nowMs, t: nextT, ratingState });
     } else {
       this.setState({ lastMs: nowMs });
       return;
@@ -61,11 +62,11 @@ export default class SaveTick extends React.Component<Props, State> {
 
   render() {
     const { size } = this.props;
-    const { tick, t, firstSpin } = this.state;
+    const { ratingState, t, firstSpin } = this.state;
     return (
       <div>
         <SaveTickPure
-          tick={tick}
+          ratingState={ratingState}
           t={firstSpin ? easeInQuad(t) : t}
           size={size}
         />

@@ -92,15 +92,15 @@ const styles = {
     },
   }),
   autofillNormal: setAutofillBackground(colors.autofillBackground),
-  autofillError: setAutofillBackground(colors.errorBackground),
+  autofillError: setAutofillBackground(colors.errorLight),
   inputError: css({
-    backgroundColor: colors.errorBackground + " !important",
+    backgroundColor: colors.errorLight + " !important",
 
     ":focus": {
-      borderColor: colors.errorBorder + " !important",
+      borderColor: colors.errorDark + " !important",
 
       "::selection": {
-        backgroundColor: colors.errorBorder + " !important",
+        backgroundColor: colors.errorDark + " !important",
       },
     },
   }),

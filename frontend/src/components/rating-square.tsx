@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RatingStore, RatingState, Rating } from "../store";
+import { RatingStore, Rating, RatingState } from "../store";
 import TapArea from "./tap-area";
 import { css } from "glamor";
 import { sizes, colors, smallDeviceMediaQuery } from "../style";
@@ -162,7 +162,12 @@ export default class RatingSquare extends React.Component<Props> {
                     {...styles.tickWrapperOuter(rating)}
                   >
                     <TickWrapperInner {...styles.tickWrapperInner}>
-                      <SaveTick tick={state === RatingState.Ok} size="100%" />
+                      <SaveTick
+                        ratingState={
+                          state === undefined ? RatingState.Saving : state
+                        }
+                        size="100%"
+                      />
                     </TickWrapperInner>
                   </TickWrapperOuter>,
                 ]

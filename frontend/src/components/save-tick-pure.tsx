@@ -1,9 +1,10 @@
 import * as React from "react";
-import { mix, easeOutQuad, easeInQuad } from "../util";
+import { mix, easeOutQuad, easeInQuad, unreachable } from "../util";
 import { colors, sizes } from "../style";
+import { RatingState } from "../store";
 
 interface Props {
-  tick: boolean;
+  ratingState: RatingState;
   t: number; // [0, 1]
   size: string;
 }
@@ -32,10 +33,10 @@ const TICK_CONFIG = {
 
 export default class SaveTick extends React.Component<Props> {
   render() {
-    const pointStr = this.getPoints()
-      .map(({ x, y }) => `${x},${y}`)
-      .join(" ");
-    const { size } = this.props;
+    const pointStrs = this.getPoints().map(g =>
+      g.map(({ x, y }) => `${x},${y}`).join(" "),
+    );
+    const { size, ratingState } = this.props;
     return (
       <svg
         width={size}
@@ -58,27 +59,56 @@ export default class SaveTick extends React.Component<Props> {
             <feBlend in="SourceGraphic" mode="normal" />
           </filter>
         </defs>
-        <circle r="1" fill={colors.primaryBackground} filter="url(#shadow)" />
-        <polyline
-          points={pointStr}
-          stroke={colors.primaryContent}
-          strokeWidth="0.05"
-          fill="none"
+        <circle
+          r="1"
+          fill={
+            ratingState === RatingState.Error
+              ? colors.errorDark
+              : colors.primaryBackground
+          }
+          style={{ transition: "fill 0.5s ease" }}
+          filter="url(#shadow)"
         />
+        {pointStrs.map((s, i) => (
+          <polyline
+            key={i}
+            points={s}
+            stroke={colors.primaryContent}
+            strokeWidth="0.05"
+            fill="none"
+          />
+        ))}
       </svg>
     );
   }
 
-  private getPoints(): Point[] {
-    const { tick } = this.props;
+  private getPoints(): Point[][] {
+    const { ratingState } = this.props;
     const a = spinnerConfig(
-      Math.PI / 2 + (tick ? easeInQuad(this.props.t) : this.props.t) * Math.PI,
+      Math.PI / 2 +
+        (ratingState === RatingState.Saving
+          ? this.props.t
+          : easeInQuad(this.props.t)) *
+          Math.PI,
     );
-    if (!tick) {
-      return configToPoints(a);
+    switch (ratingState) {
+      case RatingState.Saving: {
+        return [configToPoints(a)];
+      }
+      case RatingState.Ok: {
+        const t = easeOutQuad(Math.min(1, this.props.t * 1.25));
+        return [configToPoints(mixConfig(a, TICK_CONFIG, t))];
+      }
+      case RatingState.Error: {
+        const t = easeOutQuad(Math.min(1, this.props.t * 1.25));
+        return [
+          configToPoints(spinnerConfig(Math.PI * (0.5 + t * 0.25))),
+          configToPoints(spinnerConfig(Math.PI * (0.5 + t * 0.75))),
+        ];
+      }
+      default:
+        return unreachable(ratingState);
     }
-    const t = easeOutQuad(Math.min(1, this.props.t * 1.25));
-    return configToPoints(mixConfig(a, TICK_CONFIG, t));
   }
 }
 

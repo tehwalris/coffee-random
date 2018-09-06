@@ -112,13 +112,17 @@ export class ColumnStore extends BaseState {
   }
 
   private async loadNextColumn(): Promise<void> {
-    const res = await client.nextColumn({
-      username: this.username,
-      password: this.password,
-      notColumn: this.column || 0,
-    });
-    this.column = res.machineColumn;
-    this.update(this);
+    try {
+      const res = await client.nextColumn({
+        username: this.username,
+        password: this.password,
+        notColumn: this.column || 0,
+      });
+      this.column = res.machineColumn;
+      this.update(this);
+    } catch (e) {
+      console.error(e); //tslint:disable-line:no-console
+    }
   }
 
   private hasColumn(): this is { column: number } {
@@ -147,7 +151,8 @@ export enum RatingState {
 
 export class RatingStore extends BaseState {
   private saving = false;
-  private savedAt: Date | undefined;
+  private failed = false;
+  private saveCount = 0;
   private timeoutHandle: NodeJS.Timer | undefined;
   column: number;
   rating: Rating | undefined;
@@ -160,29 +165,24 @@ export class RatingStore extends BaseState {
     if (this.saving) {
       return RatingState.Saving;
     }
-    if (this.savedAt) {
-      return RatingState.Ok;
+    if (this.failed) {
+      return RatingState.Error;
     }
-    return RatingState.Error;
-  }
-
-  getProgress(): number | undefined {
-    if (!this.savedAt) {
-      return;
-    }
-    const p = (Date.now() - +this.savedAt) / SAVE_TIMEOUT_MS;
-    return Math.max(0, Math.min(1, p));
+    return RatingState.Ok;
   }
 
   async onTapRating(rating: Rating) {
+    this.saveCount += 1;
+    const ownCount = this.saveCount;
     this.rating = rating;
     this.saving = true;
-    this.savedAt = undefined;
+    this.failed = false;
     if (this.timeoutHandle) {
       clearTimeout(this.timeoutHandle);
     }
     this.update(this);
 
+    let failed = false;
     try {
       await client.submit({
         ...rating,
@@ -190,12 +190,21 @@ export class RatingStore extends BaseState {
         password: this.password,
         machineColumn: this.column,
       });
-      this.savedAt = new Date();
     } catch (e) {
       console.error(e); //tslint:disable-line:no-console
+      failed = true;
     }
+
+    if (this.saveCount !== ownCount) {
+      // another save finished before this one, don't modify the state
+      return;
+    }
+
     this.saving = false;
-    this.timeoutHandle = setTimeout(this.onTimeout, SAVE_TIMEOUT_MS);
+    this.failed = failed;
+    if (!failed) {
+      this.timeoutHandle = setTimeout(this.onTimeout, SAVE_TIMEOUT_MS);
+    }
     this.update(this);
   }
 

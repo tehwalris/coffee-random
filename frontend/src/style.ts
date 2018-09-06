@@ -50,8 +50,8 @@ export const colors = {
   unfocusedSelectionBackground: b.greys[4],
   unfocusedSelectionContent: b.greys[0],
 
-  errorBackground: "#FFEEEE",
-  errorBorder: "#B92525",
+  errorLight: "#FFEEEE",
+  errorDark: "#B92525",
 
   autofillBackground: b.themeLighter,
 };
