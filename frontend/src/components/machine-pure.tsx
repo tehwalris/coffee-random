@@ -122,7 +122,11 @@ export default class MachinePure extends React.Component<Props> {
           key={`platform ${i}`}
           place={({ platforms, machineOpacity: o }: Derived) => ({
             ...platforms[i],
-            style: { backgroundColor: colors.machineLight, opacity: o },
+            style: {
+              backgroundColor: colors.machineLight,
+              opacity: o,
+              borderTop: `1px solid ${colors.machineMediumLight}`,
+            },
           })}
           render={render}
           updateFrom={() => false}

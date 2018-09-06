@@ -42,7 +42,7 @@ export default class Head extends React.PureComponent<Props> {
             height="0.2"
             x="0.25"
             y={mix(RECT_UP_Y, RECT_DOWN_Y, door)}
-            fill={colors.machineMedium}
+            fill={colors.machineMediumLight}
           />
           <rect
             width="0.6"
@@ -60,6 +60,8 @@ export default class Head extends React.PureComponent<Props> {
             cx="0.232"
             cy="0.24"
             fill={light ? "white" : "transparent"}
+            stroke={light ? colors.machineMediumLight : undefined}
+            strokeWidth="0.01"
           />
         </svg>
       </Ratio>

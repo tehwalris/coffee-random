@@ -25,6 +25,7 @@ export const colors = {
 
   machineDark: b.greys[2],
   machineMedium: b.greys[3],
+  machineMediumLight: b.greys[4],
   machineLight: b.greys[5],
   coffee: "#A05A2C",
   coffeeDarkRGB: [0x85, 0x44, 0x19],
