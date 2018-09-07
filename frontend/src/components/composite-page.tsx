@@ -311,7 +311,7 @@ export default class CompositePage extends React.Component<Props, State> {
               />
               <Machine
                 column={column}
-                stopPour={t > 0}
+                stopPour={t > 0.1}
                 stopEverything={t === 1}
               />
               <RatingSquare

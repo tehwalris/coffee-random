@@ -162,12 +162,14 @@ export default class Machine extends React.Component<Props, State> {
   ): Heads {
     const dt = this.state.t - this.state.lastT;
     const clamp = (v: number) => Math.max(0, Math.min(1, v));
-    return this.state.plan.heads.map((h, i) => ({
-      door: clamp(
-        h.door + dt / (i + 1 === activeColumn ? DOOR_MS_PRE : -DOOR_MS_POST),
-      ),
-      light,
-    })) as Heads;
+    console.log(this.state.plan.heads);
+    return this.state.plan.heads.map((h, i) => {
+      const active = i + 1 === activeColumn;
+      return {
+        door: clamp(h.door + dt / (active ? DOOR_MS_PRE : -DOOR_MS_POST)),
+        light: active ? light : false,
+      };
+    }) as Heads;
   }
 
   private planMoveEnter(stageT: number, dt: number): Plan {
@@ -282,16 +284,17 @@ export default class Machine extends React.Component<Props, State> {
   }
 
   private planPostPour(stageT: number): Plan {
-    const { position, blonding, abort } = this.state;
+    const { stopPour } = this.props;
+    const { position, blonding, abort, column } = this.state;
     const coffee = easeInQuad(
       Math.max(0, Math.min(1, stageT / COFFEE_DROP_MS)),
     );
-    if (stageT >= COFFEE_DROP_MS + POST_POUR_EXTRA_DELAY_MS) {
+    if (!stopPour && stageT >= COFFEE_DROP_MS + POST_POUR_EXTRA_DELAY_MS) {
       this.switchStage(abort ? Stage.MoveLeave : Stage.Delay);
     }
     return {
       arrowPos: position,
-      heads: this.planHeads(undefined),
+      heads: this.planHeads(stopPour ? column : undefined, false),
       coffee: 0.5 + coffee / 2,
       blonding,
     };
