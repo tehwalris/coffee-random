@@ -16,20 +16,16 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@babel/runtime@7.0.0-beta.49":
-  version "7.0.0-beta.49"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-beta.49.tgz#03b3bf07eb982072c8e851dd2ddd5110282e61bf"
+"@babel/runtime@7.0.0-beta.51":
+  version "7.0.0-beta.51"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0-beta.51.tgz#48b8ed18307034c6620f643514650ca2ccc0165a"
   dependencies:
-    core-js "^2.5.6"
+    core-js "^2.5.7"
     regenerator-runtime "^0.11.1"
 
 "@types/google-protobuf@^3.2.7":
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.2.7.tgz#9576ed5dd62cdb1c9f952522028a03b7cb2b69b5"
-
-"@types/invariant@^2.2.29":
-  version "2.2.29"
-  resolved "https://registry.yarnpkg.com/@types/invariant/-/invariant-2.2.29.tgz#aa845204cd0a289f65d47e0de63a6a815e30cc66"
 
 "@types/jest@^22.2.3":
   version "22.2.3"
@@ -42,10 +38,6 @@
 "@types/node@*", "@types/node@^10.0.4":
   version "10.0.4"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.4.tgz#130598ee56e9a1210a53f557d64935571f05390d"
-
-"@types/node@^10.0.5":
-  version "10.0.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.0.8.tgz#37b4d91d4e958e4c2ba0be2b86e7ed4ff19b0858"
 
 "@types/react-dom@^16.0.5":
   version "16.0.5"
@@ -1689,7 +1681,7 @@ core-js@^2.4.0, core-js@^2.5.0:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.6.tgz#0fe6d45bf3cac3ac364a9d72de7576f4eb221b9d"
 
-core-js@^2.5.6:
+core-js@^2.5.7:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
 
@@ -2793,10 +2785,6 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
-framesync@^3.0.2, framesync@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/framesync/-/framesync-3.1.7.tgz#9b9aa3eff8598625302597851a428f40c3dc1c6b"
-
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -3141,10 +3129,6 @@ hawk@~6.0.2:
 he@1.1.x:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"
-
-hey-listen@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.2.tgz#ffe0bf374200bde00ae7dcb626d17026070a5711"
 
 hmac-drbg@^1.0.0:
   version "1.0.1"
@@ -4446,6 +4430,10 @@ mem@^1.1.0:
   dependencies:
     mimic-fn "^1.0.0"
 
+memoize-one@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-4.0.2.tgz#3fb8db695aa14ab9c0f1644e1585a8806adc1aee"
+
 memory-fs@^0.4.0, memory-fs@~0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
@@ -5188,21 +5176,6 @@ pn@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
 
-popmotion-pose@^1.4.4:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/popmotion-pose/-/popmotion-pose-1.4.4.tgz#c5a00f37ea9846e212293acda6bc7a80a870ea25"
-  dependencies:
-    popmotion "^8.1.22"
-    pose-core "^0.5.2"
-
-popmotion@^8.1.22:
-  version "8.1.24"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.1.24.tgz#9c8943a0dda1a39163cf3e42116c1fb6c41e331e"
-  dependencies:
-    framesync "^3.1.7"
-    style-value-types "^1.0.4"
-    stylefire "^1.2.9"
-
 portfinder@^1.0.9:
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.13.tgz#bb32ecd87c27104ae6ee44b5a3ccbf0ebb1aede9"
@@ -5210,14 +5183,6 @@ portfinder@^1.0.9:
     async "^1.5.2"
     debug "^2.2.0"
     mkdirp "0.5.x"
-
-pose-core@^0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/pose-core/-/pose-core-0.5.2.tgz#955ff71feba1225539e086500ef193840d399659"
-  dependencies:
-    "@types/invariant" "^2.2.29"
-    "@types/node" "^10.0.5"
-    hey-listen "^1.0.2"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -5755,13 +5720,6 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-react-pose@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/react-pose/-/react-pose-1.6.4.tgz#7ecf491269557e36de04f7009ddc84c161cfa042"
-  dependencies:
-    hey-listen "^1.0.2"
-    popmotion-pose "^1.4.4"
-
 react-scripts-ts@2.15.1:
   version "2.15.1"
   resolved "https://registry.yarnpkg.com/react-scripts-ts/-/react-scripts-ts-2.15.1.tgz#98032840e61faff65e59047036a7fa236568d503"
@@ -5806,11 +5764,12 @@ react-scripts-ts@2.15.1:
   optionalDependencies:
     fsevents "^1.1.3"
 
-react-spring@^5.3.8:
-  version "5.3.8"
-  resolved "https://registry.yarnpkg.com/react-spring/-/react-spring-5.3.8.tgz#d3895fbd09130f32356f679bf89c2031c0541616"
+react-spring@5.6.3:
+  version "5.6.3"
+  resolved "https://registry.yarnpkg.com/react-spring/-/react-spring-5.6.3.tgz#f0de648e74d92213ea476d7f868994fd6239aeee"
   dependencies:
-    "@babel/runtime" "7.0.0-beta.49"
+    "@babel/runtime" "7.0.0-beta.51"
+    memoize-one "^4.0.0"
 
 react-transition-group@^2.4.0:
   version "2.4.0"
@@ -6679,17 +6638,6 @@ style-loader@0.19.0:
   dependencies:
     loader-utils "^1.0.2"
     schema-utils "^0.3.0"
-
-style-value-types@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-1.0.4.tgz#58df3a09281d719d981ee4a317addc434eecc877"
-
-stylefire@^1.2.9:
-  version "1.2.15"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-1.2.15.tgz#ee681669a1cce9205c973293723ae1b3ede1372f"
-  dependencies:
-    framesync "^3.0.2"
-    style-value-types "^1.0.4"
 
 subarg@^1.0.0:
   version "1.0.0"

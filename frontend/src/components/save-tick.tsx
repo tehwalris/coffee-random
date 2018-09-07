@@ -12,7 +12,6 @@ interface State {
   ratingState: RatingState;
   t: number;
   lastMs: number;
-  isMounted: boolean;
   firstSpin: boolean;
 }
 
@@ -23,27 +22,25 @@ export default class SaveTick extends React.Component<Props, State> {
     ratingState: RatingState.Saving,
     t: -0.75,
     lastMs: 0,
-    isMounted: true,
     firstSpin: true,
   };
+  ownIsMounted = true;
 
   componentDidMount() {
     requestAnimationFrame(this.onFrame);
   }
 
   componentWillUnmount() {
-    this.setState({ isMounted: false });
+    this.ownIsMounted = false;
   }
 
   private onFrame = (nowMs: number) => {
-    const { lastMs, t, isMounted } = this.state;
+    const { lastMs, t } = this.state;
     let { ratingState } = this.state;
-    if (ratingState !== RatingState.Saving && t > 1) {
+    if ((ratingState !== RatingState.Saving && t > 1) || !this.ownIsMounted) {
       return;
     }
-    if (isMounted) {
-      requestAnimationFrame(this.onFrame);
-    }
+    requestAnimationFrame(this.onFrame);
     if (lastMs) {
       let nextT = t + (nowMs - lastMs) / SPIN_TIME_MS;
       if (nextT >= 0) {

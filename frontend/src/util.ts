@@ -1,3 +1,5 @@
+import * as ReactSpring from "react-spring";
+
 export function mix(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
 }
@@ -18,3 +20,6 @@ export function easeOutQuad(t: number) {
 
 export const RENDER_DEBUG = false;
 export const ANIMATION_SLOWDOWN = 1;
+
+// tslint:disable-next-line:no-any
+export const SpringTransition = (ReactSpring as any).Transition;

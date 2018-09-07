@@ -1,5 +1,9 @@
-import { SpringConfig } from "react-spring";
 import { ANIMATION_SLOWDOWN } from "./util";
+
+type SpringConfig = {
+  friction: number;
+  tension: number;
+};
 
 const b = {
   greys: [

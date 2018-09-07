@@ -2,12 +2,17 @@ import * as React from "react";
 import { RatingStore, Rating, RatingState } from "../store";
 import TapArea from "./tap-area";
 import { css } from "glamor";
-import { sizes, colors, smallDeviceMediaQuery } from "../style";
+import {
+  sizes,
+  colors,
+  smallDeviceMediaQuery,
+  springConfigMain,
+} from "../style";
 import SaveTick from "./save-tick";
-import posed, { PoseGroup } from "react-pose";
 import Placed from "./placed";
 import { Derived } from "./composite-page";
 import { PlaceableProps } from "./placement-parent";
+import { SpringTransition } from "../util";
 
 interface Props extends PlaceableProps<Derived> {
   store?: RatingStore;
@@ -16,14 +21,13 @@ interface Props extends PlaceableProps<Derived> {
 }
 
 const styles = {
-  tickWrapperOuter: ({ business, quality }: Rating) =>
-    css({
-      position: "absolute",
-      left: `${100 * business}%`,
-      top: `${100 * (1 - quality)}%`,
-      width: "100%",
-      height: "100%",
-    }),
+  tickWrapperOuter: ({ business, quality }: Rating): React.CSSProperties => ({
+    position: "absolute",
+    left: `${100 * business}%`,
+    top: `${100 * (1 - quality)}%`,
+    width: "100%",
+    height: "100%",
+  }),
   tickWrapperInner: css({
     width: sizes.tickSizePx,
     height: sizes.tickSizePx,
@@ -39,16 +43,6 @@ const styles = {
     },
   }),
 };
-
-const TickWrapperOuter = posed.div({
-  enter: {},
-  exit: {},
-});
-
-const TickWrapperInner = posed.div({
-  enter: { scale: 1, opacity: 1 },
-  exit: { scale: 0, opacity: 0 },
-});
 
 export default class RatingSquare extends React.Component<Props> {
   render() {
@@ -154,25 +148,30 @@ export default class RatingSquare extends React.Component<Props> {
             store && store.onTapRating({ business: x, quality: 1 - y })
           }
         >
-          <PoseGroup animateOnMount>
+          <SpringTransition
+            keys={rating ? [`${rating.quality}:${rating.business}`] : []}
+            from={{ opacity: 0, transform: "scale(0.5)" }}
+            enter={{ opacity: 1, transform: "scale(1)" }}
+            leave={{ opacity: 0, transform: "scale(0.5)" }}
+            config={springConfigMain}
+          >
             {rating
               ? [
-                  <TickWrapperOuter
-                    key={`${rating.quality}:${rating.business}`}
-                    {...styles.tickWrapperOuter(rating)}
-                  >
-                    <TickWrapperInner {...styles.tickWrapperInner}>
-                      <SaveTick
-                        ratingState={
-                          state === undefined ? RatingState.Saving : state
-                        }
-                        size="100%"
-                      />
-                    </TickWrapperInner>
-                  </TickWrapperOuter>,
+                  (s: React.CSSProperties) => (
+                    <div style={styles.tickWrapperOuter(rating)}>
+                      <div {...styles.tickWrapperInner} style={s}>
+                        <SaveTick
+                          ratingState={
+                            state === undefined ? RatingState.Saving : state
+                          }
+                          size="100%"
+                        />
+                      </div>
+                    </div>
+                  ),
                 ]
               : []}
-          </PoseGroup>
+          </SpringTransition>
         </TapArea>
       </Placed>,
     ];

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { css } from "glamor";
-import * as ReactSpring from "react-spring";
 import { springConfigLoginSlide } from "../style";
+import { SpringTransition } from "../util";
 
 // const SLIDE_DURATION_MS = 500;
 
@@ -36,15 +36,12 @@ const styles = {
   },
 };
 
-// tslint:disable-next-line:no-any
-const Transition = (ReactSpring as any).Transition;
-
 export default class SlideDown extends React.Component<Props> {
   render() {
     const { top, bottom, focusBottom, noAnimate } = this.props;
     return (
       <div {...styles.outerWrapper}>
-        <Transition
+        <SpringTransition
           keys={focusBottom ? "bottom" : "top"}
           from={styles.animateFrom}
           enter={styles.animateEnter}
@@ -57,7 +54,7 @@ export default class SlideDown extends React.Component<Props> {
               {focusBottom ? bottom : top}
             </div>
           )}
-        </Transition>
+        </SpringTransition>
       </div>
     );
   }
