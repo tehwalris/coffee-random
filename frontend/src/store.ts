@@ -105,8 +105,6 @@ export class LoginStore extends BaseState {
 }
 
 export class ColumnStore extends BaseState {
-  column: number | undefined = undefined;
-
   constructor(arg: UpdateHandler | BaseState) {
     super(arg);
     this.loadNextColumn();

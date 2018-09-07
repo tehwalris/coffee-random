@@ -32,7 +32,7 @@ The animations in this app are all pretty different from a technical point of vi
 ### Machine
 
 - TODO pour
-- TODO cup moving
+- TODO debug view with state transitions
 - TODO picture of real machines
 
 The pair of animated coffee machines is the centerpiece of this app. It is split into two react components in a fairly typical way.
@@ -43,8 +43,7 @@ The other component (`machine.tsx`) is a large state machine, which generates th
 
 ### Morph
 
-- TODO both ways
-- TODO slow motion
+- TODO slow motion (with and without layer borders)
 
 The morphing transition is the most technically difficult animation in this app, for a few reasons:
 
@@ -72,8 +71,7 @@ The login screen doesn't have complicated animations. The fades on colors of the
 ### Button
 
 - TODO normal
-- TODO slow motion
-- TODO debug view
+- TODO slow motion with debug
 
 The button uses my stylized version of a "material" look. The ripples originate in a diagonal line, which intersects the touch point. There's no particular hover effect, since this is intended for mobile.
 
@@ -83,7 +81,6 @@ Since the animation progress is controlled by the timestamps given by `requestAn
 
 - TODO normal
 - TODO fail
-- TODO debug
 
 The tick component is a fairly unique sort of loading spinner. It starts as bar, which spins as many times as it needs before the "save rating" request is completed. Once the request completes, the bar morphs into a tick on the next turn. If the request fails, it morphs into a cross instead.
 
