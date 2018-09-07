@@ -162,7 +162,6 @@ export default class Machine extends React.Component<Props, State> {
   ): Heads {
     const dt = this.state.t - this.state.lastT;
     const clamp = (v: number) => Math.max(0, Math.min(1, v));
-    console.log(this.state.plan.heads);
     return this.state.plan.heads.map((h, i) => {
       const active = i + 1 === activeColumn;
       return {
