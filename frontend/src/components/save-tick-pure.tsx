@@ -1,5 +1,11 @@
 import * as React from "react";
-import { mix, easeOutQuad, easeInQuad, unreachable } from "../util";
+import {
+  mix,
+  easeOutQuad,
+  easeInQuad,
+  unreachable,
+  ANIMATION_SLOWDOWN,
+} from "../util";
 import { colors, sizes } from "../style";
 import { RatingState } from "../store";
 
@@ -66,7 +72,7 @@ export default class SaveTick extends React.Component<Props> {
               ? colors.errorDark
               : colors.primaryBackground
           }
-          style={{ transition: "fill 0.5s ease" }}
+          style={{ transition: `fill ${0.5 * ANIMATION_SLOWDOWN}s ease` }}
           filter="url(#shadow)"
         />
         {pointStrs.map((s, i) => (

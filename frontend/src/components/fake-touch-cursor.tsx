@@ -1,7 +1,9 @@
 import * as React from "react";
 import { css } from "glamor";
+import { ANIMATION_SLOWDOWN } from "../util";
 
 const SIZE_PX = 25;
+const FADE_TIME_MS = 300 * Math.sqrt(ANIMATION_SLOWDOWN);
 
 const styles = {
   wrapper: css({
@@ -21,8 +23,6 @@ const styles = {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   }),
 };
-
-const FADE_TIME_MS = 300;
 
 export default class FakeTouchCursor extends React.PureComponent<{}> {
   position = { x: -1000, y: -1000 };
@@ -77,7 +77,6 @@ export default class FakeTouchCursor extends React.PureComponent<{}> {
       if (s[k] === undefined) {
         el.style.removeProperty(k);
       } else {
-        console.log("adding", k);
         el.style[k] = s[k].toString();
       }
     });

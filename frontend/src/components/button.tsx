@@ -1,6 +1,7 @@
 import * as React from "react";
 import { css } from "glamor";
 import { colors, sizes, smallDeviceMediaQuery } from "../style";
+import { ANIMATION_SLOWDOWN } from "../util";
 
 type Props = React.InputHTMLAttributes<HTMLButtonElement>;
 
@@ -13,8 +14,8 @@ interface State {
 }
 
 const OVERLAY_ANGLE_RAD = Math.PI / 8;
-const OVERLAY_ENTER_TIME_MS = 200;
-const OVERLAY_LEAVE_TIME_MS = 300;
+const OVERLAY_ENTER_TIME_MS = 200 * ANIMATION_SLOWDOWN;
+const OVERLAY_LEAVE_TIME_MS = 300 * ANIMATION_SLOWDOWN;
 
 // (Rotated) overlay just big enough to contain button
 const overlayWidth =
@@ -36,7 +37,7 @@ const styles = {
     backgroundColor: colors.primaryBackground,
     color: colors.primaryContent,
     touchAction: "none",
-    transition: "background 0.5s ease",
+    transition: `background ${0.5 * ANIMATION_SLOWDOWN}s ease`,
 
     ":focus": { outline: "none" },
 

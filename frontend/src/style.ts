@@ -1,5 +1,5 @@
-import { config as springConfigs } from "react-spring";
-import { RENDER_DEBUG } from "./util";
+import { SpringConfig } from "react-spring";
+import { ANIMATION_SLOWDOWN } from "./util";
 
 const b = {
   greys: [
@@ -86,10 +86,42 @@ export const sizes = {
 export const smallDeviceMediaQuery = "@media(max-width: 325px)";
 export const tooSmallWidth = "250px";
 
-export const springConfigMain = RENDER_DEBUG
-  ? springConfigs.slow
-  : { tension: 50, friction: 7 };
+function slowDownSpring(c: SpringConfig): SpringConfig {
+  return {
+    tension: c.tension / ANIMATION_SLOWDOWN ** 2,
+    friction: c.friction / ANIMATION_SLOWDOWN,
+  };
+}
 
-export const springConfigLoginSlide = { tension: 50, friction: 8.75 };
+// fromReactSpring converts a config for react-spring into
+// a config for a standard spring like in spring.ts.
+function fromReactSpring(c: SpringConfig): SpringConfig {
+  return {
+    tension: (c.tension - 30) * 3.62 + 194,
+    friction: (c.friction - 8) * 3 + 25,
+  };
+}
 
-export const springConfigCup = { tension: 120, friction: 17 };
+// toReactSpring is the inverse of fromReactSpring
+function toReactSpring(c: SpringConfig): SpringConfig {
+  return {
+    tension: (c.tension - 194) / 3.62 + 30,
+    friction: (c.friction - 25) / 3 + 8,
+  };
+}
+
+// react-spring uses applies a transformation before
+// using the constants in its config for simulation, so
+// slowDownSpring can not work react-spring configs directly.
+const slowDownReactSpring = (c: SpringConfig) =>
+  toReactSpring(slowDownSpring(fromReactSpring(c)));
+
+export const springConfigMain = slowDownReactSpring({
+  tension: 50,
+  friction: 7,
+});
+export const springConfigLoginSlide = slowDownReactSpring({
+  tension: 50,
+  friction: 8.75,
+});
+export const springConfigCup = slowDownSpring({ tension: 120, friction: 17 });

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { css, select as glamorSelect, keyframes } from "glamor";
 import { sizes, colors, smallDeviceMediaQuery } from "../style";
+import { ANIMATION_SLOWDOWN } from "../util";
 
 interface Props {
   className?: string;
@@ -75,7 +76,7 @@ const styles = {
       sizes.shadow.blurPx + "px",
       `rgba(0, 0, 0, ${sizes.shadow.opacity})`,
     ].join(" "),
-    transition: "border 0.1s ease",
+    transition: `border ${0.1 * ANIMATION_SLOWDOWN}s ease`,
 
     ":focus": {
       ...focusedInputStyles,

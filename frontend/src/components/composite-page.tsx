@@ -3,7 +3,7 @@ import { css } from "glamor";
 import { RatingStore, COLUMN_COUNT } from "../store";
 import { Spring } from "react-spring";
 import Title from "./title";
-import { mix, easeInQuad } from "../util";
+import { mix, easeInQuad, ANIMATION_SLOWDOWN } from "../util";
 import PlacementParent from "./placement-parent";
 import Machine from "./machine";
 import { HEAD_RATIO } from "./head";
@@ -13,7 +13,7 @@ import Placed from "./placed";
 import { colors, sizes, springConfigMain } from "../style";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 
-const SECTION_FADE_TIME_MS = 150;
+const SECTION_FADE_TIME_MS = 150 * ANIMATION_SLOWDOWN;
 
 export enum Target {
   Machine,

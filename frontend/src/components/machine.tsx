@@ -1,6 +1,6 @@
 import * as React from "react";
 import MachinePure, { Heads, HeadProps } from "./machine-pure";
-import { unreachable, easeInQuad } from "../util";
+import { unreachable, easeInQuad, ANIMATION_SLOWDOWN } from "../util";
 import { times } from "lodash";
 import { createSpring } from "../spring";
 import { COLUMN_COUNT } from "../store";
@@ -56,17 +56,17 @@ const SPRING = createSpring({
 });
 
 // Switch stage from MoveEnter/MoveLeave when this is stillFrames >= SWITCH_STILL_FRAMES
-const SWITCH_STILL_FRAMES = 2;
+const SWITCH_STILL_FRAMES = Math.round(2 * ANIMATION_SLOWDOWN);
 
-const DOOR_MS_PRE = 2000;
-const DOOR_MS_POST = 1000;
-const COFFEE_DROP_MS = 150;
+const DOOR_MS_PRE = 2000 * ANIMATION_SLOWDOWN;
+const DOOR_MS_POST = 1000 * ANIMATION_SLOWDOWN;
+const COFFEE_DROP_MS = 150 * ANIMATION_SLOWDOWN;
 const OUTSIDE_POS = 1;
-const BLINK_MS = 1000;
-const POUR_MS = 7000;
-const MIN_POUR_MS = 500;
-const NEXT_POUR_DELAY = 2000;
-const POST_POUR_EXTRA_DELAY_MS = 200;
+const BLINK_MS = 1000 * ANIMATION_SLOWDOWN;
+const POUR_MS = 7000 * ANIMATION_SLOWDOWN;
+const MIN_POUR_MS = 500 * ANIMATION_SLOWDOWN;
+const NEXT_POUR_DELAY = 2000 * ANIMATION_SLOWDOWN;
+const POST_POUR_EXTRA_DELAY_MS = 200 * ANIMATION_SLOWDOWN;
 
 const DEFAULT_HEAD: HeadProps = {
   door: 0,

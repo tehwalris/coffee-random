@@ -1,8 +1,9 @@
 /* tslint:disable:no-use-before-declare */
 
 import { client } from "./api";
+import { ANIMATION_SLOWDOWN } from "./util";
 
-const SAVE_TIMEOUT_MS = 3000;
+const SAVE_TIMEOUT_MS = 3000 * ANIMATION_SLOWDOWN;
 export const COLUMN_COUNT = 4;
 
 type UpdateHandler = (store: Store) => void;

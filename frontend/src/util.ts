@@ -17,3 +17,4 @@ export function easeOutQuad(t: number) {
 }
 
 export const RENDER_DEBUG = false;
+export const ANIMATION_SLOWDOWN = 1;

@@ -1,7 +1,14 @@
 import * as React from "react";
 import { BaseProps as PlacedProps } from "./placed";
+import { ANIMATION_SLOWDOWN } from "../util";
 
 const DPR = window.devicePixelRatio;
+
+// DEVICE_ROUND_FACTOR adjusts rounding of positions
+// 1 means round to whole screen pixels (sharp)
+// 10 means round to 10 screen pixels (very coarse)
+// 0.5 means round to half a screen pixel (may blur)
+const ROUND_FACTOR = Math.min(1, 1 / ANIMATION_SLOWDOWN);
 
 export interface Placement {
   x: number;
@@ -59,11 +66,12 @@ export default class PlacementParent<I, D extends I> extends React.Component<
   };
 
   // round takes a value in CSS pixels a rounds it.
-  // The rounded value is a multiple of 1/DPR, so
+  // The rounded value is a multiple of ROUND_FACTOR/DPR, so
   // that when it is used for transforms, the transform
   // is aligned to real device pixels.
   private round(v: number): number {
-    return Math.round(v * DPR) / DPR;
+    const c = ROUND_FACTOR / DPR;
+    return Math.round(v / c) * c;
   }
 
   private placementToStyle({

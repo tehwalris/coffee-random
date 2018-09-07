@@ -1,6 +1,6 @@
 import * as React from "react";
 import SaveTickPure from "./save-tick-pure";
-import { easeInQuad } from "../util";
+import { easeInQuad, ANIMATION_SLOWDOWN } from "../util";
 import { RatingState } from "../store";
 
 interface Props {
@@ -16,7 +16,7 @@ interface State {
   firstSpin: boolean;
 }
 
-const SPIN_TIME_MS = 500;
+const SPIN_TIME_MS = 500 * ANIMATION_SLOWDOWN;
 
 export default class SaveTick extends React.Component<Props, State> {
   state: State = {
