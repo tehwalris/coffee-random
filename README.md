@@ -45,16 +45,18 @@ implementing each one.
 The pair of animated coffee machines is the centerpiece of this app. It is split
 into two react components in a fairly typical way:
 
-One stateless component (`machine-pure.tsx`) handles layout and style. It takes
-positions for all the doors, the cup, the position and length of the stream of
-coffee, etc.
+One stateless component
+([`machine-pure.tsx`](frontend/src/components/machine-pure.tsx)) handles layout
+and style. It takes positions for all the doors, the cup, the position and
+length of the stream of coffee, etc.
 
-The other component (`machine.tsx`) is a large state machine, which generates
-those inputs. The animation is structured in phases like pre-pour (door closing,
-coffee stream starting), pour (coffee color changing), etc. It's possible to
-cleanly abort from any phase, and change the target brew head at any time. This
-component also has to handle cup movement, since that is closely tied to pouring
-coffee - for example, you can't pour until the cup is in position.
+The other component ([`machine.tsx`](frontend/src/components/machine.tsx)) is a
+large state machine, which generates those inputs. The animation is structured
+in phases like pre-pour (door closing, coffee stream starting), pour (coffee
+color changing), etc. It's possible to cleanly abort from any phase, and change
+the target brew head at any time. This component also has to handle cup
+movement, since that is closely tied to pouring coffee - for example, you can't
+pour until the cup is in position.
 
 The design is a stylized version of the real machines that my university has:
 
@@ -84,7 +86,8 @@ animation, morphing only the background rectangle and cropping the content, and
 animating every single piece. Each iteration required large structural changes
 to the machine and rating square components.
 
-In the final version, the transition is coordinated by `composite-page.tsx`. The
+In the final version, the transition is coordinated by
+[`composite-page.tsx`](frontend/src/components/composite-page.tsx). The
 positions for everything are calculated in JS based on pixel measurements of the
 window. This greatly simplifies combining pixel sizes, percentage sizes and
 fixed aspect ratios.
@@ -100,21 +103,24 @@ would likely be structurally different.
 By calculating all positions for both elements of the machine and rating square
 centrally, these components are, of course, coupled. This coupling is almost
 necessary though, since their animations depend on each-others layouts. The
-structure I've built (see `placement-parent.tsx` and `placement.tsx`) allows
-these two components to use this shared layout information cleanly, and prevents
-any further coupling. I think the approach of sharing layout calculations
-between components is the best possible solution here, but I would avoid it
-unless a complex interconnected transition is really necessary.
+structure I've built (see
+[`placement-parent.tsx`](frontend/src/components/placement-parent.tsx) and
+[`placed.tsx`](frontend/src/components/placed.tsx)) allows these two components
+to use this shared layout information cleanly, and prevents any further
+coupling. I think the approach of sharing layout calculations between components
+is the best possible solution here, but I would avoid it unless a complex
+interconnected transition is really necessary.
 
 ### Login
 
 <img src="resources/showcase/login.gif" width="360px" height="640px" />
 
 The login screen doesn't have complicated animations. The fades of the colors of
-the inputs are done with plain CSS `transition`. I used `react-spring` in a
-typical way here to transition past the login screen. The simple animations used
-here are probably the sweet spot for typical applications, in terms of
-development cost vs UX benefits.
+the inputs are done with plain CSS `transition`. I used
+[`react-spring`](https://github.com/drcmda/react-spring) in a typical way here
+to transition past the login screen. The simple animations used here are
+probably the sweet spot for typical applications, in terms of development cost
+vs UX benefits.
 
 ### Button
 
@@ -130,8 +136,10 @@ Since the animation progress is controlled by the timestamps given by
 for that callback. Combined with the possibly asynchronous nature of React's
 `setState` this caused quite a few bugs on fast consecutive touches. The code I
 used to make the event handling stable is far from ideal. Using CSS `transition`
-with `react-transition-group` (instead of controlling each frame directly) would
-probably give a simpler implementation.
+with
+[`react-transition-group`](https://github.com/reactjs/react-transition-group)
+(instead of controlling each frame directly) would probably give a simpler
+implementation.
 
 ### Tick
 
