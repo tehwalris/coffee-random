@@ -25,6 +25,7 @@ css.insert(`@media(max-width: ${tooSmallWidthPx}px) {
 }`);
 
 css.global("#root", {
+  overflow: "auto",
   height: "600px",
   minHeight: "100%",
   minWidth: tooSmallWidthPx,
