@@ -1,6 +1,9 @@
 import * as React from "react";
 import { css } from "glamor";
 
+// TapArea is a tapable rectangle.
+// It provides normalized tap coordinates.
+
 export interface Coordinate {
   x: number; // [0, 1] (left - right)
   y: number; // [0, 1] (top - bottom)

@@ -3,6 +3,10 @@ import SaveTickPure from "./save-tick-pure";
 import { easeInQuad, ANIMATION_SLOWDOWN } from "../util";
 import { RatingState } from "../store";
 
+// SaveTick animates SaveTickPure.
+// It ensures that morphing between the different contents
+// of SaveTickPure only occurs after a full turn.
+
 interface Props {
   ratingState: RatingState;
   size: string;

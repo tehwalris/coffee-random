@@ -1,5 +1,3 @@
-import * as ReactSpring from "react-spring";
-
 export function mix(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
 }
@@ -18,8 +16,7 @@ export function easeOutQuad(t: number) {
   return t * (2 - t);
 }
 
-export const RENDER_DEBUG = false;
+// ANIMATION_SLOWDOWN slows down all animations in the app (for demo purposes).
+// A value of 10 means everything will happen 10 times slower.
+// Values less than 1 are also allowed.
 export const ANIMATION_SLOWDOWN = 1;
-
-// tslint:disable-next-line:no-any
-export const SpringTransition = (ReactSpring as any).Transition;

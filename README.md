@@ -42,8 +42,6 @@ implementing each one.
 
 <img src="resources/showcase/machine-cropped.gif" width="360px" height="224px" />
 
-- TODO picture of real machines
-
 The pair of animated coffee machines is the centerpiece of this app. It is split
 into two react components in a fairly typical way:
 

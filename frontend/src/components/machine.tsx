@@ -5,10 +5,17 @@ import { times } from "lodash";
 import { createSpring } from "../spring";
 import { COLUMN_COUNT } from "../store";
 import { PlaceableProps } from "./placement-parent";
-import { Derived } from "./composite-page";
 import { springConfigCup } from "../style";
+import { LayoutOutputs } from "../layout-composite-page";
 
-interface Props extends PlaceableProps<Derived> {
+// Machine renders a coffee machine using MachinePure.
+// This component handles all the logic for closing
+// doors, blinking lights, pouring coffee and moving the cup.
+// It allows aborting and switching the active brew head ("column")
+// at any stage. It will cleanly wait for coffee to stop pouring
+// before moving the cup.
+
+interface Props extends PlaceableProps<LayoutOutputs> {
   column?: number; // integer [1, 4]
   stopPour: boolean;
   stopEverything: boolean;

@@ -1,3 +1,7 @@
+// This is a spring implementation for animation.
+// It is heavily based on the spring implementation in react-motion
+// https://github.com/chenglou/react-motion/blob/master/src/stepper.js
+
 export type Spring = (
   args: {
     position: number;
@@ -7,8 +11,6 @@ export type Spring = (
   },
 ) => { position: number; velocity: number };
 
-// Heavily based on the spring implementation in react-motion
-// https://github.com/chenglou/react-motion/blob/master/src/stepper.js
 export function createSpring({
   stepMillis,
   precision,

@@ -3,6 +3,9 @@ import { css, select as glamorSelect, keyframes } from "glamor";
 import { sizes, colors, smallDeviceMediaQuery } from "../style";
 import { ANIMATION_SLOWDOWN } from "../util";
 
+// Input is a styled input element.
+// It handles many low level details, like using nicer fonts on password inputs.
+
 interface Props {
   className?: string;
   type?: "password";

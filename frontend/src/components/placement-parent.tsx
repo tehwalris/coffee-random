@@ -2,6 +2,11 @@ import * as React from "react";
 import { BaseProps as PlacedProps } from "./placed";
 import { ANIMATION_SLOWDOWN } from "../util";
 
+// PlacementParent works together with Placed as a convenient
+// system for dynamically positioning multiple elements.
+// PlacementParent normally has Placed components as children.
+// PlacementParent renders each child with the correct transform.
+
 const DPR = window.devicePixelRatio;
 
 // DEVICE_ROUND_FACTOR adjusts rounding of positions
@@ -24,44 +29,27 @@ export type PlaceableProps<D> = {
 
 type Placeable<D> = React.ReactElement<PlaceableProps<D>>;
 
-interface Props<I, D extends I> {
+interface Props<I> {
   inputs: I;
-  derive: (inputs: I) => D;
-  children: Placeable<D> | Placeable<D>[];
-  getWrapperSize: (derived: D) => { width: number; height: number };
+  children: Placeable<I> | Placeable<I>[];
+  getWrapperSize: (derived: I) => { width: number; height: number };
 }
 
-export default class PlacementParent<I, D extends I> extends React.Component<
-  Props<I, D>
-> {
-  lastInputs: I | undefined;
-  lastDerived: D | undefined;
-
-  getDerived = (): D => {
-    const { inputs, derive } = this.props;
-    if (inputs === this.lastInputs) {
-      return this.lastDerived!;
-    }
-    this.lastInputs = inputs;
-    this.lastDerived = derive(inputs);
-    return this.lastDerived;
-  };
-
+export default class PlacementParent<I> extends React.Component<Props<I>> {
   render() {
-    const { inputs, derive, children, getWrapperSize } = this.props;
-    const derived = derive(inputs);
+    const { inputs, children, getWrapperSize } = this.props;
     return (
-      <div style={{ ...getWrapperSize(derived), position: "relative" }}>
-        {React.Children.toArray(children).map((c: Placeable<D>) =>
+      <div style={{ ...getWrapperSize(inputs), position: "relative" }}>
+        {React.Children.toArray(children).map((c: Placeable<I>) =>
           React.cloneElement(c, { render: this.renderPlaced }),
         )}
       </div>
     );
   }
 
-  renderPlaced = ({ children: c, place }: PlacedProps<D>): React.ReactChild => {
+  renderPlaced = ({ children: c, place }: PlacedProps<I>): React.ReactChild => {
     return (
-      <div style={this.placementToStyle(place(this.getDerived()))}>{c}</div>
+      <div style={this.placementToStyle(place(this.props.inputs))}>{c}</div>
     );
   };
 

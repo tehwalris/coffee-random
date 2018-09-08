@@ -7,7 +7,7 @@ import RatingTop from "./pages/rating-top";
 import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
 import { colors, sizes, smallDeviceMediaQuery } from "./style";
-import { unreachable, RENDER_DEBUG } from "./util";
+import { unreachable } from "./util";
 import SlideDown from "./components/slide-down";
 import FakeTouchCursor from "./components/fake-touch-cursor";
 
@@ -43,12 +43,7 @@ const styles = {
     backgroundColor: colors.background,
     color: colors.content,
     fontSize: sizes.uiFontSize,
-
-    overflow: RENDER_DEBUG ? "visible" : "hidden",
-    transform: RENDER_DEBUG
-      ? "translateY(-100px) scale(0.75) rotateX(32deg) rotateY(-9deg) rotateZ(26deg)"
-      : undefined,
-    transformStyle: RENDER_DEBUG ? "preserve-3d" : undefined,
+    overflow: "hidden",
 
     [`@media(min-width: ${FAKE_PHONE.breakPx}px)`]: {
       height: FAKE_PHONE.heightPx,

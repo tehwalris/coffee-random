@@ -3,6 +3,11 @@
 import { client } from "./api";
 import { ANIMATION_SLOWDOWN } from "./util";
 
+// This file contains all the non-animation logic in coffee-random.
+// I experimented with doing some unusal state management here,
+// by (ab)using inheritance. It's interesting to look at, but
+// I don't recommend using it in a real app.
+
 const SAVE_TIMEOUT_MS = 3000 * ANIMATION_SLOWDOWN;
 export const COLUMN_COUNT = 4;
 

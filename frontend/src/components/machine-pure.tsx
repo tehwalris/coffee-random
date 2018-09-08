@@ -5,10 +5,12 @@ import Head from "./head";
 import Cup from "./cup";
 import { mix } from "../util";
 import Placed from "./placed";
-import { Derived } from "./composite-page";
 import { PlaceableProps } from "./placement-parent";
+import { LayoutOutputs } from "../layout-composite-page";
 
-export interface Props extends PlaceableProps<Derived> {
+// MachinePure is a fully controllable picture of a coffee machine.
+
+export interface Props extends PlaceableProps<LayoutOutputs> {
   arrowPos: number; // 1 is left head, 4 is right head, any float values are allowed
   heads: Heads;
   coffee: number; // [0, 1] // 0 - no coffee, 0.5 - full coffee, 1 - no coffee (0.25 some coffee from the top)
@@ -73,7 +75,7 @@ export default class MachinePure extends React.Component<Props> {
     return [
       <Placed
         key="coffee"
-        place={({ midLayer, machineOpacity: o }: Derived) => ({
+        place={({ midLayer, machineOpacity: o }: LayoutOutputs) => ({
           ...midLayer(arrowPos, false),
           style: { opacity: o },
         })}
@@ -84,7 +86,7 @@ export default class MachinePure extends React.Component<Props> {
       </Placed>,
       <Placed
         key="cup"
-        place={({ midLayer, machineOpacity: o }: Derived) => ({
+        place={({ midLayer, machineOpacity: o }: LayoutOutputs) => ({
           ...midLayer(arrowPos, true),
           style: { opacity: o },
         })}
@@ -98,7 +100,7 @@ export default class MachinePure extends React.Component<Props> {
       ...[0, 1, 2, 3].map(i => (
         <Placed
           key={`head ${i}`}
-          place={({ heads: h, machineOpacity: o }: Derived) => ({
+          place={({ heads: h, machineOpacity: o }: LayoutOutputs) => ({
             ...h[i],
             style: { opacity: o },
           })}
@@ -120,7 +122,7 @@ export default class MachinePure extends React.Component<Props> {
       ...[0, 1].map(i => (
         <Placed
           key={`platform ${i}`}
-          place={({ platforms, machineOpacity: o }: Derived) => ({
+          place={({ platforms, machineOpacity: o }: LayoutOutputs) => ({
             ...platforms[i],
             style: {
               backgroundColor: colors.machineLight,

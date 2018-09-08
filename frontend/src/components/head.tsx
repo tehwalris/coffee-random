@@ -4,6 +4,9 @@ import Ratio from "./ratio";
 import { colors } from "../style";
 import { mix } from "../util";
 
+// Head is a stylized coffee machine brew head as a SVG.
+// The door and leftmost light are controllable.
+
 interface Props {
   width: string;
   door: number; // [0, 1] (0 - raised/open, 1 - lowered/closed)

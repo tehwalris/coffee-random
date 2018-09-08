@@ -3,6 +3,10 @@ import { css } from "glamor";
 import { colors, sizes, smallDeviceMediaQuery } from "../style";
 import { ANIMATION_SLOWDOWN } from "../util";
 
+// Button is a styled button with a "material" inspired ripple effect.
+// It is intended for touch devices, so it some effects don't work
+// when the button is activated by keyboard.
+
 type Props = React.InputHTMLAttributes<HTMLButtonElement>;
 
 interface State {

@@ -1,6 +1,8 @@
 import * as React from "react";
 import { css } from "glamor";
 
+// LinkButton is a button which renders as plain text (like a link).
+
 const styles = {
   button: css({
     display: "inline-block",

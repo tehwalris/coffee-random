@@ -5,7 +5,6 @@ import registerServiceWorker from "./registerServiceWorker";
 import { css } from "glamor";
 import "normalize.css";
 import { colors, tooSmallWidth } from "./style";
-import { RENDER_DEBUG } from "./util";
 
 css.global("body", {
   margin: 0,
@@ -16,7 +15,6 @@ css.global("body", {
   backgroundColor: colors.machineMedium,
   color: colors.content,
   userSelect: "none",
-  perspective: RENDER_DEBUG ? "1000px" : undefined,
   fontFamily: "Montserrat,Open Sans,Helvetica Neue,sans-serif",
 });
 

@@ -10,11 +10,14 @@ import {
 } from "../style";
 import SaveTick from "./save-tick";
 import Placed from "./placed";
-import { Derived } from "./composite-page";
 import { PlaceableProps } from "./placement-parent";
-import { SpringTransition } from "../util";
+import { Transition } from "react-spring";
+import { LayoutOutputs } from "../layout-composite-page";
 
-interface Props extends PlaceableProps<Derived> {
+// RatingSquare is a tappable sqaure input for taking ratings
+// of coffee from the user.
+
+interface Props extends PlaceableProps<LayoutOutputs> {
   store?: RatingStore;
   pointerEvents: boolean;
   stopInteraction: boolean;
@@ -65,7 +68,7 @@ export default class RatingSquare extends React.Component<Props> {
     return [
       <Placed
         key="top"
-        place={({ square, current, squareOpacity: o }: Derived) => ({
+        place={({ square, current, squareOpacity: o }: LayoutOutputs) => ({
           w: square.w,
           h: square.h,
           x: current.x + current.w / 2 - square.w / 2,
@@ -82,7 +85,7 @@ export default class RatingSquare extends React.Component<Props> {
       </Placed>,
       <Placed
         key="bottom"
-        place={({ square, current, squareOpacity: o }: Derived) => ({
+        place={({ square, current, squareOpacity: o }: LayoutOutputs) => ({
           w: square.w,
           h: square.h,
           x: current.x + current.w / 2 - square.w / 2,
@@ -99,7 +102,7 @@ export default class RatingSquare extends React.Component<Props> {
       </Placed>,
       <Placed
         key="left"
-        place={({ square, current, squareOpacity: o }: Derived) => ({
+        place={({ square, current, squareOpacity: o }: LayoutOutputs) => ({
           w: square.w,
           h: square.h,
           x: current.x,
@@ -116,7 +119,7 @@ export default class RatingSquare extends React.Component<Props> {
       </Placed>,
       <Placed
         key="right"
-        place={({ square, current, squareOpacity: o }: Derived) => ({
+        place={({ square, current, squareOpacity: o }: LayoutOutputs) => ({
           w: square.w,
           h: square.h,
           x: current.x + current.w - square.w,
@@ -133,7 +136,7 @@ export default class RatingSquare extends React.Component<Props> {
       </Placed>,
       <Placed
         key="tapArea"
-        place={({ square, squareOpacity: o }: Derived) => ({
+        place={({ square, squareOpacity: o }: LayoutOutputs) => ({
           ...square,
           style: {
             opacity: o,
@@ -148,7 +151,7 @@ export default class RatingSquare extends React.Component<Props> {
             store && store.onTapRating({ business: x, quality: 1 - y })
           }
         >
-          <SpringTransition
+          <Transition
             keys={rating ? [`${rating.quality}:${rating.business}`] : []}
             from={{ opacity: 0, transform: "scale(0.5)" }}
             enter={{ opacity: 1, transform: "scale(1)" }}
@@ -171,7 +174,7 @@ export default class RatingSquare extends React.Component<Props> {
                   ),
                 ]
               : []}
-          </SpringTransition>
+          </Transition>
         </TapArea>
       </Placed>,
     ];

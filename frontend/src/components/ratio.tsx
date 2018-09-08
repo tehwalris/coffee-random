@@ -1,6 +1,7 @@
-// Based on https://spin.atomicobject.com/2015/07/14/css-responsive-square/
-
 import * as React from "react";
+
+// Ratio is wraps an element to give it a fixed aspect ratio.
+// Based on https://spin.atomicobject.com/2015/07/14/css-responsive-square/
 
 interface Props {
   children?: React.ReactChild | React.ReactChild[];

@@ -1,15 +1,15 @@
 import * as React from "react";
 import { css } from "glamor";
 import { springConfigLoginSlide } from "../style";
-import { SpringTransition } from "../util";
+import { Transition } from "react-spring";
 
-// const SLIDE_DURATION_MS = 500;
+// SlideDown animates a sliding transition between two pages.
 
 interface Props {
   top?: React.ReactChild;
   bottom?: React.ReactChild;
   focusBottom?: boolean;
-  noAnimate: boolean; // TODO use
+  noAnimate: boolean; // if true, transitions occurs instantly
 }
 
 const styles = {
@@ -41,7 +41,7 @@ export default class SlideDown extends React.Component<Props> {
     const { top, bottom, focusBottom, noAnimate } = this.props;
     return (
       <div {...styles.outerWrapper}>
-        <SpringTransition
+        <Transition
           keys={focusBottom ? "bottom" : "top"}
           from={styles.animateFrom}
           enter={styles.animateEnter}
@@ -54,7 +54,7 @@ export default class SlideDown extends React.Component<Props> {
               {focusBottom ? bottom : top}
             </div>
           )}
-        </SpringTransition>
+        </Transition>
       </div>
     );
   }

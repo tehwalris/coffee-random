@@ -2,6 +2,10 @@ import * as React from "react";
 import { css } from "glamor";
 import { ANIMATION_SLOWDOWN } from "../util";
 
+// FakeTouchCursor is useful for recording videos of coffee-random.
+// It looks a little nicer than the built in touch cursor in Chrome,
+// especially since it's not always visible.
+
 const SIZE_PX = 25;
 const FADE_TIME_MS = 300 * Math.sqrt(ANIMATION_SLOWDOWN);
 

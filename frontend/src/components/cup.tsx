@@ -3,6 +3,8 @@ import { colors } from "../style";
 import Ratio from "./ratio";
 import { css } from "glamor";
 
+// Cup is just the "signature" cup as an SVG.
+
 interface Props {
   width: string;
   center?: boolean;

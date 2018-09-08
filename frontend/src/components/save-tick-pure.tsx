@@ -9,6 +9,8 @@ import {
 import { colors, sizes } from "../style";
 import { RatingState } from "../store";
 
+// SaveTickPure is a controllable tick, cross and loading spinner component.
+
 interface Props {
   ratingState: RatingState;
   t: number; // [0, 1]

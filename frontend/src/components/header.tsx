@@ -3,6 +3,8 @@ import { css } from "glamor";
 import { colors, sizes, smallDeviceMediaQuery } from "../style";
 import Cup from "./cup";
 
+// Header is the "coffee-random" header for the login page.
+
 const styles = {
   wrapper: css({
     position: "relative",
