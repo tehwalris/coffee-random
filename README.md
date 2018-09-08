@@ -11,6 +11,11 @@ It lets you rate each coffee you get from the coffee machine at my university.
 The rating functionality itself is not why I built this. This project was a
 playground to gain experience using lots of animations in a web app.
 
+## [Live demo!](https://coffee.walr.is)
+
+Try it out on [`coffee.walr.is`](https://coffee.walr.is).
+Use the `demo` user (password: `walrus`).
+
 ## Constraints
 
 My goal was to implement animations in a realistic context, but try even
@@ -155,3 +160,60 @@ momentum of the bar. This would have been easier in real animation software than
 the fully hard-coded approach I used here. If you have more than one of this
 sort of component, definitely consider using some system for importing
 animations.
+
+## Development
+
+The frontend is written in TypeScript with React. The backend is written in Go.
+The backend requires a PostgreSQL database. The frontend and backend communicate
+using gRPC-Web.
+
+### Preparation
+
+You'll need the following tools:
+
+- `node` (eg. version 10)
+- `yarn`
+- `go`
+- `golang/dep`
+- `protoc`
+- `protoc-gen-go`
+- PostgreSQL (eg. in Docker)
+
+Install the dependencies:
+
+- in the repo root run `dep ensure`
+- in `./frontend` run `yarn`
+
+Generate the gRPC code (in `./pb`):
+
+- `./gen-ts.sh`
+- `./gen-go.sh`
+
+### Starting the backend
+
+In `./backend` run `go build`. Start the backend, passing your database connection info.
+For local development you'll have something like this:
+
+```shell
+./backend -postgres-url 'youruser:yourpass@yourhost:5432/yourdbname?sslmode=disable' -http-listen :8080
+```
+
+The backend will automatically configure the database schema.
+
+### Setting the backend URL
+
+When building or developing the frontend, you need to set the backend URL.
+This is done with the `REACT_APP_API_URL` environment variable.
+The default is `env REACT_APP_API_URL="http://localhost:8080"`.
+
+### Starting a frontend dev server
+
+In `./frontend` run `yarn start`.
+
+### Production frontend build
+
+In `./frontend` run `yarn build`. Build output is in `./frontend/build`.
+
+### Log in with demo user
+
+If you don't want to manually create a user, you can use the `demo` user (password `walrus`).
