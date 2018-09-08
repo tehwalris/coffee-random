@@ -147,11 +147,3 @@ momentum of the bar. This would have been easier in real animation software than
 the fully hard coded approach I used here. If you have more than one of this
 sort of component, definitely consider using some system for importing
 animations.
-
-## Discussion
-
-- TODO cost of animation code
-- TODO tools: `transition`, `react-transition-group`?, `popmotion`?,
-  `react-spring`
-- TODO animation software and import
-- TODO performance of animations in react
