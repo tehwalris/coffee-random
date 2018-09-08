@@ -4,7 +4,7 @@ import App from "./app";
 import registerServiceWorker from "./registerServiceWorker";
 import { css } from "glamor";
 import "normalize.css";
-import { colors, tooSmallWidth } from "./style";
+import { colors, tooSmallWidthPx } from "./style";
 
 css.global("body", {
   margin: 0,
@@ -18,7 +18,7 @@ css.global("body", {
   fontFamily: "Montserrat,Open Sans,Helvetica Neue,sans-serif",
 });
 
-css.insert(`@media(max-width: ${tooSmallWidth}) {
+css.insert(`@media(max-width: ${tooSmallWidthPx}px) {
   body {
     overflow-x: auto;
   }
@@ -27,7 +27,7 @@ css.insert(`@media(max-width: ${tooSmallWidth}) {
 css.global("#root", {
   height: "600px",
   minHeight: "100%",
-  minWidth: tooSmallWidth,
+  minWidth: tooSmallWidthPx,
 });
 
 ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);

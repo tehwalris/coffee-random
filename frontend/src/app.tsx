@@ -6,7 +6,7 @@ import LoginPage from "./pages/login";
 import RatingTop from "./pages/rating-top";
 import CompositePage, { Target } from "./components/composite-page";
 import { css } from "glamor";
-import { colors, sizes, smallDeviceMediaQuery } from "./style";
+import { colors, sizes, smallDeviceMediaQuery, tooSmallWidthPx } from "./style";
 import { unreachable } from "./util";
 import SlideDown from "./components/slide-down";
 import FakeTouchCursor from "./components/fake-touch-cursor";
@@ -15,6 +15,10 @@ interface State {
   store: Store;
   storeIndex: number; // incremented each time store is moved to lastStore
   lastStore?: Store; // store is moved here when the page (store class) changes
+  phoneDims: {
+    widthPx: number;
+    heightPx: number;
+  };
 }
 
 const FAKE_PHONE = {
@@ -24,16 +28,6 @@ const FAKE_PHONE = {
 };
 
 const USE_FAKE_CURSOR = document.body.clientWidth >= FAKE_PHONE.breakPx;
-
-const phoneDims = {
-  widthPx: window.innerWidth,
-  heightPx: window.innerHeight,
-};
-
-if (phoneDims.widthPx >= FAKE_PHONE.breakPx) {
-  phoneDims.widthPx = FAKE_PHONE.widthPx;
-  phoneDims.heightPx = FAKE_PHONE.heightPx;
-}
 
 const styles = {
   outer: css({
@@ -88,6 +82,28 @@ class App extends React.Component<{}, State> {
   state: State = {
     store: new LoginStore(this.onUpdate),
     storeIndex: 0,
+    phoneDims: { widthPx: 0, heightPx: 0 },
+  };
+
+  componentWillMount() {
+    this.updateDimensions();
+    window.addEventListener("resize", this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+  }
+
+  updateDimensions = () => {
+    const d = {
+      widthPx: Math.max(window.innerWidth, tooSmallWidthPx),
+      heightPx: window.innerHeight,
+    };
+    if (d.widthPx >= FAKE_PHONE.breakPx) {
+      this.setState({ phoneDims: { ...FAKE_PHONE } });
+    } else {
+      this.setState({ phoneDims: d });
+    }
   };
 
   render() {
@@ -101,7 +117,7 @@ class App extends React.Component<{}, State> {
   }
 
   renderInner(store: Store) {
-    const { storeIndex } = this.state;
+    const { phoneDims, storeIndex } = this.state;
     if (store instanceof LoginStore) {
       return (
         <SlideDown

@@ -88,7 +88,7 @@ export const sizes = {
 };
 
 export const smallDeviceMediaQuery = "@media(max-width: 325px)";
-export const tooSmallWidth = "250px";
+export const tooSmallWidthPx = 250;
 
 function slowDownSpring(c: SpringConfig): SpringConfig {
   return {
