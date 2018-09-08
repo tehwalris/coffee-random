@@ -13,9 +13,9 @@ playground to gain experience using lots of animations in a web app.
 
 ## Constraints
 
-These are the constraints I tried to stick to. The goal was to implement
-animations in a realistic context, but try even technically challenging
-animations.
+My goal was to implement animations in a realistic context, but try even
+technically challenging animations. These are the constraints I tried to stick
+to:
 
 - I must implement exactly the animations I want
   - Even if that takes an unreasonable amount of code
@@ -58,6 +58,10 @@ cleanly abort from any phase, and change the target brew head at any time. This
 component also has to handle cup movement, since that is closely tied to pouring
 coffee - for example you can't pour until the cup is in position.
 
+The design is a stylized version of the real machines that my university has:
+
+<img src="resources/showcase/real-machines.jpg" width="720px" />
+
 ### Morph
 
 <img src="resources/showcase/morph-debug.gif" width="360px" height="640px" />
@@ -67,7 +71,8 @@ for a few reasons:
 
 - The machine layout uses both pixel and percentage sizes, and has fixed aspect
   ratio pieces
-- Every piece of the machine and label on the rating square move on unique paths
+- Every piece of the machine and every label on the rating square moves on a
+  unique path
 - The paths of the rating labels depend on the dimensions and position of the
   machine, and vice-versa
 - The machine has a significant amount of state and logic, but the rendered
