@@ -51,10 +51,10 @@ coffee, etc.
 
 The other component (`machine.tsx`) is a large state machine, which generates
 those inputs. The animation is structured in phases like pre-pour (door closing,
-coffee stream starting), pour (coffee color changing), etc. It's possible
+coffee stream starting), pour (coffee color changing), etc. It's possible to
 cleanly abort from any phase, and change the target brew head at any time. This
 component also has to handle cup movement, since that is closely tied to pouring
-coffee - for example you can't pour until the cup is in position.
+coffee - for example, you can't pour until the cup is in position.
 
 The design is a stylized version of the real machines that my university has:
 
@@ -67,8 +67,8 @@ The design is a stylized version of the real machines that my university has:
 The morphing transition is the most technically difficult animation in this app,
 for a few reasons:
 
-- The machine layout uses both pixel and percentage sizes, and has fixed aspect
-  ratio pieces
+- The machine layout uses both pixel and percentage sizes and has pieces which
+  have a fixed aspect ratio
 - Every piece of the machine and every label on the rating square moves on a
   unique path
 - The paths of the rating labels depend on the dimensions and position of the
@@ -92,7 +92,7 @@ fixed aspect ratios.
 Doing the calculations manually (instead of relying on browser layout
 mechanisms) makes it much easier to smoothly animate pieces between two
 structurally different layouts. For example, in the "machine" form there is a
-larger space betwen the 2nd and 3rd brew head. In the "rating square" form, all
+larger space between the 2nd and 3rd brew head. In the "rating square" form, all
 brew heads are evenly spaced. It would be very difficult to animate between
 these two states if all the layout was done in CSS, since the required markup
 would likely be structurally different.
@@ -110,11 +110,11 @@ unless a complex interconnected transition is really necessary.
 
 <img src="resources/showcase/login.gif" width="360px" height="640px" />
 
-The login screen doesn't have complicated animations. The fades on colors of the
-inputs are done with plain CSS `transition`. I used `react-spring` in a typical
-way here to transition past the login screen. The simple animations used here
-are probably the sweet spot for typical applications, in terms of development
-cost vs UX benifits.
+The login screen doesn't have complicated animations. The fades of the colors of
+the inputs are done with plain CSS `transition`. I used `react-spring` in a
+typical way here to transition past the login screen. The simple animations used
+here are probably the sweet spot for typical applications, in terms of
+development cost vs UX benefits.
 
 ### Button
 
@@ -126,9 +126,9 @@ in a diagonal line, which intersects the touch point. There's no particular
 hover effect, since this is intended for mobile.
 
 Since the animation progress is controlled by the timestamps given by
-`requestAnimationFrame`, saving the start time of an animation involes waiting
-for that callback. Combined with the possibly asyncronous nature of React's
-`setState` this caused quite a few bugs on fast consequtive touches. The code I
+`requestAnimationFrame`, saving the start time of an animation involves waiting
+for that callback. Combined with the possibly asynchronous nature of React's
+`setState` this caused quite a few bugs on fast consecutive touches. The code I
 used to make the event handling stable is far from ideal. Using CSS `transition`
 with `react-transition-group` (instead of controlling each frame directly) would
 probably give a simpler implementation.
@@ -137,13 +137,13 @@ probably give a simpler implementation.
 
 <img src="resources/showcase/ticks.gif" width="360px" height="120px" />
 
-The tick component is a fairly unique sort of loading spinner. It starts as bar,
-which spins as many times as it needs before the "save rating" request is
+The tick component is a fairly unique sort of loading spinner. It starts as a
+bar, which spins as many times as it needs before the "save rating" request is
 completed. Once the request completes, the bar morphs into a tick on the next
 turn. If the request fails, it morphs into a cross instead.
 
 The difficulty here was getting the morph to look natural, and maintaining the
 momentum of the bar. This would have been easier in real animation software than
-the fully hard coded approach I used here. If you have more than one of this
+the fully hard-coded approach I used here. If you have more than one of this
 sort of component, definitely consider using some system for importing
 animations.
