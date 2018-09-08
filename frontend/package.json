@@ -1,7 +1,11 @@
 {
   "name": "coffee-random",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "license": "MIT",
+  "author": {
+    "name": "Philippe Voinov"
+  },
   "dependencies": {
     "@types/google-protobuf": "^3.2.7",
     "@types/jest": "^22.2.3",
