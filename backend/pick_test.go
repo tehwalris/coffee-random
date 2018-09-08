@@ -5,7 +5,7 @@ import (
 	"math"
 	"testing"
 
-	main "git.dolansoft.org/philippe/coffee-random/backend"
+	main "github.com/tehwalris/coffee-random/backend"
 )
 
 func TestWeightedRand(t *testing.T) {

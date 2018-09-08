@@ -15,7 +15,7 @@ COPY frontend/tsconfig.json frontend/tsconfig.json
 RUN cd frontend && yarn run build
 
 FROM golang:1.9.2-alpine3.7
-WORKDIR /go/src/git.dolansoft.org/philippe/coffee-random
+WORKDIR /go/src/github.com/tehwalris/coffee-random
 RUN apk --update add git protobuf
 RUN go get -u github.com/golang/dep/cmd/dep && \
   go get -u github.com/golang/protobuf/protoc-gen-go

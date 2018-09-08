@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
-	pb "git.dolansoft.org/philippe/coffee-random/pb"
+	pb "github.com/tehwalris/coffee-random/pb"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 )
 
