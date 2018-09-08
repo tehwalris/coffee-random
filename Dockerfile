@@ -12,7 +12,6 @@ COPY frontend/src frontend/src
 RUN cd pb && ./gen-ts.sh
 COPY frontend/tslint.json frontend/tslint.json
 COPY frontend/tsconfig.json frontend/tsconfig.json
-COPY frontend/tsconfig.test.json frontend/tsconfig.test.json
 RUN cd frontend && yarn run build
 
 FROM golang:1.9.2-alpine3.7
