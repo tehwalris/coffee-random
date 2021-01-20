@@ -11,11 +11,6 @@ It lets you rate each coffee you get from the coffee machine at my university.
 The rating functionality itself is not why I built this. This project was a
 playground to gain experience using lots of animations in a web app.
 
-## [Live demo!](https://coffee.walr.is)
-
-Try it out on [`coffee.walr.is`](https://coffee.walr.is).
-Use the `demo` user (password: `walrus`).
-
 ## Constraints
 
 My goal was to implement animations in a realistic context, but try even
